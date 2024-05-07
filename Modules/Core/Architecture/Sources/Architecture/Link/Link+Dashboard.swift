@@ -10,6 +10,6 @@ extension Link {
 
 extension Link.Dashboard {
   public enum Path: String, Equatable {
-
+    case sample
   }
 }
