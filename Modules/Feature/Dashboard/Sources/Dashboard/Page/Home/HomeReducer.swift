@@ -1,17 +1,16 @@
 import Architecture
 import ComposableArchitecture
-import Domain
 import Foundation
+import Domain
 
 @Reducer
-struct SampleReducer {
-  
+struct HomeReducer {
   private let pageID: String
-  private let sideEffect: SampleSideEffect
+  private let sideEffect: HomeSideEffect
   
   init(
     pageID: String = UUID().uuidString,
-    sideEffect: SampleSideEffect)
+    sideEffect: HomeSideEffect)
   {
     self.pageID = pageID
     self.sideEffect = sideEffect
@@ -26,7 +25,7 @@ struct SampleReducer {
     }
   }
   
-  enum  CancelID: Equatable, CaseIterable {
+  enum CancelID: Equatable, CaseIterable {
     case teardown
   }
   
@@ -52,7 +51,7 @@ struct SampleReducer {
         sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)
         return .none
       }
+      
     }
-    
   }
 }

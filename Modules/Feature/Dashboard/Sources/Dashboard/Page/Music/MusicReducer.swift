@@ -1,17 +1,16 @@
 import Architecture
-import ComposableArchitecture
 import Domain
+import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct SampleReducer {
-  
+struct MusicReducer {
   private let pageID: String
-  private let sideEffect: SampleSideEffect
+  private let sideEffect: MusicSideEffect
   
   init(
     pageID: String = UUID().uuidString,
-    sideEffect: SampleSideEffect)
+    sideEffect: MusicSideEffect)
   {
     self.pageID = pageID
     self.sideEffect = sideEffect
@@ -26,7 +25,7 @@ struct SampleReducer {
     }
   }
   
-  enum  CancelID: Equatable, CaseIterable {
+  enum CancelID: Equatable, CaseIterable {
     case teardown
   }
   
@@ -53,6 +52,5 @@ struct SampleReducer {
         return .none
       }
     }
-    
   }
 }

@@ -20,11 +20,20 @@ extension AppMain: View {
         .init(
           tag: .zero,
           tabItem: .init(
-            title: "Sample",
-            image: .init(systemName: "shippingbox.fill"),
+            title: "Home",
+            image: .init(systemName: "house"),
             tag: .zero),
-          linkItem: .init(path: Link.Dashboard.Path.sample.rawValue),
-          prefersLargeTitles: true)
+          linkItem: .init(path: Link.Dashboard.Path.home.rawValue),
+          prefersLargeTitles: true),
+        
+          .init(
+            tag: 1,
+            tabItem: .init(
+              title: "Sample",
+              image: .init(systemName: "shippingbox.fill"),
+              tag: 1),
+            linkItem: .init(path: Link.Dashboard.Path.sample.rawValue),
+            prefersLargeTitles: true),
       ])
     .ignoresSafeArea()
   }
