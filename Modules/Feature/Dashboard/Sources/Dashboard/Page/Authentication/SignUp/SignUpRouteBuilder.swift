@@ -1,18 +1,18 @@
 import Architecture
 import LinkNavigator
 
-struct MusicRouteBuilder<RootNavigator: RootNavigatorType> {
+struct SignUpRouteBuilder<RootNavigator: RootNavigatorType> {
   static func generate() -> RouteBuilderOf<RootNavigator> {
-    let matchPath = Link.Dashboard.Path.music.rawValue
-    
-    return .init(matchPath: matchPath) { navigator, items, diContainer -> RouteViewController? in
+    let matchPath = Link.Dashboard.Path.signUp.rawValue
+
+    return .init(matchPath: matchPath) { navigator, _, diContainer -> RouteViewController? in
       guard let env: DashboardEnvironmentUsable = diContainer.resolve() else { return .none }
-      
+
       return DebugWrappingController(matchPath: matchPath) {
-        MusicPage(store: .init(
-          initialState: MusicReducer.State(),
+        SignUpPage(store: .init(
+          initialState: SignUpReducer.State(),
           reducer: {
-            MusicReducer(
+            SignUpReducer(
               sideEffect: .init(
                 useCase: env,
                 navigator: navigator))

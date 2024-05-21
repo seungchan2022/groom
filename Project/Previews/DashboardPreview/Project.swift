@@ -12,5 +12,5 @@ let project: Project = .preview(
     .local(path: .relativeToRoot("Modules/Core/DesignSystem")),
   ],
   dependencies: [
-    .package(product: "Dashboard", type: .runtime)
+    .package(product: "Dashboard", type: .runtime),
   ])

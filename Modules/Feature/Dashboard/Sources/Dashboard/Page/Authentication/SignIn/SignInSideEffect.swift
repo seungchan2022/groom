@@ -1,12 +1,15 @@
 import Architecture
 import ComposableArchitecture
+import Domain
 import Foundation
 
-struct MusicSideEffect {
+// MARK: - SignInSideEffect
+
+struct SignInSideEffect {
   let useCase: DashboardEnvironmentUsable
   let main: AnySchedulerOf<DispatchQueue>
   let navigator: RootNavigatorType
-  
+
   init(
     useCase: DashboardEnvironmentUsable,
     main: AnySchedulerOf<DispatchQueue> = .main,
@@ -18,4 +21,12 @@ struct MusicSideEffect {
   }
 }
 
-extension MusicSideEffect { }
+extension SignInSideEffect {
+  var routeToSignUp: () -> Void {
+    {
+      navigator.next(
+        linkItem: .init(path: Link.Dashboard.Path.signUp.rawValue),
+        isAnimated: true)
+    }
+  }
+}

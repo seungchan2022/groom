@@ -10,9 +10,11 @@ public struct DashboardRouteBuilderGroup<RootNavigator: RootNavigatorType> {
 extension DashboardRouteBuilderGroup {
   public static var release: [RouteBuilderOf<RootNavigator>] {
     [
-      HomeRouteBuilder.generate(),
-      MusicRouteBuilder.generate(),
-      SampleRouteBuilder.generate(),
+      ExploreRouteBuilder.generate(),
+      WishListRouteBuilder.generate(),
+      ProfileRouteBuilder.generate(),
+      SignInRouteBuilder.generate(),
+      SignUpRouteBuilder.generate(),
     ]
   }
 }

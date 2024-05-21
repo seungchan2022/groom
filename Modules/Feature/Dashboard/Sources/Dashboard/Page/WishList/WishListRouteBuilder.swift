@@ -1,18 +1,18 @@
 import Architecture
 import LinkNavigator
 
-struct SampleRouteBuilder<RootNavigator: RootNavigatorType> {
+struct WishListRouteBuilder<RootNavigator: RootNavigatorType> {
   static func generate() -> RouteBuilderOf<RootNavigator> {
-    let matchPath = Link.Dashboard.Path.sample.rawValue
-    
-    return .init(matchPath: matchPath) { navigator, items, diContainer -> RouteViewController? in
+    let matchPath = Link.Dashboard.Path.wishList.rawValue
+
+    return .init(matchPath: matchPath) { navigator, _, diContainer -> RouteViewController? in
       guard let env: DashboardEnvironmentUsable = diContainer.resolve() else { return .none }
-      
+
       return DebugWrappingController(matchPath: matchPath) {
-        SamplePage(store: .init(
-          initialState: SampleReducer.State(),
+        WishListPage(store: .init(
+          initialState: WishListReducer.State(),
           reducer: {
-            SampleReducer(sideEffect: .init(
+            WishListReducer(sideEffect: .init(
               useCase: env,
               navigator: navigator))
           }))

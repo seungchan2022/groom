@@ -10,8 +10,10 @@ extension Link {
 
 extension Link.Dashboard {
   public enum Path: String, Equatable {
-    case home
-    case music
-    case sample
+    case explore
+    case wishList
+    case profile
+    case signIn
+    case signUp
   }
 }

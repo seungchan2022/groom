@@ -51,6 +51,7 @@ extension URLRequest {
 
     switch content {
     case .queryItemPath: return self
+
     case .bodyItem(let item):
       return {
         guard let data = try? JSONEncoder().encode(item) else { return self }
@@ -60,6 +61,7 @@ extension URLRequest {
         new.httpBody = data
         return new
       }()
+
     case .bodyURLEncoded(let item):
       return {
         guard let data = item.encodeString().data(using: .utf8) else { return self }

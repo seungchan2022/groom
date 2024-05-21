@@ -1,16 +1,19 @@
 import Architecture
 import ComposableArchitecture
+import Domain
 import Foundation
 
-struct HomeSideEffect {
+// MARK: - SignUpSideEffect
+
+struct SignUpSideEffect {
   let useCase: DashboardEnvironmentUsable
   let main: AnySchedulerOf<DispatchQueue>
   let navigator: RootNavigatorType
-  
+
   init(
     useCase: DashboardEnvironmentUsable,
     main: AnySchedulerOf<DispatchQueue> = .main,
-    navigator: RootNavigatorType) 
+    navigator: RootNavigatorType)
   {
     self.useCase = useCase
     self.main = main
@@ -18,4 +21,11 @@ struct HomeSideEffect {
   }
 }
 
-extension HomeSideEffect { }
+extension SignUpSideEffect {
+  var routeToBack: () -> Void {
+    {
+      navigator
+        .back(isAnimated: true)
+    }
+  }
+}
