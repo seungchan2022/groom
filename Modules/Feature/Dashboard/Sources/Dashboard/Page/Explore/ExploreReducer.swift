@@ -3,6 +3,14 @@ import ComposableArchitecture
 import Domain
 import Foundation
 
+
+public enum DestinationSearchOption {
+  case location
+  case date
+  case guest
+}
+
+
 @Reducer
 struct ExploreReducer {
 
@@ -22,6 +30,15 @@ struct ExploreReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
+    var isShowSearchDestination = false
+    
+    var destinationText = ""
+    var peopleCount: Int = .zero
+    var fromDate = Date()
+    var toDate = Date()
+    
+    var isSelectedOption: DestinationSearchOption = .location
+    
     init(id: UUID = UUID()) {
       self.id = id
     }
