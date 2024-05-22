@@ -10,7 +10,7 @@ public enum DesignSystemImage: CaseIterable, Equatable {
   case image6
   case image7
   case image8
-
+  case host
   
   public var image: Image {
     var image: Image {
@@ -31,6 +31,8 @@ public enum DesignSystemImage: CaseIterable, Equatable {
         Asset.Image.image7.swiftUIImage
       case .image8:
         Asset.Image.image8.swiftUIImage
+      case .host:
+        Asset.Image.host.swiftUIImage
       }
     }
     

@@ -20,4 +20,12 @@ struct ExploreSideEffect {
   }
 }
 
-extension ExploreSideEffect { }
+extension ExploreSideEffect { 
+  var routeToDetail: () -> Void {
+    {
+      navigator.next(
+        linkItem: .init(path: Link.Dashboard.Path.detail.rawValue),
+        isAnimated: true)
+    }
+  }
+}

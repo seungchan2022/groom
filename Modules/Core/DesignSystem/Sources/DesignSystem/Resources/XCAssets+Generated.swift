@@ -58,6 +58,7 @@ internal enum Asset {
     }
   }
   internal enum Image {
+    internal static let host = ImageAsset(name: "host")
     internal static let image1 = ImageAsset(name: "image1")
     internal static let image2 = ImageAsset(name: "image2")
     internal static let image3 = ImageAsset(name: "image3")

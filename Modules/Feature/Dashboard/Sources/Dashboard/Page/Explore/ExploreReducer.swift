@@ -35,6 +35,8 @@ struct ExploreReducer {
     case binding(BindingAction<State>)
     case teardown
 
+    case routeToDetail
+    
     case throwError(CompositeErrorRepository)
   }
 
@@ -49,6 +51,11 @@ struct ExploreReducer {
         return .concatenate(
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
+      case .routeToDetail:
+        sideEffect.routeToDetail()
+        return .none
+      
+      
       case .throwError(let error):
         sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)
         return .none

@@ -11,6 +11,7 @@ extension DashboardRouteBuilderGroup {
   public static var release: [RouteBuilderOf<RootNavigator>] {
     [
       ExploreRouteBuilder.generate(),
+      DetailRouteBuilder.generate(),
       WishListRouteBuilder.generate(),
       ProfileRouteBuilder.generate(),
       SignInRouteBuilder.generate(),
