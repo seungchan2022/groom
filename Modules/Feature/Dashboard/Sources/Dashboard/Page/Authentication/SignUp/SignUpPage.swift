@@ -56,7 +56,7 @@ extension SignUpPage: View {
         }
       if !store.isValidEmail {
         HStack {
-          Text("이메일 형식을 따르고, @와 도메인(example.com)이 포함된 주소를 입력하세요.")
+          Text("유효한 이메일 주소가 아닙니다.")
             .font(.footnote)
             .foregroundStyle(.red)
             .padding(.top, -12)
@@ -65,7 +65,7 @@ extension SignUpPage: View {
         }
       }
 
-      TextField(
+      SecureField(
         "",
         text: $store.passwordText,
         prompt: Text("Password"))
@@ -84,7 +84,7 @@ extension SignUpPage: View {
         }
       if !store.isValidPassword {
         HStack {
-          Text("비밀번호는 최소 8자 이상이어야 하고, 대문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.")
+          Text("영어대문자, 숫자, 특수문자를 모두 사용하여 8 ~ 20자리로 설정해주세요.")
             .font(.footnote)
             .foregroundStyle(.red)
             .padding(.top, -12)
@@ -93,7 +93,7 @@ extension SignUpPage: View {
         }
       }
 
-      TextField(
+      SecureField(
         "",
         text: $store.confirmPasswordText,
         prompt: Text("Confirm Password"))
@@ -150,5 +150,21 @@ extension SignUpPage: View {
     .onAppear {
       isFocus = .email
     }
+  }
+}
+
+enum Validator {
+  static func validateEmail(email: String) -> Bool {
+    let emailRegex = #"^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$"#
+
+    let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+    return emailPredicate.evaluate(with: email)
+  }
+
+  static func validatePassword(password: String) -> Bool {
+    let passwordRegex = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$"
+
+    let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
+    return passwordPredicate.evaluate(with: password)
   }
 }
