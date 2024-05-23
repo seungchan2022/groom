@@ -8,5 +8,6 @@ import Platform
 // MARK: - AppSideEffect
 
 struct AppSideEffect: DependencyType, DashboardEnvironmentUsable {
+  let authUseCase: AuthUseCase
   let toastViewModel: ToastViewActionType
 }

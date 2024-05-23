@@ -121,7 +121,11 @@ extension SignUpPage: View {
         }
       }
 
-      Button(action: { }) {
+      Button(action: {
+        store.send(.onTapSignUp)
+        print(store.emailText)
+        print(store.passwordText)
+      }) {
         Text("Sign Up")
           .foregroundStyle(.white)
           .frame(height: 50)
@@ -132,7 +136,7 @@ extension SignUpPage: View {
       }
       .disabled(!isActiveSignUp)
 
-      Button(action: { store.send(.routeToBack) }) {
+      Button(action: { store.send(.routeToSignIn) }) {
         HStack {
           Text("Already have an account?")
 
