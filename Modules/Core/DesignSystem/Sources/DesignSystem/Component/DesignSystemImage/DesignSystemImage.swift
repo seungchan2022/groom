@@ -1,5 +1,5 @@
-import SwiftUI
 import Foundation
+import SwiftUI
 
 public enum DesignSystemImage: CaseIterable, Equatable {
   case image1
@@ -11,7 +11,9 @@ public enum DesignSystemImage: CaseIterable, Equatable {
   case image7
   case image8
   case host
-  
+
+  // MARK: Public
+
   public var image: Image {
     var image: Image {
       switch self {
@@ -35,7 +37,7 @@ public enum DesignSystemImage: CaseIterable, Equatable {
         Asset.Image.host.swiftUIImage
       }
     }
-    
+
     return image
   }
 }

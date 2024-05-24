@@ -3,6 +3,7 @@ import ComposableArchitecture
 import Domain
 import Foundation
 
+// MARK: - DestinationSearchOption
 
 public enum DestinationSearchOption {
   case location
@@ -10,6 +11,7 @@ public enum DestinationSearchOption {
   case guest
 }
 
+// MARK: - ExploreReducer
 
 @Reducer
 struct ExploreReducer {
@@ -31,14 +33,14 @@ struct ExploreReducer {
     let id: UUID
 
     var isShowSearchDestination = false
-    
+
     var destinationText = ""
     var peopleCount: Int = .zero
     var fromDate = Date()
     var toDate = Date()
-    
+
     var isSelectedOption: DestinationSearchOption = .location
-    
+
     init(id: UUID = UUID()) {
       self.id = id
     }
@@ -53,7 +55,7 @@ struct ExploreReducer {
     case teardown
 
     case routeToDetail
-    
+
     case throwError(CompositeErrorRepository)
   }
 
@@ -71,8 +73,7 @@ struct ExploreReducer {
       case .routeToDetail:
         sideEffect.routeToDetail()
         return .none
-      
-      
+
       case .throwError(let error):
         sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)
         return .none

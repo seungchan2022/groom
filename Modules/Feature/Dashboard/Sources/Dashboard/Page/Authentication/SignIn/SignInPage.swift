@@ -48,7 +48,7 @@ extension SignInPage: View {
             .stroke(isFocus == .email ? .blue : .clear, lineWidth: 1)
         }
 
-      TextField(
+      SecureField(
         "",
         text: $store.passwordText,
         prompt: Text("Password"))
@@ -73,7 +73,7 @@ extension SignInPage: View {
         }
       }
 
-      Button(action: { }) {
+      Button(action: { store.send(.onTapSignIn) }) {
         Text("Log In")
           .foregroundStyle(.white)
           .frame(height: 50)
@@ -103,4 +103,3 @@ extension SignInPage: View {
     }
   }
 }
-

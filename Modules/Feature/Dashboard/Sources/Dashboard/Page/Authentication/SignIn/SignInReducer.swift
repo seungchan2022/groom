@@ -28,6 +28,8 @@ struct SignInReducer {
     var isValidEmail = true
     var isValidPassword = true
 
+    var fetchSignIn: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+
     init(id: UUID = UUID()) {
       self.id = id
     }
@@ -35,18 +37,26 @@ struct SignInReducer {
 
   enum CancelID: Equatable, CaseIterable {
     case teardown
+    case requestSignIn
   }
 
   enum Action: BindableAction, Equatable {
     case binding(BindingAction<State>)
     case teardown
 
+    case onTapSignIn
+
+    case fetchSignIn(Result<Bool, CompositeErrorRepository>)
+
+    case routeToBack
     case routeToSignUp
+
+    case throwError(CompositeErrorRepository)
   }
 
   var body: some Reducer<State, Action> {
     BindingReducer()
-    Reduce { _, action in
+    Reduce { state, action in
       switch action {
       case .binding:
         return .none
@@ -55,8 +65,32 @@ struct SignInReducer {
         return .concatenate(
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
+      case .onTapSignIn:
+        return sideEffect
+          .signIn(.init(email: state.emailText, password: state.passwordText))
+          .cancellable(pageID: pageID, id: CancelID.requestSignIn, cancelInFlight: true)
+
+      case .fetchSignIn(let result):
+        switch result {
+        case .success:
+          sideEffect.routeToBack()
+          return .none
+
+        case .failure:
+          sideEffect.useCase.toastViewModel.send(message: "이메일 혹은 비밀번호가 잘못되었습니다.")
+          return .none
+        }
+
+      case .routeToBack:
+        sideEffect.routeToBack()
+        return .none
+
       case .routeToSignUp:
         sideEffect.routeToSignUp()
+        return .none
+
+      case .throwError(let error):
+        sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)
         return .none
       }
     }

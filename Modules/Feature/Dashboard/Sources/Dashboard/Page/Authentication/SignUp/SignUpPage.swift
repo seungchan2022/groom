@@ -123,8 +123,6 @@ extension SignUpPage: View {
 
       Button(action: {
         store.send(.onTapSignUp)
-        print(store.emailText)
-        print(store.passwordText)
       }) {
         Text("Sign Up")
           .foregroundStyle(.white)
@@ -156,6 +154,8 @@ extension SignUpPage: View {
     }
   }
 }
+
+// MARK: - Validator
 
 enum Validator {
   static func validateEmail(email: String) -> Bool {

@@ -1,6 +1,6 @@
 import Architecture
-import ComposableArchitecture
 import CombineExt
+import ComposableArchitecture
 import Domain
 import Foundation
 
@@ -25,16 +25,16 @@ struct SignUpSideEffect {
 extension SignUpSideEffect {
   var signUp: (Auth.Email.Request) -> Effect<SignUpReducer.Action> {
     { req in
-        .publisher {
-          useCase.authUseCase.signUp(req)
-            .map { _ in true }
-            .receive(on: main)
-            .mapToResult()
-            .map(SignUpReducer.Action.fetchSignUp)
-        }
+      .publisher {
+        useCase.authUseCase.signUp(req)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(SignUpReducer.Action.fetchSignUp)
+      }
     }
   }
-  
+
   var routeToSignIn: () -> Void {
     {
       navigator

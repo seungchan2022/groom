@@ -14,34 +14,46 @@ extension ProfilePage: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading) {
-        VStack(alignment: .leading, spacing: 32) {
-          Text("Log in to start planning your next trip.")
-            .font(.headline)
+        switch store.state.status {
+        case .isLoggedIn:
+          VStack(alignment: .leading) {
+            Text("로그인 성공")
+              .font(.largeTitle)
 
-          Button(action: { store.send(.routeToSignIn) }) {
-            Text("Log In")
-              .foregroundStyle(.white)
-              .frame(height: 50)
-              .frame(maxWidth: .infinity)
-              .background(.pink)
-              .clipShape(RoundedRectangle(cornerRadius: 8))
+            Text("User ID: \(store.item.uid)")
+            Text("User Email: \(store.item.email ?? "")")
           }
+          .padding(.top, 32)
 
-          HStack {
-            Text("Don't have an account?")
+        case .isLoggedOut:
+          VStack(alignment: .leading, spacing: 32) {
+            Text("Log in to start planning your next trip.")
               .font(.headline)
 
-            Button(action: { store.send(.routeToSignUp) }) {
-              Text("Sign up")
+            Button(action: { store.send(.routeToSignIn) }) {
+              Text("Log In")
+                .foregroundStyle(.white)
+                .frame(height: 50)
+                .frame(maxWidth: .infinity)
+                .background(.pink)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+
+            HStack {
+              Text("Don't have an account?")
                 .font(.headline)
-                .fontWeight(.bold)
-                .foregroundStyle(.black)
-                .underline()
+
+              Button(action: { store.send(.routeToSignUp) }) {
+                Text("Sign up")
+                  .font(.headline)
+                  .fontWeight(.bold)
+                  .foregroundStyle(.black)
+                  .underline()
+              }
             }
           }
+          .padding(.top, 32) // ~ Sign Up
         }
-        .padding(.top, 32) // ~ Sign Up
-
         VStack(spacing: 32) {
           Button(action: { }) {
             VStack {
@@ -120,5 +132,21 @@ extension ProfilePage: View {
       .padding(.horizontal, 16)
     }
     .navigationTitle("Profile")
+    .toolbar {
+      ToolbarItem(placement: .topBarTrailing) {
+        Button(action: { store.send(.onTapSignOut) }) {
+          Text("Log Out")
+            .font(.headline)
+            .foregroundStyle(.black)
+        }
+      }
+    }
+    .onAppear {
+      store.send(.getUser)
+      store.send(.getUserInfo)
+    }
+    .onDisappear {
+      store.send(.teardown)
+    }
   }
 }

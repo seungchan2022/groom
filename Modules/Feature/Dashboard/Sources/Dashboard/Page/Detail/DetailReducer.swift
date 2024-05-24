@@ -34,7 +34,7 @@ struct DetailReducer {
   enum Action: BindableAction, Equatable {
     case binding(BindingAction<State>)
     case teardown
-    
+
     case routeToBack
 
     case throwError(CompositeErrorRepository)
@@ -54,7 +54,7 @@ struct DetailReducer {
       case .routeToBack:
         sideEffect.routeToBack()
         return .none
-        
+
       case .throwError(let error):
         sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)
         return .none

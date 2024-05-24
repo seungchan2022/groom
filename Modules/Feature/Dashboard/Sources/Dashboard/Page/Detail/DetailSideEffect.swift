@@ -2,6 +2,7 @@ import Architecture
 import ComposableArchitecture
 import Foundation
 
+// MARK: - DetailSideEffect
 
 struct DetailSideEffect {
   let useCase: DashboardEnvironmentUsable

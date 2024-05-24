@@ -20,7 +20,7 @@ struct ExploreSideEffect {
   }
 }
 
-extension ExploreSideEffect { 
+extension ExploreSideEffect {
   var routeToDetail: () -> Void {
     {
       navigator.next(

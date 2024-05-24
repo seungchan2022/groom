@@ -1,4 +1,5 @@
 import Architecture
+import CombineExt
 import ComposableArchitecture
 import Foundation
 
@@ -21,6 +22,41 @@ struct ProfileSideEffect {
 }
 
 extension ProfileSideEffect {
+  var user: () -> Effect<ProfileReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.me()
+          .map { $0 != .none }
+          .receive(on: main)
+          .mapToResult()
+          .map(ProfileReducer.Action.fetchUser)
+      }
+    }
+  }
+
+  var userInfo: () -> Effect<ProfileReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.me()
+          .receive(on: main)
+          .mapToResult()
+          .map(ProfileReducer.Action.fetchUserInfo)
+      }
+    }
+  }
+
+  var signOut: () -> Effect<ProfileReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.signOut()
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(ProfileReducer.Action.fetchSignOut)
+      }
+    }
+  }
+
   var routeToSignIn: () -> Void {
     {
       navigator.sheet(

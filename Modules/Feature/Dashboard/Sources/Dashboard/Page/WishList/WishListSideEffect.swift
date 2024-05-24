@@ -1,4 +1,5 @@
 import Architecture
+import CombineExt
 import ComposableArchitecture
 import Domain
 import Foundation
@@ -22,6 +23,29 @@ struct WishListSideEffect {
 }
 
 extension WishListSideEffect {
+  var user: () -> Effect<WishListReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.me()
+          .map { $0 != .none }
+          .receive(on: main)
+          .mapToResult()
+          .map(WishListReducer.Action.fetchUser)
+      }
+    }
+  }
+
+  var userInfo: () -> Effect<WishListReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.me()
+          .receive(on: main)
+          .mapToResult()
+          .map(WishListReducer.Action.fetchUserInfo)
+      }
+    }
+  }
+
   var routeToSignIn: () -> Void {
     {
       navigator.sheet(
