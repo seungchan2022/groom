@@ -50,6 +50,7 @@ struct SignInReducer {
 
     case routeToBack
     case routeToSignUp
+    case routeToRestPassword
 
     case throwError(CompositeErrorRepository)
   }
@@ -87,6 +88,10 @@ struct SignInReducer {
 
       case .routeToSignUp:
         sideEffect.routeToSignUp()
+        return .none
+
+      case .routeToRestPassword:
+        sideEffect.routeToRestPassword()
         return .none
 
       case .throwError(let error):

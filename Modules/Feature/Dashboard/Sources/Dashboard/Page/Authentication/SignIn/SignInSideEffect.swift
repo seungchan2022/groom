@@ -50,4 +50,12 @@ extension SignInSideEffect {
         isAnimated: true)
     }
   }
+
+  var routeToRestPassword: () -> Void {
+    {
+      navigator.next(
+        linkItem: .init(path: Link.Dashboard.Path.resetPassword.rawValue),
+        isAnimated: true)
+    }
+  }
 }

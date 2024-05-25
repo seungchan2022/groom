@@ -66,7 +66,7 @@ extension SignInPage: View {
       HStack {
         Spacer()
 
-        Button(action: { }) {
+        Button(action: { store.send(.routeToRestPassword) }) {
           Text("Forgot Password?")
             .font(.callout)
             .fontWeight(.bold)

@@ -16,6 +16,7 @@ extension DashboardRouteBuilderGroup {
       ProfileRouteBuilder.generate(),
       SignInRouteBuilder.generate(),
       SignUpRouteBuilder.generate(),
+      ResetPasswordRouteBuilder.generate(),
     ]
   }
 }
