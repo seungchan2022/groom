@@ -35,6 +35,17 @@ extension SignInSideEffect {
     }
   }
 
+  var resetPassword: (String) -> Effect<SignInReducer.Action> {
+    { email in
+      .publisher {
+        useCase.authUseCase.resetPassword(email)
+          .receive(on: main)
+          .mapToResult()
+          .map(SignInReducer.Action.fetchResetPassword)
+      }
+    }
+  }
+
   var routeToBack: () -> Void {
     {
       navigator.close(
@@ -47,14 +58,6 @@ extension SignInSideEffect {
     {
       navigator.next(
         linkItem: .init(path: Link.Dashboard.Path.signUp.rawValue),
-        isAnimated: true)
-    }
-  }
-
-  var routeToRestPassword: () -> Void {
-    {
-      navigator.next(
-        linkItem: .init(path: Link.Dashboard.Path.resetPassword.rawValue),
         isAnimated: true)
     }
   }

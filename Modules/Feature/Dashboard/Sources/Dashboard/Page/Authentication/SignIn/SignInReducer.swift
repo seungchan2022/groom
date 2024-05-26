@@ -20,24 +20,38 @@ struct SignInReducer {
 
   @ObservableState
   struct State: Equatable, Identifiable {
+
+    // MARK: Lifecycle
+
+    init(id: UUID = UUID()) {
+      self.id = id
+    }
+
+    // MARK: Internal
+
     let id: UUID
 
     var emailText = ""
     var passwordText = ""
 
+    var checkToEmail = ""
+
     var isValidEmail = true
     var isValidPassword = true
 
+    var isPresentedReset = false
+
     var fetchSignIn: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
-    init(id: UUID = UUID()) {
-      self.id = id
-    }
+    var fetchResetPassword: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
+
   }
 
   enum CancelID: Equatable, CaseIterable {
     case teardown
     case requestSignIn
+    case requestResetPassword
+
   }
 
   enum Action: BindableAction, Equatable {
@@ -45,12 +59,13 @@ struct SignInReducer {
     case teardown
 
     case onTapSignIn
+    case onTapResetPassword
 
     case fetchSignIn(Result<Bool, CompositeErrorRepository>)
+    case fetchResetPassword(Result<Auth.Me.Response?, CompositeErrorRepository>)
 
     case routeToBack
     case routeToSignUp
-    case routeToRestPassword
 
     case throwError(CompositeErrorRepository)
   }
@@ -71,6 +86,11 @@ struct SignInReducer {
           .signIn(.init(email: state.emailText, password: state.passwordText))
           .cancellable(pageID: pageID, id: CancelID.requestSignIn, cancelInFlight: true)
 
+      case .onTapResetPassword:
+        return sideEffect
+          .resetPassword(state.checkToEmail)
+          .cancellable(pageID: pageID, id: CancelID.requestResetPassword, cancelInFlight: true)
+
       case .fetchSignIn(let result):
         switch result {
         case .success:
@@ -82,16 +102,23 @@ struct SignInReducer {
           return .none
         }
 
+      case .fetchResetPassword(let result):
+        switch result {
+        case .success:
+          sideEffect.useCase.toastViewModel.send(message: "비밀번호 재설정 링크가 입력하신 이메일로 전송되었습니다.")
+          return .none
+
+        case .failure:
+          sideEffect.useCase.toastViewModel.send(message: "요청하신 계정은 존재하지 않습니다. 다시 한번 확인해주세요.")
+          return .none
+        }
+
       case .routeToBack:
         sideEffect.routeToBack()
         return .none
 
       case .routeToSignUp:
         sideEffect.routeToSignUp()
-        return .none
-
-      case .routeToRestPassword:
-        sideEffect.routeToRestPassword()
         return .none
 
       case .throwError(let error):

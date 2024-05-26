@@ -66,7 +66,10 @@ extension SignInPage: View {
       HStack {
         Spacer()
 
-        Button(action: { store.send(.routeToRestPassword) }) {
+        Button(action: {
+          store.state.checkToEmail = ""
+          store.isPresentedReset = true
+        }) {
           Text("Forgot Password?")
             .font(.callout)
             .fontWeight(.bold)
@@ -96,6 +99,24 @@ extension SignInPage: View {
 
       Spacer()
     }
+    .alert(
+      "Reset Password",
+      isPresented: $store.isPresentedReset,
+      actions: {
+        TextField("이메일", text: $store.checkToEmail)
+          .autocorrectionDisabled(true)
+
+        Button(role: .cancel, action: { }) {
+          Text("취소")
+        }
+
+        Button(action: { store.send(.onTapResetPassword) }) {
+          Text("확인")
+        }
+      },
+      message: {
+        Text("계정과 연결된 이메일 주소를 입력하면, 비밀번호 재설정 링크가 이메일로 전송됩니다.")
+      })
     .padding(.horizontal, 16)
     .toolbar(.visible, for: .navigationBar)
     .onAppear {

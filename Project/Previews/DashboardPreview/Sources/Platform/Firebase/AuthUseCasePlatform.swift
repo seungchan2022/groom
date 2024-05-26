@@ -61,6 +61,19 @@ extension AuthUseCasePlatform: AuthUseCase {
       .eraseToAnyPublisher()
     }
   }
+
+  public var resetPassword: (String) -> AnyPublisher<Domain.Auth.Me.Response?, CompositeErrorRepository> {
+    { email in
+      Future<Domain.Auth.Me.Response?, CompositeErrorRepository> { promise in
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+          guard let error else { return promise(.success(.none)) }
+
+          promise(.failure(.other(error)))
+        }
+      }
+      .eraseToAnyPublisher()
+    }
+  }
 }
 
 extension User {

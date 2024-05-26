@@ -6,4 +6,6 @@ public protocol AuthUseCase {
   var signOut: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
 
   var me: () -> AnyPublisher<Auth.Me.Response?, CompositeErrorRepository> { get }
+
+  var resetPassword: (String) -> AnyPublisher<Auth.Me.Response?, CompositeErrorRepository> { get }
 }
