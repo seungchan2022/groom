@@ -75,24 +75,23 @@ extension AuthUseCasePlatform: AuthUseCase {
     }
   }
 
-//  public var updatePassword: (String) -> AnyPublisher<Domain.Auth.Me.Response?, CompositeErrorRepository>  {
-//    { password in
-//      Future<Domain.Auth.Me.Response?, CompositeErrorRepository> { promise in
-//
-//        Auth.auth().currentUser?.updatePassword(to: password) { error in
-//          guard let error else { return promise(.success(.none)) }
-//
-//          promise(.failure(.other(error)))
-//        }
-//      }
-//      .eraseToAnyPublisher()
-//    }
-//  }
-
   public var updatePassword: (String) -> AnyPublisher<Void, CompositeErrorRepository> {
     { newPassword in
       Future<Void, CompositeErrorRepository> { promise in
         Auth.auth().currentUser?.updatePassword(to: newPassword) { error in
+          guard let error else { return promise(.success(Void())) }
+
+          return promise(.failure(.other(error)))
+        }
+      }
+      .eraseToAnyPublisher()
+    }
+  }
+
+  public var delete: () -> AnyPublisher<Void, CompositeErrorRepository> {
+    {
+      Future<Void, CompositeErrorRepository> { promise in
+        Auth.auth().currentUser?.delete { error in
           guard let error else { return promise(.success(Void())) }
 
           return promise(.failure(.other(error)))

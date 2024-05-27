@@ -57,6 +57,18 @@ extension ProfileSideEffect {
     }
   }
 
+  var deleteUser: () -> Effect<ProfileReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.delete()
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(ProfileReducer.Action.fetchDeleteUser)
+      }
+    }
+  }
+
   var routeToSignIn: () -> Void {
     {
       navigator.sheet(

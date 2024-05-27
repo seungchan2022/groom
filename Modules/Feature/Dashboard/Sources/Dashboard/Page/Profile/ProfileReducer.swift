@@ -31,8 +31,9 @@ struct ProfileReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
-    var isPresentedAlert = false
-    
+    var isShowResetPassword = false
+    var isShowDeleteUser = false
+
     var status: LoginStatus = .isLoggedOut
 
     var item: Auth.Me.Response = .init(uid: "", email: "", photoURL: "")
@@ -41,6 +42,8 @@ struct ProfileReducer {
 
     var fetchUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
     var fetchUserInfo: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
+
+    var fetchDeleteUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     init(id: UUID = UUID()) {
       self.id = id
@@ -52,6 +55,7 @@ struct ProfileReducer {
     case requestSignOut
     case requestUser
     case requestUserInfo
+    case requstDeleteUser
   }
 
   enum Action: BindableAction, Equatable {
@@ -63,10 +67,14 @@ struct ProfileReducer {
 
     case onTapSignOut
 
+    case onTapDeleteUser
+
     case fetchSignOut(Result<Bool, CompositeErrorRepository>)
 
     case fetchUser(Result<Bool, CompositeErrorRepository>)
     case fetchUserInfo(Result<Auth.Me.Response?, CompositeErrorRepository>)
+
+    case fetchDeleteUser(Result<Bool, CompositeErrorRepository>)
 
     case routeToSignIn
     case routeToSignUp
@@ -97,12 +105,16 @@ struct ProfileReducer {
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
       case .onTapSignOut:
-        
         state.item = .init(uid: "", email: "", photoURL: "")
         state.status = .isLoggedOut
         return sideEffect
           .signOut()
           .cancellable(pageID: pageID, id: CancelID.requestSignOut, cancelInFlight: true)
+
+      case .onTapDeleteUser:
+        return sideEffect
+          .deleteUser()
+          .cancellable(pageID: pageID, id: CancelID.requstDeleteUser, cancelInFlight: true)
 
       case .fetchSignOut(let result):
         switch result {
@@ -133,6 +145,17 @@ struct ProfileReducer {
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "2", email: "555", photoURL: "")
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchDeleteUser(let result):
+        switch result {
+        case .success:
+          sideEffect.useCase.toastViewModel.send(message: "계정이 탈퇴되었습니다.")
+          sideEffect.routeToSignIn()
           return .none
 
         case .failure(let error):

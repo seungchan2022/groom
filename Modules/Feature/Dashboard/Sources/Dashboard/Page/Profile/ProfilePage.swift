@@ -127,28 +127,50 @@ extension ProfilePage: View {
             }
           }
 
-          Button(action: { store.send(.routeToUpdatePassword) }) {
-            VStack {
-              HStack {
-                Image(systemName: "shield.righthalf.filled")
-                  .resizable()
-                  .foregroundStyle(.black)
-                  .frame(width: 20, height: 20)
+          if store.state.status == .isLoggedIn {
+            Button(action: { store.send(.routeToUpdatePassword) }) {
+              VStack {
+                HStack {
+                  Image(systemName: "shield.righthalf.filled")
+                    .resizable()
+                    .foregroundStyle(.black)
+                    .frame(width: 20, height: 20)
 
-                Text("비밀번호 변경")
-                  .font(.headline)
-                  .foregroundStyle(.black)
+                  Text("비밀번호 변경")
+                    .font(.headline)
+                    .foregroundStyle(.black)
 
-                Spacer()
+                  Spacer()
 
-                Image(systemName: "chevron.right")
-                  .resizable()
-                  .fontWeight(.light)
-                  .foregroundStyle(.black)
-                  .frame(width: 14, height: 20)
+                  Image(systemName: "chevron.right")
+                    .resizable()
+                    .fontWeight(.light)
+                    .foregroundStyle(.black)
+                    .frame(width: 14, height: 20)
+                }
+
+                Divider()
               }
+            }
 
-              Divider()
+            Button(action: { store.isShowDeleteUser = true }) {
+              VStack {
+                HStack {
+                  Text("계정 탈퇴")
+                    .font(.headline)
+                    .foregroundStyle(.black)
+
+                  Spacer()
+
+                  Image(systemName: "chevron.right")
+                    .resizable()
+                    .fontWeight(.light)
+                    .foregroundStyle(.black)
+                    .frame(width: 14, height: 20)
+                }
+
+                Divider()
+              }
             }
           }
         }
@@ -158,24 +180,38 @@ extension ProfilePage: View {
     }
     .navigationTitle("Profile")
     .toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Button(action: { store.isPresentedAlert = true }) {
-          Text("Log Out")
-            .font(.headline)
-            .foregroundStyle(.black)
+      if store.state.status == .isLoggedIn {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button(action: { store.isShowResetPassword = true }) {
+            Text("Log Out")
+              .font(.headline)
+              .foregroundStyle(.black)
+          }
         }
       }
     }
     .alert(
       "로그아웃을 하시겠습니까?",
-      isPresented: $store.isPresentedAlert,
+      isPresented: $store.isShowResetPassword,
       actions: {
         Button(role: .cancel, action: { }) {
           Text("취소")
         }
 
-        Button(action: {  store.send(.onTapSignOut) }) {
+        Button(action: { store.send(.onTapSignOut) }) {
           Text("로그아웃")
+        }
+      })
+    .alert(
+      "계정을 탈퇴 하시겠습니까?",
+      isPresented: $store.isShowDeleteUser,
+      actions: {
+        Button(role: .cancel, action: { }) {
+          Text("취소")
+        }
+
+        Button(action: { store.send(.onTapDeleteUser) }) {
+          Text("계정 탈퇴")
         }
       })
     .onAppear {
