@@ -39,6 +39,7 @@ extension SignInSideEffect {
     { email in
       .publisher {
         useCase.authUseCase.resetPassword(email)
+          .map { _ in true }
           .receive(on: main)
           .mapToResult()
           .map(SignInReducer.Action.fetchResetPassword)

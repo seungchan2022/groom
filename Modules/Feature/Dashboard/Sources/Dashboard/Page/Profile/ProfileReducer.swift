@@ -68,6 +68,7 @@ struct ProfileReducer {
 
     case routeToSignIn
     case routeToSignUp
+    case routeToUpdatePassword
 
     case throwError(CompositeErrorRepository)
   }
@@ -141,6 +142,10 @@ struct ProfileReducer {
 
       case .routeToSignUp:
         sideEffect.routeToSignUp()
+        return .none
+        
+      case .routeToUpdatePassword:
+        sideEffect.routeToUpdatePassword()
         return .none
 
       case .throwError(let error):

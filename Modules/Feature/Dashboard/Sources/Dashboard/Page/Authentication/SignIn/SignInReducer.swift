@@ -43,7 +43,7 @@ struct SignInReducer {
 
     var fetchSignIn: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
-    var fetchResetPassword: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
+    var fetchResetPassword: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
   }
 
@@ -62,7 +62,7 @@ struct SignInReducer {
     case onTapResetPassword
 
     case fetchSignIn(Result<Bool, CompositeErrorRepository>)
-    case fetchResetPassword(Result<Auth.Me.Response?, CompositeErrorRepository>)
+    case fetchResetPassword(Result<Bool, CompositeErrorRepository>)
 
     case routeToBack
     case routeToSignUp

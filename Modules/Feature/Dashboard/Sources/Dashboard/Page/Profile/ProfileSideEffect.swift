@@ -76,4 +76,13 @@ extension ProfileSideEffect {
         isAnimated: true)
     }
   }
+  
+  var routeToUpdatePassword: () -> Void {
+    {
+      navigator.fullSheet(
+        linkItem: .init(path: Link.Dashboard.Path.updatePassword.rawValue),
+        isAnimated: true,
+        prefersLargeTitles: false)
+    }
+  }
 }

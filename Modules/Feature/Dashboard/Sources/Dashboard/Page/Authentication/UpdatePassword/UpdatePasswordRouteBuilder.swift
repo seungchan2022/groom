@@ -1,20 +1,20 @@
 import Architecture
 import LinkNavigator
 
-struct ResetPasswordRouteBuilder<RootNavigator: RootNavigatorType> {
+struct UpdatePasswordRouteBuilder<RootNavigator: RootNavigatorType> {
   static func generate() -> RouteBuilderOf<RootNavigator> {
-    let matchPath = Link.Dashboard.Path.resetPassword.rawValue
+    let matchPath = Link.Dashboard.Path.updatePassword.rawValue
 
     return .init(matchPath: matchPath) { navigator, _, diContainer -> RouteViewController? in
 
       guard let env: DashboardEnvironmentUsable = diContainer.resolve() else { return .none }
 
       return DebugWrappingController(matchPath: matchPath) {
-        ResetPasswordPage(
+        UpdatePasswordPage(
           store: .init(
-            initialState: ResetPasswordReducer.State(),
+            initialState: UpdatePasswordReducer.State(),
             reducer: {
-              ResetPasswordReducer(
+              UpdatePasswordReducer(
                 sideEffect: .init(
                   useCase: env,
                   navigator: navigator))

@@ -45,6 +45,8 @@ extension AppMain: View {
           prefersLargeTitles: true),
       ])
       .ignoresSafeArea()
-      .onAppear { }
+      .onAppear {
+        viewModel.linkNavigator.moveTab(targetPath: Link.Dashboard.Path.profile.rawValue)
+      }
   }
 }

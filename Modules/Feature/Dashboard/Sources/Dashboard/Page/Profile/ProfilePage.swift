@@ -126,6 +126,32 @@ extension ProfilePage: View {
               Divider()
             }
           }
+          
+          
+          Button(action: { store.send(.routeToUpdatePassword) }) {
+            VStack {
+              HStack {
+                Image(systemName: "shield.righthalf.filled")
+                  .resizable()
+                  .foregroundStyle(.black)
+                  .frame(width: 20, height: 20)
+
+                Text("비밀번호 변경")
+                  .font(.headline)
+                  .foregroundStyle(.black)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                  .resizable()
+                  .fontWeight(.light)
+                  .foregroundStyle(.black)
+                  .frame(width: 14, height: 20)
+              }
+              
+              Divider()
+            }
+          }
         }
         .padding(.top, 32)
       }
