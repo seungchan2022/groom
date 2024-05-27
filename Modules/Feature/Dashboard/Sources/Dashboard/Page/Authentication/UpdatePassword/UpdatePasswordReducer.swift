@@ -29,7 +29,7 @@ struct UpdatePasswordReducer {
     var isValidConfirmPassword = true
 
     var fetchUpdatePassword: FetchState.Data<Bool> = .init(isLoading: false, value: false)
-    
+
     init(id: UUID = UUID()) {
       self.id = id
     }
@@ -45,7 +45,7 @@ struct UpdatePasswordReducer {
     case teardown
 
     case onTapClose
-    
+
     case onTapUpdatePassword
     case fetchUpdatePassword(Result<Bool, CompositeErrorRepository>)
 
@@ -66,21 +66,20 @@ struct UpdatePasswordReducer {
       case .onTapClose:
         sideEffect.close()
         return .none
-        
+
       case .onTapUpdatePassword:
         return sideEffect.updatePassword(state.passwordText)
           .cancellable(pageID: pageID, id: CancelID.requestUpdatePassword, cancelInFlight: true)
-        
+
       case .fetchUpdatePassword(let result):
-        print(result)
         switch result {
         case .success:
           sideEffect.close()
           sideEffect.useCase.toastViewModel.send(message: "비밀번호가 변경되었습니다.")
           return .none
-          
+
         case .failure(let error):
-          
+
           return .run { await $0(.throwError(error)) }
         }
 

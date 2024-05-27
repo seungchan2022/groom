@@ -1,12 +1,14 @@
 import ComposableArchitecture
 import SwiftUI
 
-// MARK: - UpdatePasswordPage
+// MARK: - Focus
 
 private enum Focus {
   case password
   case confirmPassword
 }
+
+// MARK: - UpdatePasswordPage
 
 struct UpdatePasswordPage {
   @Bindable var store: StoreOf<UpdatePasswordReducer>
@@ -16,7 +18,7 @@ struct UpdatePasswordPage {
 
 extension UpdatePasswordPage {
   private var isActive: Bool {
-     Validator
+    Validator
       .validatePassword(password: store.passwordText) && isValidConfirm(text: store.confirmPasswordText)
   }
 

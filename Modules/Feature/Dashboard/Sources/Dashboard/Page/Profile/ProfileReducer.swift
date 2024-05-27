@@ -31,6 +31,8 @@ struct ProfileReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
+    var isPresentedAlert = false
+    
     var status: LoginStatus = .isLoggedOut
 
     var item: Auth.Me.Response = .init(uid: "", email: "", photoURL: "")
@@ -95,6 +97,7 @@ struct ProfileReducer {
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
       case .onTapSignOut:
+        
         state.item = .init(uid: "", email: "", photoURL: "")
         state.status = .isLoggedOut
         return sideEffect
@@ -143,7 +146,7 @@ struct ProfileReducer {
       case .routeToSignUp:
         sideEffect.routeToSignUp()
         return .none
-        
+
       case .routeToUpdatePassword:
         sideEffect.routeToUpdatePassword()
         return .none

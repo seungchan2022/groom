@@ -126,8 +126,7 @@ extension ProfilePage: View {
               Divider()
             }
           }
-          
-          
+
           Button(action: { store.send(.routeToUpdatePassword) }) {
             VStack {
               HStack {
@@ -148,7 +147,7 @@ extension ProfilePage: View {
                   .foregroundStyle(.black)
                   .frame(width: 14, height: 20)
               }
-              
+
               Divider()
             }
           }
@@ -160,13 +159,25 @@ extension ProfilePage: View {
     .navigationTitle("Profile")
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
-        Button(action: { store.send(.onTapSignOut) }) {
+        Button(action: { store.isPresentedAlert = true }) {
           Text("Log Out")
             .font(.headline)
             .foregroundStyle(.black)
         }
       }
     }
+    .alert(
+      "로그아웃을 하시겠습니까?",
+      isPresented: $store.isPresentedAlert,
+      actions: {
+        Button(role: .cancel, action: { }) {
+          Text("취소")
+        }
+
+        Button(action: {  store.send(.onTapSignOut) }) {
+          Text("로그아웃")
+        }
+      })
     .onAppear {
       store.send(.getUser)
       store.send(.getUserInfo)

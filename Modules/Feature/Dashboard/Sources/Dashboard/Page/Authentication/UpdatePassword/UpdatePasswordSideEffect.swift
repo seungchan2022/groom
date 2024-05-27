@@ -10,7 +10,7 @@ struct UpdatePasswordSideEffect {
   let useCase: DashboardEnvironmentUsable
   let main: AnySchedulerOf<DispatchQueue>
   let navigator: RootNavigatorType
-  
+
   init(
     useCase: DashboardEnvironmentUsable,
     main: AnySchedulerOf<DispatchQueue> = .main,
@@ -25,16 +25,16 @@ struct UpdatePasswordSideEffect {
 extension UpdatePasswordSideEffect {
   var updatePassword: (String) -> Effect<UpdatePasswordReducer.Action> {
     { newPassword in
-        .publisher {
-          useCase.authUseCase.updatePassword(newPassword)
-            .map { _ in true }
-            .receive(on: main)
-            .mapToResult()
-            .map(UpdatePasswordReducer.Action.fetchUpdatePassword)
-        }
+      .publisher {
+        useCase.authUseCase.updatePassword(newPassword)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdatePasswordReducer.Action.fetchUpdatePassword)
+      }
     }
   }
-  
+
   var close: () -> Void {
     {
       navigator.close(
@@ -43,4 +43,3 @@ extension UpdatePasswordSideEffect {
     }
   }
 }
-

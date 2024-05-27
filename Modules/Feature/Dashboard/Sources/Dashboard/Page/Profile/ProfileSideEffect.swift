@@ -76,7 +76,7 @@ extension ProfileSideEffect {
         isAnimated: true)
     }
   }
-  
+
   var routeToUpdatePassword: () -> Void {
     {
       navigator.fullSheet(
