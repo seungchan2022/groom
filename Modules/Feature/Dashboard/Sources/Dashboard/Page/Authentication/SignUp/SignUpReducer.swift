@@ -26,11 +26,13 @@ struct SignUpReducer {
     var passwordText = ""
     var confirmPasswordText = ""
 
-    var fetchSignUp: FetchState.Data<Bool> = .init(isLoading: false, value: false)
-
     var isValidEmail = true
     var isValidPassword = true
     var isValidConfirmPassword = true
+    var isShowPassword = false
+    var isShowConfirmPassword = false
+
+    var fetchSignUp: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     init(id: UUID = UUID()) {
       self.id = id

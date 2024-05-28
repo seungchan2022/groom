@@ -54,6 +54,7 @@ extension SignUpPage: View {
         .onChange(of: store.emailText) { _, new in
           store.isValidEmail = Validator.validateEmail(email: new)
         }
+
       if !store.isValidEmail {
         HStack {
           Text("유효한 이메일 주소가 아닙니다.")
@@ -65,23 +66,39 @@ extension SignUpPage: View {
         }
       }
 
-      SecureField(
-        "",
-        text: $store.passwordText,
-        prompt: Text("Password"))
-        .autocorrectionDisabled(true)
-        .focused($isFocus, equals: .password)
-        .textInputAutocapitalization(.never)
-        .padding()
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay {
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(!store.isValidPassword ? .red : isFocus == .password ? .blue : .clear, lineWidth: 1)
+      HStack {
+        if store.isShowPassword {
+          TextField(
+            "",
+            text: $store.passwordText,
+            prompt: Text("Password"))
+        } else {
+          SecureField(
+            "",
+            text: $store.passwordText,
+            prompt: Text("Password"))
         }
-        .onChange(of: store.passwordText) { _, new in
-          store.isValidPassword = Validator.validatePassword(password: new)
+      }
+      .autocorrectionDisabled(true)
+      .focused($isFocus, equals: .password)
+      .textInputAutocapitalization(.never)
+      .padding()
+      .background(.thinMaterial)
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .overlay {
+        RoundedRectangle(cornerRadius: 10)
+          .stroke(!store.isValidPassword ? .red : isFocus == .password ? .blue : .clear, lineWidth: 1)
+      }
+      .overlay(alignment: .trailing) {
+        Button(action: { store.isShowPassword.toggle() }) {
+          Image(systemName: store.isShowPassword ? "eye" : "eye.slash")
+            .foregroundStyle(.black)
+            .padding(.trailing, 12)
         }
+      }
+      .onChange(of: store.passwordText) { _, new in
+        store.isValidPassword = Validator.validatePassword(password: new)
+      }
       if !store.isValidPassword {
         HStack {
           Text("영어대문자, 숫자, 특수문자를 모두 사용하여 8 ~ 20자리로 설정해주세요.")
@@ -93,23 +110,39 @@ extension SignUpPage: View {
         }
       }
 
-      SecureField(
-        "",
-        text: $store.confirmPasswordText,
-        prompt: Text("Confirm Password"))
-        .autocorrectionDisabled(true)
-        .focused($isFocus, equals: .confirmPassword)
-        .textInputAutocapitalization(.never)
-        .padding()
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay {
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(!store.isValidConfirmPassword ? .red : isFocus == .confirmPassword ? .blue : .clear, lineWidth: 1)
+      HStack {
+        if store.isShowConfirmPassword {
+          TextField(
+            "",
+            text: $store.confirmPasswordText,
+            prompt: Text("Confirm Password"))
+        } else {
+          SecureField(
+            "",
+            text: $store.confirmPasswordText,
+            prompt: Text("Confirm Password"))
         }
-        .onChange(of: store.confirmPasswordText) { _, new in
-          store.isValidConfirmPassword = isValidConfirm(text: new)
+      }
+      .autocorrectionDisabled(true)
+      .focused($isFocus, equals: .confirmPassword)
+      .textInputAutocapitalization(.never)
+      .padding()
+      .background(.thinMaterial)
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .overlay {
+        RoundedRectangle(cornerRadius: 10)
+          .stroke(!store.isValidConfirmPassword ? .red : isFocus == .confirmPassword ? .blue : .clear, lineWidth: 1)
+      }
+      .overlay(alignment: .trailing) {
+        Button(action: { store.isShowConfirmPassword.toggle() }) {
+          Image(systemName: store.isShowConfirmPassword ? "eye" : "eye.slash")
+            .foregroundStyle(.black)
+            .padding(.trailing, 12)
         }
+      }
+      .onChange(of: store.confirmPasswordText) { _, new in
+        store.isValidConfirmPassword = isValidConfirm(text: new)
+      }
       if !store.isValidConfirmPassword {
         HStack {
           Text("비밀번호가 일치하지 않습니다.")

@@ -39,7 +39,9 @@ struct SignInReducer {
     var isValidEmail = true
     var isValidPassword = true
 
-    var isPresentedReset = false
+    var isShowReset = false
+
+    var isShowPassword = false
 
     var fetchSignIn: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 

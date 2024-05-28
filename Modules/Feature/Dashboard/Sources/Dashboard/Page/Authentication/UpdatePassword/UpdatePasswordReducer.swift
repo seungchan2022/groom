@@ -27,6 +27,8 @@ struct UpdatePasswordReducer {
 
     var isValidPassword = true
     var isValidConfirmPassword = true
+    var isShowPassword = false
+    var isShowConfirmPassword = false
 
     var fetchUpdatePassword: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 

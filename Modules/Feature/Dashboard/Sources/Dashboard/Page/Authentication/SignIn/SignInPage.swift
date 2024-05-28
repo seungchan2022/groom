@@ -48,27 +48,44 @@ extension SignInPage: View {
             .stroke(isFocus == .email ? .blue : .clear, lineWidth: 1)
         }
 
-      SecureField(
-        "",
-        text: $store.passwordText,
-        prompt: Text("Password"))
-        .autocorrectionDisabled(true)
-        .focused($isFocus, equals: .password)
-        .textInputAutocapitalization(.never)
-        .padding()
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay {
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(isFocus == .password ? .blue : .clear, lineWidth: 1)
+      HStack {
+        if store.isShowPassword {
+          TextField(
+            "",
+            text: $store.passwordText,
+            prompt: Text("Password"))
+        } else {
+          SecureField(
+            "",
+            text: $store.passwordText,
+            prompt: Text("Password"))
         }
+      }
+      .autocorrectionDisabled(true)
+      .focused($isFocus, equals: .password)
+      .textInputAutocapitalization(.never)
+      .padding()
+      .background(.thinMaterial)
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .overlay {
+        RoundedRectangle(cornerRadius: 10)
+          .stroke(isFocus == .password ? .blue : .clear, lineWidth: 1)
+      }
+
+      .overlay(alignment: .trailing) {
+        Button(action: { store.isShowPassword.toggle() }) {
+          Image(systemName: store.isShowPassword ? "eye" : "eye.slash")
+            .foregroundStyle(.black)
+            .padding(.trailing, 12)
+        }
+      }
 
       HStack {
         Spacer()
 
         Button(action: {
           store.state.checkToEmail = ""
-          store.isPresentedReset = true
+          store.isShowReset = true
         }) {
           Text("Forgot Password?")
             .font(.callout)
@@ -101,7 +118,7 @@ extension SignInPage: View {
     }
     .alert(
       "Reset Password",
-      isPresented: $store.isPresentedReset,
+      isPresented: $store.isShowReset,
       actions: {
         TextField("이메일", text: $store.checkToEmail)
           .autocorrectionDisabled(true)
