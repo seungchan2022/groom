@@ -1,5 +1,7 @@
 import Architecture
+import CombineExt
 import ComposableArchitecture
+import Domain
 import Foundation
 
 // MARK: - ExploreSideEffect
@@ -21,6 +23,17 @@ struct ExploreSideEffect {
 }
 
 extension ExploreSideEffect {
+  var getItem: (Airbnb.Listing.Request) -> Effect<ExploreReducer.Action> {
+    { request in
+      .publisher {
+        useCase.airbnbUseCase.listing(request)
+          .receive(on: main)
+          .mapToResult()
+          .map(ExploreReducer.Action.fetchItem)
+      }
+    }
+  }
+
   var routeToDetail: () -> Void {
     {
       navigator.next(

@@ -9,5 +9,6 @@ import Platform
 
 struct AppSideEffect: DependencyType, DashboardEnvironmentUsable {
   let authUseCase: AuthUseCase
+  let airbnbUseCase: AirbnbUseCase
   let toastViewModel: ToastViewActionType
 }
