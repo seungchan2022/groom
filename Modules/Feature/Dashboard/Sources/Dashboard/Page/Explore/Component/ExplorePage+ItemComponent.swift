@@ -20,7 +20,7 @@ extension ExplorePage.ItemComponent: View {
     Button(action: { tapAction(viewState.item) }) {
       VStack(spacing: 8) {
         TabView {
-          ForEach(DesignSystemImage.allCases.prefix(4), id: \.self) { item in
+          ForEach(DesignSystemImage.allCases.shuffled().prefix(4), id: \.self) { item in
             item.image
               .resizable()
               .scaledToFill()

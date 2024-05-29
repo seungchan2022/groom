@@ -42,7 +42,7 @@ extension Airbnb.Detail {
     public let lastReviewDate: String?
     public let reviewPerMonth: Double?
     public let totalListingCount: Int
-    public let availableDays: Int?
+    public let availableDays: Int
     public let lastUpdateDate: String
     public let country: String
     public let city: String
