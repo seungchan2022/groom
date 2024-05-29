@@ -7,6 +7,7 @@ import SwiftUI
 
 struct DetailPage {
   @Bindable var store: StoreOf<DetailReducer>
+
 }
 
 // MARK: View
@@ -224,48 +225,15 @@ extension DetailPage: View {
         }
         .padding(.horizontal, 16)
       }
-      .padding(.bottom, 100)
+      .padding(.bottom, 120)
     }
     .ignoresSafeArea()
-//    .overlay(alignment: .bottom) {
-//      VStack {
-//        Divider()
-//          .padding(.bottom)
-//
-//        HStack {
-//          VStack(alignment: .leading) {
-//            Text("$500")
-//              .font(.subheadline)
-//              .fontWeight(.semibold)
-//
-//            Text("Total before taxes")
-//              .font(.footnote)
-//
-//            Text("Oct 15 - 20")
-//              .font(.footnote)
-//              .fontWeight(.semibold)
-//              .underline()
-//          }
-//
-//          Spacer()
-//
-//          Button(action: { }) {
-//            Text("Reserve")
-//              .foregroundStyle(.white)
-//              .font(.subheadline)
-//              .fontWeight(.semibold)
-//              .frame(width: 140, height: 40)
-//              .background(.pink)
-//              .clipShape(RoundedRectangle(cornerRadius: 10))
-//          }
-//
-//        }
-//        .padding(.horizontal, 32)
-//
-//      }
-//      .background(.white)
-//
-//    }
     .toolbar(.hidden, for: .navigationBar)
+    .onAppear {
+      store.send(.getItem(store.item))
+    }
+    .onDisappear {
+      store.send(.teardown)
+    }
   }
 }

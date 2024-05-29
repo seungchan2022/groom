@@ -22,18 +22,30 @@ struct DetailReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
-    init(id: UUID = UUID()) {
+    let item: Airbnb.Listing.Item
+
+    var fetchItem: FetchState.Data<Airbnb.Detail.Response?> = .init(isLoading: false, value: .none)
+
+    init(
+      id: UUID = UUID(),
+      item: Airbnb.Listing.Item)
+    {
       self.id = id
+      self.item = item
     }
   }
 
   enum CancelID: Equatable, CaseIterable {
     case teardown
+    case requestItem
   }
 
   enum Action: BindableAction, Equatable {
     case binding(BindingAction<State>)
     case teardown
+
+    case getItem(Airbnb.Listing.Item)
+    case fetchItem(Result<Airbnb.Detail.Response, CompositeErrorRepository>)
 
     case routeToBack
 
@@ -42,7 +54,7 @@ struct DetailReducer {
 
   var body: some Reducer<State, Action> {
     BindingReducer()
-    Reduce { _, action in
+    Reduce { state, action in
       switch action {
       case .binding:
         return .none
@@ -50,6 +62,23 @@ struct DetailReducer {
       case .teardown:
         return .concatenate(
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
+
+      case .getItem(let item):
+        state.fetchItem.isLoading = true
+        return sideEffect
+          .getItem(item)
+          .cancellable(pageID: pageID, id: CancelID.requestItem, cancelInFlight: true)
+
+      case .fetchItem(let result):
+        state.fetchItem.isLoading = false
+        switch result {
+        case .success(let item):
+          state.fetchItem.value = item
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
 
       case .routeToBack:
         sideEffect.routeToBack()

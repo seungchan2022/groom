@@ -25,6 +25,7 @@ extension AppContainer {
     let sideEffect = AppSideEffect(
       authUseCase: AuthUseCasePlatform(),
       airbnbUseCase: AirbnbUseCasePlatform(),
+      airbnbDetailUseCase: AirbnbDetailUseCasePlatform(),
       toastViewModel: ToastViewModel())
 
     return .init(
