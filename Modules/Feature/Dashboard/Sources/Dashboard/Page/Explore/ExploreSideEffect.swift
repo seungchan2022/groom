@@ -34,10 +34,12 @@ extension ExploreSideEffect {
     }
   }
 
-  var routeToDetail: () -> Void {
-    {
+  var routeToDetail: (Airbnb.Listing.Item) -> Void {
+    { item in
       navigator.next(
-        linkItem: .init(path: Link.Dashboard.Path.detail.rawValue),
+        linkItem: .init(
+          path: Link.Dashboard.Path.detail.rawValue,
+          items: item),
         isAnimated: true)
     }
   }

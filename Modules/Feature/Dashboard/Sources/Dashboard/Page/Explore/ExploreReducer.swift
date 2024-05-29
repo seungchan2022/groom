@@ -62,7 +62,7 @@ struct ExploreReducer {
     case getItem
     case fetchItem(Result<Airbnb.Listing.Response, CompositeErrorRepository>)
 
-    case routeToDetail
+    case routeToDetail(Airbnb.Listing.Item)
 
     case throwError(CompositeErrorRepository)
   }
@@ -96,8 +96,8 @@ struct ExploreReducer {
           return .run { await $0(.throwError(error)) }
         }
 
-      case .routeToDetail:
-        sideEffect.routeToDetail()
+      case .routeToDetail(let item):
+        sideEffect.routeToDetail(item)
         return .none
 
       case .throwError(let error):

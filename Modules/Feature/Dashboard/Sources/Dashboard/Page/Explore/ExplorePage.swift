@@ -213,51 +213,10 @@ extension ExplorePage: View {
 
         ScrollView {
           LazyVStack(spacing: 48) {
-            ForEach(0..<5) { _ in
-              Button(action: { store.send(.routeToDetail) }) {
-                VStack(spacing: 8) {
-                  TabView {
-                    ForEach(DesignSystemImage.allCases.prefix(4), id: \.self) { item in
-                      item.image
-                        .resizable()
-                        .scaledToFill()
-                    }
-                  }
-                  .frame(height: 320)
-                  .clipShape(RoundedRectangle(cornerRadius: 10))
-                  .tabViewStyle(.page)
-
-                  HStack(alignment: .top) {
-                    VStack(alignment: .leading) {
-                      Text("Miami, Florida")
-                        .foregroundStyle(.black)
-                        .fontWeight(.semibold)
-
-                      Text("12 mi away")
-                        .foregroundStyle(.gray)
-
-                      HStack {
-                        Text("$567")
-
-                          .fontWeight(.semibold)
-
-                        Text("night")
-                      }
-                      .foregroundStyle(.black)
-                    }
-
-                    Spacer()
-
-                    HStack {
-                      Image(systemName: "star.fill")
-
-                      Text("4.86")
-                    }
-                    .foregroundStyle(.black)
-                  }
-                  .font(.footnote)
-                }
-              }
+            ForEach(store.itemList) { item in
+              ItemComponent(
+                viewState: .init(item: item),
+                tapAction: { store.send(.routeToDetail($0)) })
             }
           }
           .padding(.horizontal, 16)
