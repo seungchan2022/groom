@@ -1,6 +1,7 @@
+import _MapKit_SwiftUI
+import ComposableArchitecture
 import DesignSystem
 import Domain
-import MapKit
 import SwiftUI
 
 // MARK: - DetailPage.ItemComponent
@@ -9,6 +10,9 @@ extension DetailPage {
   struct ItemComponent {
     let viewState: ViewState
     let backAction: () -> Void
+    let tapAction: () -> Void
+
+    @Binding var position: MapCameraPosition
   }
 }
 
@@ -19,6 +23,14 @@ extension DetailPage.ItemComponent {
 
   private var lastUpdateDate: String {
     viewState.item.lastUpdateDate.toDate?.toString ?? ""
+  }
+
+  private var destination: MKCoordinateRegion {
+    .init(
+      center: CLLocationCoordinate2D(
+        latitude: viewState.item.coordinateList.latitude,
+        longitude: viewState.item.coordinateList.longitude),
+      span: .init())
   }
 }
 
@@ -118,10 +130,33 @@ extension DetailPage.ItemComponent: View {
         Text("숙소 위치")
           .font(.headline)
 
-        Map()
-          .frame(height: 200)
-          .clipShape(RoundedRectangle(cornerRadius: 10))
+        Map(position: $position) {
+          Marker(
+            "Destination",
+            coordinate: CLLocationCoordinate2D(
+              latitude: viewState.item.coordinateList.latitude,
+              longitude: viewState.item.coordinateList.longitude))
+        }
+        .overlay(alignment: .bottomTrailing) {
+          Button(action: { position = .automatic }) {
+            Image(systemName: "dot.scope")
+              .foregroundStyle(.black)
+              .background {
+                RoundedRectangle(cornerRadius: 5)
+                  .fill(.white)
+                  .frame(width: 32, height: 32)
+              }
+          }
+          .padding(8)
+        }
+        .frame(height: 300)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .mapStyle(.standard)
+        .onTapGesture {
+          tapAction()
+        }
       }
+
       .padding(.horizontal, 16)
     }
     .padding(.top, 20)
