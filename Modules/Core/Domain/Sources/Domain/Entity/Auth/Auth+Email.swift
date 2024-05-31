@@ -11,11 +11,18 @@ extension Auth {
 extension Auth.Email {
   public struct Request: Equatable, Sendable {
     public let email: String
+    public let userName: String?
     public let password: String
 
-    public init(email: String, password: String) {
+    public init(
+      email: String,
+      userName: String? = .none,
+      password: String)
+    {
       self.email = email
+      self.userName = userName
       self.password = password
     }
+
   }
 }

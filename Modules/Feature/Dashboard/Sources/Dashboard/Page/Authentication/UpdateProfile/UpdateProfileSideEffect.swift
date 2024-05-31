@@ -22,6 +22,17 @@ struct UpdateProfileSideEffect {
 }
 
 extension UpdateProfileSideEffect {
+  var userInfo: () -> Effect<UpdateProfileReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.me()
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdateProfileReducer.Action.fetchUserInfo)
+      }
+    }
+  }
+
   var deleteUser: () -> Effect<UpdateProfileReducer.Action> {
     {
       .publisher {

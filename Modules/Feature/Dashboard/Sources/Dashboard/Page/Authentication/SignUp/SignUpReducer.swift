@@ -23,6 +23,7 @@ struct SignUpReducer {
     let id: UUID
 
     var emailText = ""
+    var userNameText = ""
     var passwordText = ""
     var confirmPasswordText = ""
 
@@ -69,7 +70,7 @@ struct SignUpReducer {
 
       case .onTapSignUp:
         return sideEffect
-          .signUp(.init(email: state.emailText, password: state.passwordText))
+          .signUp(.init(email: state.emailText, userName: state.userNameText, password: state.passwordText))
           .cancellable(pageID: pageID, id: CancelID.requestSignUp, cancelInFlight: true)
 
       case .fetchSignUp(let result):

@@ -23,7 +23,7 @@ extension ProfilePage: View {
                 .frame(width: 80, height: 80)
 
               VStack(alignment: .leading) {
-                Text("아이디 \(store.item.email ?? "")")
+                Text("이메일: \(store.item.email ?? "")")
 
                 Text("User Name\(store.item.userName ?? "")")
               }

@@ -2,6 +2,9 @@ import Combine
 import Domain
 import Firebase
 import FirebaseAuth
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 import Foundation
 
 // MARK: - AuthUseCasePlatform
@@ -14,10 +17,29 @@ extension AuthUseCasePlatform: AuthUseCase {
   public var signUp: (Domain.Auth.Email.Request) -> AnyPublisher<Void, CompositeErrorRepository> {
     { req in
       Future<Void, CompositeErrorRepository> { promise in
-        Auth.auth().createUser(withEmail: req.email, password: req.password) { _, error in
-          guard let error else { return promise(.success(Void())) }
+        Auth.auth().createUser(withEmail: req.email, password: req.password) { result, error in
+          if let error = error {
+            return promise(.failure(.other(error)))
+          }
 
-          promise(.failure(.other(error)))
+          guard let user = result?.user else {
+            return promise(.failure(.userCancelled))
+          }
+
+          Firestore.firestore()
+            .collection("users")
+            .document(user.uid)
+            .setData([
+              "email": req.email,
+              "userName": req.userName ?? "",
+              "createdTime": Timestamp(),
+            ]) { error in
+              if let error = error {
+                return promise(.failure(.other(error)))
+              } else {
+                return promise(.success(Void()))
+              }
+            }
         }
       }
       .eraseToAnyPublisher()
@@ -54,9 +76,31 @@ extension AuthUseCasePlatform: AuthUseCase {
   public var me: () -> AnyPublisher<Domain.Auth.Me.Response?, CompositeErrorRepository> {
     {
       Future<Domain.Auth.Me.Response?, CompositeErrorRepository> { promise in
-        guard let me = Auth.auth().currentUser else { return promise(.success(.none)) }
+        guard let me = Auth.auth().currentUser else {
+          return promise(.success(.none))
+        }
 
-        return promise(.success(me.serialized()))
+        Firestore.firestore()
+          .collection("users")
+          .document(me.uid)
+          .getDocument { document, error in
+            if let error = error {
+              return promise(.failure(.other(error)))
+            }
+
+            /// 가지고 오려는 데이터의 document가 존재 하지 않을 수도 있으므로
+            guard let document = document, document.exists, let data = document.data() else {
+              return promise(.failure(.userCancelled))
+            }
+
+            let response = Domain.Auth.Me.Response(
+              uid: me.uid,
+              email: me.email,
+              userName: data["userName"] as? String,
+              photoURL: me.photoURL?.absoluteString)
+
+            return promise(.success(response))
+          }
       }
       .eraseToAnyPublisher()
     }
@@ -99,14 +143,5 @@ extension AuthUseCasePlatform: AuthUseCase {
       }
       .eraseToAnyPublisher()
     }
-  }
-}
-
-extension User {
-  fileprivate func serialized() -> Domain.Auth.Me.Response {
-    .init(
-      uid: uid,
-      email: email,
-      photoURL: photoURL?.absoluteString)
   }
 }

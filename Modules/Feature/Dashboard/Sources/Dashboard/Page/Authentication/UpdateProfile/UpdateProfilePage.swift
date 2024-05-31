@@ -24,7 +24,7 @@ extension UpdateProfilePage: View {
           VStack(alignment: .leading, spacing: 12) {
             Text("이메일")
 
-            Text("test@test.com")
+            Text(store.item.email ?? "")
           }
 
           Spacer()
@@ -36,7 +36,7 @@ extension UpdateProfilePage: View {
         HStack {
           VStack(alignment: .leading, spacing: 12) {
             Text("이름")
-            Text("User Name")
+            Text(store.item.userName ?? "")
           }
 
           Spacer()
@@ -91,6 +91,12 @@ extension UpdateProfilePage: View {
             .imageScale(.large)
         }
       }
+    }
+    .onAppear {
+      store.send(.getUserInfo)
+    }
+    .onDisappear {
+      store.send(.teardown)
     }
   }
 }

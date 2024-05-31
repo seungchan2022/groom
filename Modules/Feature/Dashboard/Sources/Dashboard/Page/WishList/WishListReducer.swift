@@ -24,7 +24,7 @@ struct WishListReducer {
 
     var status: LoginStatus = .isLoggedOut
 
-    var item: Auth.Me.Response = .init(uid: "", email: "", photoURL: "")
+    var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
 
     var fetchUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
     var fetchUserInfo: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
@@ -94,7 +94,7 @@ struct WishListReducer {
       case .fetchUserInfo(let result):
         switch result {
         case .success(let item):
-          state.item = item ?? .init(uid: "2", email: "555", photoURL: "")
+          state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")
           return .none
 
         case .failure(let error):

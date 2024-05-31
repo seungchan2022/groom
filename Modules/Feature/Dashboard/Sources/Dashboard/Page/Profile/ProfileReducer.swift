@@ -35,8 +35,7 @@ struct ProfileReducer {
 
     var status: LoginStatus = .isLoggedOut
 
-    ///    var item: Auth.Me.Response = .init(uid: "", email: "", photoURL: "")
-    var item: Auth.Me.Response = .init(uid: "", email: "", userName: "")
+    var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
 
     var fetchSignOut: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
@@ -99,8 +98,7 @@ struct ProfileReducer {
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
       case .onTapSignOut:
-//        state.item = .init(uid: "", email: "", photoURL: "")
-        state.item = .init(uid: "", email: "", userName: "")
+        state.item = .init(uid: "", email: "", userName: "", photoURL: "")
         state.status = .isLoggedOut
         return sideEffect
           .signOut()

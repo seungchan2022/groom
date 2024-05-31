@@ -66,6 +66,16 @@ extension SignUpPage: View {
         }
       }
 
+      TextField(
+        "",
+        text: $store.userNameText,
+        prompt: Text("userName"))
+        .autocorrectionDisabled(true)
+        .textInputAutocapitalization(.never)
+        .padding()
+        .background(.thinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+
       HStack {
         if store.isShowPassword {
           TextField(
