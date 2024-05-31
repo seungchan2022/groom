@@ -41,7 +41,10 @@ extension UpdateProfilePage: View {
 
           Spacer()
 
-          Button(action: { }) {
+          Button(action: {
+            store.userName = ""
+            store.isShowUpdateUser = true
+          }) {
             Text("변경")
           }
         }
@@ -71,6 +74,24 @@ extension UpdateProfilePage: View {
         .padding(.top, 64)
       }
     }
+    .alert(
+      "이름을 변경하시겠습니까?",
+      isPresented: $store.isShowUpdateUser,
+      actions: {
+        TextField("이름", text: $store.userName)
+          .autocorrectionDisabled(true)
+
+        Button(role: .cancel, action: { }) {
+          Text("취소")
+        }
+
+        Button(action: { store.send(.onTapUpdateUserName) }) {
+          Text("확인")
+        }
+      },
+      message: {
+        Text("이름을 변경하시고 싶으면, 변경하고 싶으신 이름을 작성하시고 확인을 눌러주세요.")
+      })
     .alert(
       "계정을 탈퇴 하시겠습니까?",
       isPresented: $store.isShowDeleteUser,

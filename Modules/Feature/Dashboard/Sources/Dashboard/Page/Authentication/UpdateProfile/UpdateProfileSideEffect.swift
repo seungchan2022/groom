@@ -33,6 +33,18 @@ extension UpdateProfileSideEffect {
     }
   }
 
+  var updateUserName: (String) -> Effect<UpdateProfileReducer.Action> {
+    { name in
+      .publisher {
+        useCase.authUseCase.updateUserName(name)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdateProfileReducer.Action.fetchUpdateUserName)
+      }
+    }
+  }
+
   var deleteUser: () -> Effect<UpdateProfileReducer.Action> {
     {
       .publisher {

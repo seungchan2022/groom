@@ -23,12 +23,17 @@ struct UpdateProfileReducer {
     let id: UUID
 
     var isShowDeleteUser = false
+    var isShowUpdateUser = false
+
+    var userName = ""
 
     var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
 
-    var fetchDeleteUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
-
     var fetchUserInfo: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
+
+    var fetchUpdateUserName: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+
+    var fetchDeleteUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     init(id: UUID = UUID()) {
       self.id = id
@@ -37,8 +42,8 @@ struct UpdateProfileReducer {
 
   enum CancelID: String, CaseIterable {
     case teardown
-    case requestUser
     case requestUserInfo
+    case requestUpdateUserName
     case requstDeleteUser
   }
 
@@ -50,12 +55,16 @@ struct UpdateProfileReducer {
 
     case onTapClose
 
+    case onTapUpdateUserName
+
     case onTapDeleteUser
 
     case routeToSignIn
     case routeToUpdatePassword
 
     case fetchUserInfo(Result<Auth.Me.Response?, CompositeErrorRepository>)
+
+    case fetchUpdateUserName(Result<Bool, CompositeErrorRepository>)
 
     case fetchDeleteUser(Result<Bool, CompositeErrorRepository>)
 
@@ -82,6 +91,11 @@ struct UpdateProfileReducer {
         sideEffect.close()
         return .none
 
+      case .onTapUpdateUserName:
+        return sideEffect
+          .updateUserName(state.userName)
+          .cancellable(pageID: pageID, id: CancelID.requestUpdateUserName, cancelInFlight: true)
+
       case .onTapDeleteUser:
         return sideEffect
           .deleteUser()
@@ -99,6 +113,17 @@ struct UpdateProfileReducer {
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchUpdateUserName(let result):
+        switch result {
+        case .success:
+          sideEffect.useCase.toastViewModel.send(message: "이름이 변경되었습니다.")
+          sideEffect.close()
           return .none
 
         case .failure(let error):

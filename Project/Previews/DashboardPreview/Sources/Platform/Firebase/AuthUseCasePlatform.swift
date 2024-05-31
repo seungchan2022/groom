@@ -119,6 +119,31 @@ extension AuthUseCasePlatform: AuthUseCase {
     }
   }
 
+  public var updateUserName: (String) -> AnyPublisher<Void, CompositeErrorRepository> {
+    { name in
+      Future<Void, CompositeErrorRepository> { promise in
+
+        guard let me = Auth.auth().currentUser else {
+          return promise(.failure(.invalidTypeCasting))
+        }
+
+        Firestore.firestore()
+          .collection("users")
+          .document(me.uid)
+          .updateData([
+            "userName": name,
+          ]) { error in
+            if let error = error {
+              return promise(.failure(.other(error)))
+            } else {
+              return promise(.success(Void()))
+            }
+          }
+      }
+      .eraseToAnyPublisher()
+    }
+  }
+
   public var updatePassword: (String) -> AnyPublisher<Void, CompositeErrorRepository> {
     { newPassword in
       Future<Void, CompositeErrorRepository> { promise in

@@ -54,6 +54,7 @@ extension UpdatePasswordPage: View {
           }
         }
         .autocorrectionDisabled(true)
+
         .focused($isFocus, equals: .password)
         .textInputAutocapitalization(.never)
         .padding()

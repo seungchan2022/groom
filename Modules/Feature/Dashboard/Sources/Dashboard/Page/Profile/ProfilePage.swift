@@ -25,7 +25,7 @@ extension ProfilePage: View {
               VStack(alignment: .leading) {
                 Text("이메일: \(store.item.email ?? "")")
 
-                Text("User Name\(store.item.userName ?? "")")
+                Text("이름: \(store.item.userName ?? "")")
               }
             }
 
