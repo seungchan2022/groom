@@ -1,12 +1,11 @@
 import Architecture
-import CombineExt
 import ComposableArchitecture
 import Domain
 import Foundation
 
-// MARK: - UpdatePasswordSideEffect
+// MARK: - UpdateProfileSideEffect
 
-struct UpdatePasswordSideEffect {
+struct UpdateProfileSideEffect {
   let useCase: DashboardEnvironmentUsable
   let main: AnySchedulerOf<DispatchQueue>
   let navigator: RootNavigatorType
@@ -22,22 +21,32 @@ struct UpdatePasswordSideEffect {
   }
 }
 
-extension UpdatePasswordSideEffect {
-  var updatePassword: (String) -> Effect<UpdatePasswordReducer.Action> {
-    { newPassword in
+extension UpdateProfileSideEffect {
+  var deleteUser: () -> Effect<UpdateProfileReducer.Action> {
+    {
       .publisher {
-        useCase.authUseCase.updatePassword(newPassword)
+        useCase.authUseCase.delete()
           .map { _ in true }
           .receive(on: main)
           .mapToResult()
-          .map(UpdatePasswordReducer.Action.fetchUpdatePassword)
+          .map(UpdateProfileReducer.Action.fetchDeleteUser)
       }
     }
   }
 
-  var routeToBack: () -> Void {
+  var routeToSignIn: () -> Void {
     {
-      navigator.back(isAnimated: true)
+      navigator.sheet(
+        linkItem: .init(path: Link.Dashboard.Path.signIn.rawValue),
+        isAnimated: true)
+    }
+  }
+
+  var routeToUpdatePassword: () -> Void {
+    {
+      navigator.next(
+        linkItem: .init(path: Link.Dashboard.Path.updatePassword.rawValue),
+        isAnimated: true)
     }
   }
 

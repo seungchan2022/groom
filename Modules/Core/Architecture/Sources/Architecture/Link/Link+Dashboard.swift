@@ -17,5 +17,6 @@ extension Link.Dashboard {
     case signIn
     case signUp
     case updatePassword
+    case updateProfile
   }
 }

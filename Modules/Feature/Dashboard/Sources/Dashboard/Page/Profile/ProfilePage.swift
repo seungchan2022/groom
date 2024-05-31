@@ -17,13 +17,25 @@ extension ProfilePage: View {
         switch store.state.status {
         case .isLoggedIn:
           VStack(alignment: .leading) {
-            Text("로그인 성공")
-              .font(.largeTitle)
+            HStack(spacing: 12) {
+              Image(systemName: "person.circle")
+                .resizable()
+                .frame(width: 80, height: 80)
 
-            Text("User ID: \(store.item.uid)")
-            Text("User Email: \(store.item.email ?? "")")
+              VStack(alignment: .leading) {
+                Text("아이디 \(store.item.email ?? "")")
+
+                Text("User Name\(store.item.userName ?? "")")
+              }
+            }
+
+            Divider()
           }
+          .frame(maxWidth: .infinity, alignment: .leading)
           .padding(.top, 32)
+          .onTapGesture {
+            store.send(.routeToUpdateProfile)
+          }
 
         case .isLoggedOut:
           VStack(alignment: .leading, spacing: 32) {
@@ -126,53 +138,6 @@ extension ProfilePage: View {
               Divider()
             }
           }
-
-          if store.state.status == .isLoggedIn {
-            Button(action: { store.send(.routeToUpdatePassword) }) {
-              VStack {
-                HStack {
-                  Image(systemName: "shield.righthalf.filled")
-                    .resizable()
-                    .foregroundStyle(.black)
-                    .frame(width: 20, height: 20)
-
-                  Text("비밀번호 변경")
-                    .font(.headline)
-                    .foregroundStyle(.black)
-
-                  Spacer()
-
-                  Image(systemName: "chevron.right")
-                    .resizable()
-                    .fontWeight(.light)
-                    .foregroundStyle(.black)
-                    .frame(width: 14, height: 20)
-                }
-
-                Divider()
-              }
-            }
-
-            Button(action: { store.isShowDeleteUser = true }) {
-              VStack {
-                HStack {
-                  Text("계정 탈퇴")
-                    .font(.headline)
-                    .foregroundStyle(.black)
-
-                  Spacer()
-
-                  Image(systemName: "chevron.right")
-                    .resizable()
-                    .fontWeight(.light)
-                    .foregroundStyle(.black)
-                    .frame(width: 14, height: 20)
-                }
-
-                Divider()
-              }
-            }
-          }
         }
         .padding(.top, 32)
       }
@@ -200,18 +165,6 @@ extension ProfilePage: View {
 
         Button(action: { store.send(.onTapSignOut) }) {
           Text("로그아웃")
-        }
-      })
-    .alert(
-      "계정을 탈퇴 하시겠습니까?",
-      isPresented: $store.isShowDeleteUser,
-      actions: {
-        Button(role: .cancel, action: { }) {
-          Text("취소")
-        }
-
-        Button(action: { store.send(.onTapDeleteUser) }) {
-          Text("계정 탈퇴")
         }
       })
     .onAppear {

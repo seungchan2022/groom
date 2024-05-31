@@ -143,14 +143,6 @@ extension UpdatePasswordPage: View {
     }
     .navigationBarTitleDisplayMode(.inline)
     .navigationTitle("비밀번호 변경")
-    .toolbar {
-      ToolbarItem(placement: .topBarLeading) {
-        Button(action: { store.send(.onTapClose) }) {
-          Image(systemName: "xmark")
-            .imageScale(.large)
-        }
-      }
-    }
     .onAppear {
       isFocus = .password
     }

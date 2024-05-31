@@ -4,13 +4,13 @@ import Domain
 import Foundation
 
 @Reducer
-struct UpdatePasswordReducer {
+struct UpdateProfileReducer {
 
   // MARK: Lifecycle
 
   init(
     pageID: String = UUID().uuidString,
-    sideEffect: UpdatePasswordSideEffect)
+    sideEffect: UpdateProfileSideEffect)
   {
     self.pageID = pageID
     self.sideEffect = sideEffect
@@ -22,42 +22,39 @@ struct UpdatePasswordReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
-    var passwordText = ""
-    var confirmPasswordText = ""
+    var isShowDeleteUser = false
 
-    var isValidPassword = true
-    var isValidConfirmPassword = true
-    var isShowPassword = false
-    var isShowConfirmPassword = false
-
-    var fetchUpdatePassword: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchDeleteUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     init(id: UUID = UUID()) {
       self.id = id
     }
   }
 
-  enum CancelID: Equatable, CaseIterable {
+  enum CancelID: String, CaseIterable {
     case teardown
-    case requestUpdatePassword
+    case requstDeleteUser
   }
 
   enum Action: BindableAction, Equatable {
     case binding(BindingAction<State>)
     case teardown
 
-    case onTapUpdatePassword
+    case onTapClose
 
-    case routeToBack
+    case onTapDeleteUser
 
-    case fetchUpdatePassword(Result<Bool, CompositeErrorRepository>)
+    case routeToSignIn
+    case routeToUpdatePassword
+
+    case fetchDeleteUser(Result<Bool, CompositeErrorRepository>)
 
     case throwError(CompositeErrorRepository)
   }
 
   var body: some Reducer<State, Action> {
     BindingReducer()
-    Reduce { state, action in
+    Reduce { _, action in
       switch action {
       case .binding:
         return .none
@@ -66,20 +63,30 @@ struct UpdatePasswordReducer {
         return .concatenate(
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
-      case .onTapUpdatePassword:
-        return sideEffect
-          .updatePassword(state.passwordText)
-          .cancellable(pageID: pageID, id: CancelID.requestUpdatePassword, cancelInFlight: true)
-
-      case .routeToBack:
-        sideEffect.routeToBack()
+      case .onTapClose:
+        sideEffect.close()
         return .none
 
-      case .fetchUpdatePassword(let result):
+      case .onTapDeleteUser:
+        return sideEffect
+          .deleteUser()
+          .cancellable(pageID: pageID, id: CancelID.requstDeleteUser, cancelInFlight: true)
+
+      case .routeToSignIn:
+        sideEffect.routeToSignIn()
+        return .none
+
+      case .routeToUpdatePassword:
+        sideEffect.routeToUpdatePassword()
+        return .none
+
+      case .fetchDeleteUser(let result):
+
         switch result {
         case .success:
-          sideEffect.routeToBack()
-          sideEffect.useCase.toastViewModel.send(message: "비밀번호가 변경되었습니다.")
+          sideEffect.useCase.toastViewModel.send(message: "계정이 탈퇴되었습니다.")
+          sideEffect.close()
+          sideEffect.routeToSignIn()
           return .none
 
         case .failure(let error):
@@ -96,5 +103,5 @@ struct UpdatePasswordReducer {
   // MARK: Private
 
   private let pageID: String
-  private let sideEffect: UpdatePasswordSideEffect
+  private let sideEffect: UpdateProfileSideEffect
 }
