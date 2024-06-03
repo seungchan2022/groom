@@ -2,20 +2,20 @@ import DesignSystem
 import Domain
 import SwiftUI
 
-// MARK: - ExplorePage.ItemComponent
+// MARK: - HomePage.SearchCityResultComponent
 
-extension ExplorePage {
-  struct ItemComponent {
+extension HomePage {
+  struct SearchCityResultComponent {
     let viewState: ViewState
-    let tapAction: (Airbnb.Listing.Item) -> Void
+    let tapAction: (Airbnb.Search.City.Item) -> Void
   }
 }
 
-extension ExplorePage.ItemComponent { }
+extension HomePage.SearchCityResultComponent { }
 
-// MARK: - ExplorePage.ItemComponent + View
+// MARK: - HomePage.SearchCityResultComponent + View
 
-extension ExplorePage.ItemComponent: View {
+extension HomePage.SearchCityResultComponent: View {
   var body: some View {
     Button(action: { tapAction(viewState.item) }) {
       VStack(spacing: 8) {
@@ -58,11 +58,11 @@ extension ExplorePage.ItemComponent: View {
   }
 }
 
-// MARK: - ExplorePage.ItemComponent.ViewState
+// MARK: - HomePage.SearchCityResultComponent.ViewState
 
-extension ExplorePage.ItemComponent {
+extension HomePage.SearchCityResultComponent {
   struct ViewState: Equatable {
-    let item: Airbnb.Listing.Item
+    let item: Airbnb.Search.City.Item
   }
 
 }

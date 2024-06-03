@@ -20,10 +20,10 @@ extension AppMain: View {
         .init(
           tag: .zero,
           tabItem: .init(
-            title: "Explore",
+            title: "Home",
             image: .init(systemName: "magnifyingglass"),
             tag: .zero),
-          linkItem: .init(path: Link.Dashboard.Path.explore.rawValue),
+          linkItem: .init(path: Link.Dashboard.Path.home.rawValue),
           prefersLargeTitles: true),
 
         .init(

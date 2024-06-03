@@ -26,6 +26,7 @@ extension AppContainer {
       authUseCase: AuthUseCasePlatform(),
       airbnbUseCase: AirbnbUseCasePlatform(),
       airbnbDetailUseCase: AirbnbDetailUseCasePlatform(),
+      searchUseCase: SearchUseCasePlatform(),
       toastViewModel: ToastViewModel())
 
     return .init(
