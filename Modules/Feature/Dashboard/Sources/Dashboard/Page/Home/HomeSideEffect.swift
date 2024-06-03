@@ -34,8 +34,18 @@ extension HomeSideEffect {
               response: $0)
           }
           .mapToResult()
-          .map(HomeReducer.Action.fetchSearchCityItme)
+          .map(HomeReducer.Action.fetchSearchCityItem)
       }
+    }
+  }
+
+  var routeToSearchDetail: (Airbnb.Search.City.Item) -> Void {
+    { item in
+      navigator.next(
+        linkItem: .init(
+          path: Link.Dashboard.Path.detail.rawValue,
+          items: item),
+        isAnimated: true)
     }
   }
 }

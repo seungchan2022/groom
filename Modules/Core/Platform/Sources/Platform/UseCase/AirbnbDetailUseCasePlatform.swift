@@ -24,4 +24,18 @@ extension AirbnbDetailUseCasePlatform: AirbnbDetailUseCase {
         .fetch(isDebug: true)
     }
   }
+
+  public var searchCityDetail: (Airbnb.SearchCityDetail.Request) -> AnyPublisher<
+    Airbnb.SearchCityDetail.Response,
+    CompositeErrorRepository
+  > {
+    {
+      Endpoint(
+        baseURL: baseURL,
+        pathList: [],
+        httpMethod: .get,
+        content: .queryItemPath($0))
+        .fetch(isDebug: true)
+    }
+  }
 }

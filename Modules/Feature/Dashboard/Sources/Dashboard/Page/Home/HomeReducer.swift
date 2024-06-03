@@ -44,7 +44,9 @@ struct HomeReducer {
 
     case searchCity(String)
 
-    case fetchSearchCityItme(Result<Airbnb.Search.City.Compsite, CompositeErrorRepository>)
+    case fetchSearchCityItem(Result<Airbnb.Search.City.Compsite, CompositeErrorRepository>)
+
+    case routeToSearchDetail(Airbnb.Search.City.Item)
 
     case throwError(CompositeErrorRepository)
   }
@@ -78,7 +80,8 @@ struct HomeReducer {
           .searchCityItem(.init(query: query))
           .cancellable(pageID: pageID, id: CancelID.requestSearchCity, cancelInFlight: true)
 
-      case .fetchSearchCityItme(let result):
+      case .fetchSearchCityItem(let result):
+        
         state.fetchSearchCityItem.isLoading = false
         switch result {
         case .success(let item):
@@ -89,6 +92,10 @@ struct HomeReducer {
         case .failure(let error):
           return .run { await $0(.throwError(error)) }
         }
+
+      case .routeToSearchDetail(let item):
+        sideEffect.routeToSearchDetail(item)
+        return .none
 
       case .throwError(let error):
         sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)

@@ -20,7 +20,13 @@ extension DetailPage { }
 extension DetailPage: View {
   var body: some View {
     ScrollView {
-      if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
+      if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
+        SearchCityResultComponent(
+          viewState: .init(item: searchCityItem),
+          backAction: { store.send(.routeToBack) },
+          tapAction: { isShowMap = true },
+          position: $position)
+      } else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
         ItemComponent(
           viewState: .init(item: item),
           backAction: { store.send(.routeToBack) },
@@ -28,8 +34,44 @@ extension DetailPage: View {
           position: $position)
       }
     }
+
     .fullScreenCover(isPresented: $isShowMap) {
-      if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
+      if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
+        Map(position: $position) {
+          Marker(
+            "Destination",
+            coordinate: CLLocationCoordinate2D(
+              latitude: searchCityItem.coordinateList.latitude,
+              longitude: searchCityItem.coordinateList.longitude))
+        }
+        .mapStyle(.standard)
+        .mapControls {
+          MapCompass()
+          MapUserLocationButton()
+          MapPitchToggle()
+        }
+        .overlay(alignment: .bottomTrailing) {
+          Button(action: { position = .automatic }) {
+            Image(systemName: "dot.scope")
+              .foregroundStyle(.black)
+              .background {
+                RoundedRectangle(cornerRadius: 5)
+                  .fill(.white)
+                  .frame(width: 40, height: 40)
+              }
+          }
+          .padding([.bottom, .trailing], 16)
+        }
+        .overlay(alignment: .topLeading) {
+          Button(action: { isShowMap = false }) {
+            Image(systemName: "xmark")
+              .imageScale(.large)
+          }
+          .padding(.leading, 16)
+        }
+      }
+
+      else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
         Map(position: $position) {
           Marker(
             "Destination",
@@ -68,6 +110,7 @@ extension DetailPage: View {
     .toolbar(.hidden, for: .navigationBar)
     .onAppear {
       store.send(.getItem(store.item))
+      store.send(.getSearchCityItem(store.searchCityItem))
     }
     .onDisappear {
       store.send(.teardown)
