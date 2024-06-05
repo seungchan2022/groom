@@ -10,11 +10,15 @@ struct DetailRouteBuilder<RootNavigator: RootNavigatorType> {
       guard let env: DashboardEnvironmentUsable = diContainer.resolve() else { return .none }
       guard let item: Airbnb.Listing.Item = items.decoded() else { return .none }
       guard let searchCityItem: Airbnb.Search.City.Item = items.decoded() else { return .none }
+      guard let searchCountryItem: Airbnb.Search.Country.Item = items.decoded() else { return .none }
 
       return DebugWrappingController(matchPath: matchPath) {
         DetailPage(
           store: .init(
-            initialState: DetailReducer.State(item: item, searchCityItem: searchCityItem),
+            initialState: DetailReducer.State(
+              item: item,
+              searchCityItem: searchCityItem,
+              searchCountryItem: searchCountryItem),
             reducer: {
               DetailReducer(
                 sideEffect: .init(

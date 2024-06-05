@@ -20,29 +20,40 @@ struct DetailReducer {
 
   @ObservableState
   struct State: Equatable, Identifiable {
-    let id: UUID
 
-    let item: Airbnb.Listing.Item
-    let searchCityItem: Airbnb.Search.City.Item
-
-    var fetchItem: FetchState.Data<Airbnb.Detail.Response?> = .init(isLoading: false, value: .none)
-    var fetchSearchCityItem: FetchState.Data<Airbnb.SearchCityDetail.Response?> = .init(isLoading: false, value: .none)
+    // MARK: Lifecycle
 
     init(
       id: UUID = UUID(),
       item: Airbnb.Listing.Item,
-      searchCityItem: Airbnb.Search.City.Item)
+      searchCityItem: Airbnb.Search.City.Item,
+      searchCountryItem: Airbnb.Search.Country.Item)
     {
       self.id = id
       self.item = item
       self.searchCityItem = searchCityItem
+      self.searchCountryItem = searchCountryItem
     }
+
+    // MARK: Internal
+
+    let id: UUID
+
+    let item: Airbnb.Listing.Item
+    let searchCityItem: Airbnb.Search.City.Item
+    let searchCountryItem: Airbnb.Search.Country.Item
+
+    var fetchItem: FetchState.Data<Airbnb.Detail.Response?> = .init(isLoading: false, value: .none)
+    var fetchSearchCityItem: FetchState.Data<Airbnb.SearchCityDetail.Response?> = .init(isLoading: false, value: .none)
+    var fetchSearchCountryItem: FetchState.Data<Airbnb.SearchCountryDetail.Response?> = .init(isLoading: false, value: .none)
+
   }
 
   enum CancelID: Equatable, CaseIterable {
     case teardown
     case requestItem
-    case requestSearchItem
+    case requestSearchCityItem
+    case requestSearchCountryItem
   }
 
   enum Action: BindableAction, Equatable {
@@ -52,9 +63,11 @@ struct DetailReducer {
     case getItem(Airbnb.Listing.Item)
 
     case getSearchCityItem(Airbnb.Search.City.Item)
+    case getSearchCountryItem(Airbnb.Search.Country.Item)
 
     case fetchItem(Result<Airbnb.Detail.Response, CompositeErrorRepository>)
     case fetchSearchCityItem(Result<Airbnb.SearchCityDetail.Response, CompositeErrorRepository>)
+    case fetchSearchCountryItem(Result<Airbnb.SearchCountryDetail.Response, CompositeErrorRepository>)
 
     case routeToBack
 
@@ -82,7 +95,13 @@ struct DetailReducer {
         state.fetchSearchCityItem.isLoading = true
         return sideEffect
           .getSearchCityItem(item)
-          .cancellable(pageID: pageID, id: CancelID.requestSearchItem, cancelInFlight: true)
+          .cancellable(pageID: pageID, id: CancelID.requestSearchCityItem, cancelInFlight: true)
+
+      case .getSearchCountryItem(let item):
+        state.fetchSearchCountryItem.isLoading = true
+        return sideEffect
+          .getSearchCountryItem(item)
+          .cancellable(pageID: pageID, id: CancelID.requestSearchCountryItem, cancelInFlight: true)
 
       case .fetchItem(let result):
         state.fetchItem.isLoading = false
@@ -100,6 +119,17 @@ struct DetailReducer {
         switch result {
         case .success(let item):
           state.fetchSearchCityItem.value = item
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchSearchCountryItem(let result):
+        state.fetchSearchCountryItem.isLoading = false
+        switch result {
+        case .success(let item):
+          state.fetchSearchCountryItem.value = item
           return .none
 
         case .failure(let error):

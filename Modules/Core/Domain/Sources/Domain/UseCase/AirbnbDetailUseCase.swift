@@ -7,4 +7,9 @@ public protocol AirbnbDetailUseCase {
     Airbnb.SearchCityDetail.Response,
     CompositeErrorRepository
   > { get }
+
+  var searchCountryDetail: (Airbnb.SearchCountryDetail.Request) -> AnyPublisher<
+    Airbnb.SearchCountryDetail.Response,
+    CompositeErrorRepository
+  > { get }
 }

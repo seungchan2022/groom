@@ -39,7 +39,33 @@ extension HomeSideEffect {
     }
   }
 
-  var routeToSearchDetail: (Airbnb.Search.City.Item) -> Void {
+  var searchCountryItem: (Airbnb.Search.Country.Request) -> Effect<HomeReducer.Action> {
+    { request in
+      .publisher {
+        useCase.searchUseCase.searchCountry(request)
+          .receive(on: main)
+          .map {
+            Airbnb.Search.Country.Compsite(
+              request: request,
+              response: $0)
+          }
+          .mapToResult()
+          .map(HomeReducer.Action.fetchSearchCountryItem)
+      }
+    }
+  }
+
+  var routeToCityDetail: (Airbnb.Search.City.Item) -> Void {
+    { item in
+      navigator.next(
+        linkItem: .init(
+          path: Link.Dashboard.Path.detail.rawValue,
+          items: item),
+        isAnimated: true)
+    }
+  }
+
+  var routeToCountryDetail: (Airbnb.Search.Country.Item) -> Void {
     { item in
       navigator.next(
         linkItem: .init(

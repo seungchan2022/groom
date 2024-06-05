@@ -18,7 +18,7 @@ extension HomePage {
 
   private var cityItemList: [String] {
     [
-      "City", "London", "Paris", "Sicily", "New-york-city", "Shanghai", "Puglia", "Sydney",
+      "London", "Paris", "Sicily", "New-york-city", "Shanghai", "Puglia", "Sydney",
       "Beijing", "Los-angeles", "Rio-de-janeiro", "Rome", "Copenhagen", "Visualisations",
       "Berlin", "South-aegean", "Lisbon", "Buenos-aires", "Cape-town", "Istanbul",
       "Melbourne", "Hawaii", "Mexico-city", "Madrid", "Toronto", "Barcelona", "Milan",
@@ -37,6 +37,15 @@ extension HomePage {
       "Salem-or", "Pacific-grove",
     ]
   }
+
+  private var countryItemList: [String] {
+    [
+      "United states", "Italy", "Spain", "United kingdom", "France", "Australia", "China", "Greece", "Canada", "Ireland",
+      "Germany", "Portugal", "Brazil", "Denmark", "Argentina", "South africa", "Turkey", "Mexico", "Netherlands",
+      "Chile", "Japan", "Austria", "Belgium", "Czech republic", "Norway", "Taiwan", "Switzerland", "Sweden", "Singapore",
+      "Belize",
+    ]
+  }
 }
 
 // MARK: View
@@ -44,35 +53,108 @@ extension HomePage {
 extension HomePage: View {
   var body: some View {
     VStack {
-      HStack {
-        Text("City")
-        Spacer()
+      VStack {
+        HStack {
+          Text("City")
+          Spacer()
 
-        Picker("", selection: $store.query) {
-          ForEach(cityItemList, id: \.self) { item in
-            Text(item)
-              .tag(item)
+          Picker("", selection: $store.query) {
+            Text("Select a city")
+              .tag("")
+            ForEach(cityItemList, id: \.self) { item in
+              Text(item)
+                .tag(item)
+            }
           }
+          .pickerStyle(.menu)
+          .tint(.gray)
         }
-        .pickerStyle(.menu)
-        .tint(.gray)
-      }
-      .padding(.leading, 16)
+        .padding(.leading, 16)
 
-      if store.query.isEmpty {
+        Divider()
+
+        HStack {
+          Text("Country")
+          Spacer()
+
+          Picker("", selection: $store.country) {
+            Text("Select a country")
+              .tag("")
+            ForEach(countryItemList, id: \.self) { item in
+              Text(item)
+                .tag(item)
+            }
+          }
+          .pickerStyle(.menu)
+          .tint(.gray)
+        }
+        .padding(.leading, 16)
+      }
+      .background {
+        RoundedRectangle(cornerRadius: 5)
+          .stroke(.black, lineWidth: 1)
+      }
+      .padding(.horizontal, 12)
+
+      switch (store.query.isEmpty, store.country.isEmpty) {
+      case (true, true):
         ExplorePage(store: exploreStore)
-      } else {
+
+      case (false, true):
         ScrollView {
           LazyVStack(spacing: 48) {
             ForEach(store.searchCityItemList) { item in
               SearchCityResultComponent(
                 viewState: .init(item: item),
-                tapAction: { store.send(.routeToSearchDetail($0)) })
+                tapAction: { store.send(.routeToCityDetail($0)) })
             }
           }
           .padding(.horizontal, 16)
         }
+
+      case (true, false):
+        ScrollView {
+          LazyVStack(spacing: 48) {
+            ForEach(store.searchCountryItemList) { item in
+              SearchCountryResultComponent(
+                viewState: .init(item: item),
+                tapAction: { store.send(.routeToCountryDetail($0)) })
+            }
+          }
+          .padding(.horizontal, 16)
+        }
+
+      case (false, false):
+        EmptyView()
       }
+
+//      if store.query.isEmpty && store.country.isEmpty {
+//        ExplorePage(store: exploreStore)
+//      } else {
+//        if store.country.isEmpty {
+//          ScrollView {
+//            LazyVStack(spacing: 48) {
+//              ForEach(store.searchCityItemList) { item in
+//                SearchCityResultComponent(
+//                  viewState: .init(item: item),
+//                  tapAction: { store.send(.routeToCityDetail($0)) })
+//              }
+//            }
+//            .padding(.horizontal, 16)
+//          }
+//        } else {
+//          ScrollView {
+//            LazyVStack(spacing: 48) {
+//              ForEach(store.searchCountryItemList) { item in
+//                SearchCountryResultComponent(
+//                  viewState: .init(item: item),
+//                  tapAction: { store.send(.routeToCountryDetail($0)) })
+//              }
+//            }
+//            .padding(.horizontal, 16)
+//          }
+//        }
+//      }
     }
     .scrollDismissesKeyboard(.immediately)
     .navigationTitle("Explore")
@@ -81,9 +163,13 @@ extension HomePage: View {
     .onChange(of: store.query) { _, new in
       throttleEvent.update(value: new)
     }
+    .onChange(of: store.country) { _, new in
+      throttleEvent.update(value: new)
+    }
     .onAppear {
       throttleEvent.apply { _ in
         store.send(.searchCity(store.query))
+        store.send(.searchCountry(store.country))
       }
     }
     .onDisappear {

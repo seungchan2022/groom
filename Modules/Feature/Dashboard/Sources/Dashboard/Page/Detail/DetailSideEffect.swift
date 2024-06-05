@@ -44,6 +44,17 @@ extension DetailSideEffect {
     }
   }
 
+  var getSearchCountryItem: (Airbnb.Search.Country.Item) -> Effect<DetailReducer.Action> {
+    { item in
+      .publisher {
+        useCase.airbnbDetailUseCase.searchCountryDetail(item.serialized())
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchSearchCountryItem)
+      }
+    }
+  }
+
   var routeToBack: () -> Void {
     {
       navigator.back(isAnimated: true)
@@ -60,5 +71,11 @@ extension Airbnb.Listing.Item {
 extension Airbnb.Search.City.Item {
   fileprivate func serialized() -> Airbnb.SearchCityDetail.Request {
     .init(query: city)
+  }
+}
+
+extension Airbnb.Search.Country.Item {
+  fileprivate func serialized() -> Airbnb.SearchCountryDetail.Request {
+    .init(query: country)
   }
 }

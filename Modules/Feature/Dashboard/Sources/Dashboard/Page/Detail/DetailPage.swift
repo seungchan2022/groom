@@ -32,9 +32,17 @@ extension DetailPage: View {
           backAction: { store.send(.routeToBack) },
           tapAction: { isShowMap = true },
           position: $position)
+      } else if
+        let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
+          .first(where: { $0.id == store.searchCountryItem.id })
+      {
+        SearchCountryResultComponent(
+          viewState: .init(item: searchCountryItem),
+          backAction: { store.send(.routeToBack) },
+          tapAction: { isShowMap = true },
+          position: $position)
       }
     }
-
     .fullScreenCover(isPresented: $isShowMap) {
       if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
         Map(position: $position) {
@@ -104,6 +112,42 @@ extension DetailPage: View {
           }
           .padding(.leading, 16)
         }
+      } else if
+        let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
+          .first(where: { $0.id == store.searchCountryItem.id })
+      {
+        Map(position: $position) {
+          Marker(
+            "Destination",
+            coordinate: CLLocationCoordinate2D(
+              latitude: searchCountryItem.coordinateList.latitude,
+              longitude: searchCountryItem.coordinateList.longitude))
+        }
+        .mapStyle(.standard)
+        .mapControls {
+          MapCompass()
+          MapUserLocationButton()
+          MapPitchToggle()
+        }
+        .overlay(alignment: .bottomTrailing) {
+          Button(action: { position = .automatic }) {
+            Image(systemName: "dot.scope")
+              .foregroundStyle(.black)
+              .background {
+                RoundedRectangle(cornerRadius: 5)
+                  .fill(.white)
+                  .frame(width: 40, height: 40)
+              }
+          }
+          .padding([.bottom, .trailing], 16)
+        }
+        .overlay(alignment: .topLeading) {
+          Button(action: { isShowMap = false }) {
+            Image(systemName: "xmark")
+              .imageScale(.large)
+          }
+          .padding(.leading, 16)
+        }
       }
     }
     .ignoresSafeArea()
@@ -111,6 +155,7 @@ extension DetailPage: View {
     .onAppear {
       store.send(.getItem(store.item))
       store.send(.getSearchCityItem(store.searchCityItem))
+      store.send(.getSearchCountryItem(store.searchCountryItem))
     }
     .onDisappear {
       store.send(.teardown)

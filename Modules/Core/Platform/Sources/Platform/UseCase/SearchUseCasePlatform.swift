@@ -24,4 +24,18 @@ extension SearchUseCasePlatform: SearchUseCase {
         .fetch(isDebug: true)
     }
   }
+
+  public var searchCountry: (Airbnb.Search.Country.Request) -> AnyPublisher<
+    Airbnb.Search.Country.Response,
+    CompositeErrorRepository
+  > {
+    {
+      Endpoint(
+        baseURL: baseURL,
+        pathList: [],
+        httpMethod: .get,
+        content: .queryItemPath($0))
+        .fetch(isDebug: true)
+    }
+  }
 }
