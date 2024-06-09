@@ -96,7 +96,7 @@ struct SignInReducer {
       case .fetchSignIn(let result):
         switch result {
         case .success:
-          sideEffect.routeToBack()
+          sideEffect.routeToClose(true)
           return .none
 
         case .failure:
@@ -116,7 +116,7 @@ struct SignInReducer {
         }
 
       case .routeToBack:
-        sideEffect.routeToBack()
+        sideEffect.routeToClose(.none)
         return .none
 
       case .routeToSignUp:

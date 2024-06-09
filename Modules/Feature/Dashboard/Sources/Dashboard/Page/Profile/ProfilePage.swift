@@ -6,6 +6,7 @@ import SwiftUI
 
 struct ProfilePage {
   @Bindable var store: StoreOf<ProfileReducer>
+  var routeSubscriber: ProfileRouteSubscriber
 }
 
 // MARK: View
@@ -167,6 +168,10 @@ extension ProfilePage: View {
           Text("로그아웃")
         }
       })
+    .onReceive(routeSubscriber.isRouteEventSubject, perform: { _ in
+      store.send(.getUser)
+      store.send(.getUserInfo)
+    })
     .onAppear {
       store.send(.getUser)
       store.send(.getUserInfo)
