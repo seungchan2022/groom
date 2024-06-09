@@ -5,6 +5,7 @@ import SwiftUI
 
 struct WishListPage {
   @Bindable var store: StoreOf<WishListReducer>
+  var routeSubscriber: WishListRouteSubscriber
 }
 
 // MARK: View
@@ -53,6 +54,10 @@ extension WishListPage: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .navigationTitle("WishList")
+    .onReceive(routeSubscriber.isRouteEventSubject, perform: { _ in
+      store.send(.getUser)
+      store.send(.getUserInfo)
+    })
     .onAppear {
       store.send(.getUser)
       store.send(.getUserInfo)
