@@ -62,7 +62,6 @@ extension Endpoint {
     {
       Future<URLRequest, CompositeErrorRepository> { promise in
         guard let request else { return promise(.failure(.invalidTypeCasting)) }
-
         return promise(.success(request))
       }
       .eraseToAnyPublisher()

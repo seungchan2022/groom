@@ -68,15 +68,7 @@ struct HomeReducer {
 
           return .none
         }
-
-        if state.query != state.fetchSearchCityItem.value?.request.query {
-          state.searchCityItemList = []
-        }
-
-        if !state.query.isEmpty {
-          state.country = ""
-        }
-
+        
         return .none
 
       case .binding(\.country):
@@ -85,15 +77,7 @@ struct HomeReducer {
           return .none
         }
 
-        if state.country != state.fetchSearchCountryItem.value?.request.query {
-          state.searchCountryItemList = []
-        }
-
-        if !state.country.isEmpty {
-          state.query = ""
-        }
-
-        return .none
+        return  .none
 
       case .binding:
         return .none

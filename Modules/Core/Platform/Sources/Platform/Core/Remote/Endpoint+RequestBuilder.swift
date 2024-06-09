@@ -38,9 +38,15 @@ extension URLComponents {
     else { return self }
 
     var new = self
-    let newQuery = item.encodeString()
-    new.query = newQuery
-
+    let newQuery = (try? URLEncodedFormEncoder().encode(item)) ?? .init()
+    let newQueryString = String(data: newQuery, encoding: .utf8)
+    new.query = newQueryString
+    new.percentEncodedQuery = new.percentEncodedQuery?
+      .replacingOccurrences(of: ":", with: "%3A")
+      .replacingOccurrences(of: "%2522", with: "%22")
+      .replacingOccurrences(of: "%2520", with: "%20")
+    
+    print("AAA ", new.url)
     return new
   }
 }

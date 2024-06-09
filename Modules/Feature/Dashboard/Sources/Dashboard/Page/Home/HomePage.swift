@@ -11,7 +11,6 @@ struct HomePage {
 
   @Bindable var exploreStore: StoreOf<ExploreReducer>
 
-  @State var throttleEvent: ThrottleEvent = .init(value: "", delaySeconds: 1.5)
 }
 
 extension HomePage {
@@ -50,6 +49,32 @@ extension HomePage {
 
 // MARK: View
 
+extension HomePage {
+  private var queryBinder: Binding<String> {
+    .init(
+      get: { store.query },
+      set: { new in
+        guard store.query != new else { return }
+        store.send(.set(\.query, new))
+        
+        guard !new.isEmpty else { return }
+        store.send(.searchCity(new))
+      })
+  }
+  
+  private var countryBinder: Binding<String> {
+    .init(
+      get: { store.country },
+      set: { new in
+        guard store.country != new else { return }
+        store.send(.set(\.country, new))
+        
+        guard !new.isEmpty else { return }
+        store.send(.searchCountry(new))
+      })
+  }
+}
+
 extension HomePage: View {
   var body: some View {
     VStack {
@@ -58,7 +83,7 @@ extension HomePage: View {
           Text("City")
           Spacer()
 
-          Picker("", selection: $store.query) {
+          Picker("", selection: queryBinder) {
             Text("Select a city")
               .tag("")
             ForEach(cityItemList, id: \.self) { item in
@@ -77,7 +102,7 @@ extension HomePage: View {
           Text("Country")
           Spacer()
 
-          Picker("", selection: $store.country) {
+          Picker("", selection: countryBinder) {
             Text("Select a country")
               .tag("")
             ForEach(countryItemList, id: \.self) { item in
@@ -161,19 +186,14 @@ extension HomePage: View {
     .navigationBarTitleDisplayMode(.large)
     .toolbar(.visible, for: .navigationBar)
     .onChange(of: store.query) { _, new in
-      throttleEvent.update(value: new)
+      guard !new.isEmpty else { return }
+      store.send(.set(\.country, ""))
     }
     .onChange(of: store.country) { _, new in
-      throttleEvent.update(value: new)
-    }
-    .onAppear {
-      throttleEvent.apply { _ in
-        store.send(.searchCity(store.query))
-        store.send(.searchCountry(store.country))
-      }
+      guard !new.isEmpty else { return }
+      store.send(.set(\.query, ""))
     }
     .onDisappear {
-      throttleEvent.reset()
       store.send(.teardown)
     }
   }

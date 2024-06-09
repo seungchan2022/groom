@@ -12,14 +12,18 @@ extension Airbnb {
 extension Airbnb.Search.City {
   public struct Request: Equatable, Sendable, Codable {
     public let perPage: Int
-    public let query: String
+    public let query: String?
 
     public init(
       perPage: Int = 20,
-      query: String)
+      query: String?)
     {
       self.perPage = perPage
-      self.query = "city:\(query)"
+      if let query {
+        self.query = "city:\(query)"
+      } else {
+        self.query = .none
+      }
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -110,16 +114,20 @@ extension Airbnb.Search.City {
 extension Airbnb.Search.Country {
   public struct Request: Equatable, Sendable, Codable {
     public let perPage: Int
-    public let query: String
+    public let query: String?
 
     public init(
       perPage: Int = 20,
-      query: String)
+      query: String?)
     {
       self.perPage = perPage
-      self.query = "column_19:\(query)"
+      if let query {
+        self.query = #"column_19:"\#(query)""#
+      } else {
+        self.query = .none
+      }
     }
-
+    
     private enum CodingKeys: String, CodingKey {
       case perPage = "limit"
       case query = "refine"
