@@ -1,11 +1,15 @@
+import Combine
 import Foundation
 import LinkNavigator
-import Combine
+
+// MARK: - WishListRouteSubscriber
 
 @Observable
 final class WishListRouteSubscriber {
   let isRouteEventSubject: PassthroughSubject<WishListRouteItem, Never> = .init()
 }
+
+// MARK: LinkNavigatorItemSubscriberProtocol
 
 extension WishListRouteSubscriber: LinkNavigatorItemSubscriberProtocol {
   func receive(encodedItemString: String) {
@@ -13,6 +17,8 @@ extension WishListRouteSubscriber: LinkNavigatorItemSubscriberProtocol {
     isRouteEventSubject.send(query)
   }
 }
+
+// MARK: - WishListRouteItem
 
 struct WishListRouteItem: Equatable, Codable {
   let isLogIn: Bool

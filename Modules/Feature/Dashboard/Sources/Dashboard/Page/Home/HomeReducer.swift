@@ -68,7 +68,7 @@ struct HomeReducer {
 
           return .none
         }
-        
+
         return .none
 
       case .binding(\.country):
@@ -77,7 +77,7 @@ struct HomeReducer {
           return .none
         }
 
-        return  .none
+        return .none
 
       case .binding:
         return .none

@@ -66,7 +66,7 @@ struct SignInReducer {
     case fetchSignIn(Result<Bool, CompositeErrorRepository>)
     case fetchResetPassword(Result<Bool, CompositeErrorRepository>)
 
-    case routeToBack
+    case routeToClose
     case routeToSignUp
 
     case throwError(CompositeErrorRepository)
@@ -115,7 +115,7 @@ struct SignInReducer {
           return .none
         }
 
-      case .routeToBack:
+      case .routeToClose:
         sideEffect.routeToClose(.none)
         return .none
 

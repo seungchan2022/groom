@@ -127,7 +127,7 @@ extension Airbnb.Search.Country {
         self.query = .none
       }
     }
-    
+
     private enum CodingKeys: String, CodingKey {
       case perPage = "limit"
       case query = "refine"

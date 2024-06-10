@@ -56,24 +56,26 @@ extension HomePage {
       set: { new in
         guard store.query != new else { return }
         store.send(.set(\.query, new))
-        
+
         guard !new.isEmpty else { return }
         store.send(.searchCity(new))
       })
   }
-  
+
   private var countryBinder: Binding<String> {
     .init(
       get: { store.country },
       set: { new in
         guard store.country != new else { return }
         store.send(.set(\.country, new))
-        
+
         guard !new.isEmpty else { return }
         store.send(.searchCountry(new))
       })
   }
 }
+
+// MARK: View
 
 extension HomePage: View {
   var body: some View {

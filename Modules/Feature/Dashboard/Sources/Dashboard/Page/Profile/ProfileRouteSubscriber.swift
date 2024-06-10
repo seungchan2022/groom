@@ -1,11 +1,15 @@
+import Combine
 import Foundation
 import LinkNavigator
-import Combine
+
+// MARK: - ProfileRouteSubscriber
 
 @Observable
 final class ProfileRouteSubscriber {
   let isRouteEventSubject: PassthroughSubject<ProfileRouteItem, Never> = .init()
 }
+
+// MARK: LinkNavigatorItemSubscriberProtocol
 
 extension ProfileRouteSubscriber: LinkNavigatorItemSubscriberProtocol {
   func receive(encodedItemString: String) {
@@ -13,6 +17,8 @@ extension ProfileRouteSubscriber: LinkNavigatorItemSubscriberProtocol {
     isRouteEventSubject.send(query)
   }
 }
+
+// MARK: - ProfileRouteItem
 
 struct ProfileRouteItem: Equatable, Codable {
   let isLogIn: Bool

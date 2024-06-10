@@ -46,7 +46,6 @@ extension URLComponents {
       .replacingOccurrences(of: "%2522", with: "%22")
       .replacingOccurrences(of: "%2520", with: "%20")
     
-    print("AAA ", new.url)
     return new
   }
 }
