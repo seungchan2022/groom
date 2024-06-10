@@ -35,7 +35,7 @@ extension ProfilePage: View {
           .frame(maxWidth: .infinity, alignment: .leading)
           .padding(.top, 32)
           .onTapGesture {
-            store.send(.routeToUpdateProfile)
+            store.send(.routeToUpdateProfileImage)
           }
 
         case .isLoggedOut:
@@ -137,6 +137,32 @@ extension ProfilePage: View {
                   .frame(width: 14, height: 20)
               }
               Divider()
+            }
+          }
+
+          if store.state.status == .isLoggedIn {
+            Button(action: { store.send(.routeToUpdateAuth) }) {
+              VStack {
+                HStack {
+                  Image(systemName: "lock.square")
+                    .resizable()
+                    .foregroundStyle(.black)
+                    .frame(width: 20, height: 20)
+
+                  Text("로그인 / 보안")
+                    .font(.headline)
+                    .foregroundStyle(.black)
+
+                  Spacer()
+
+                  Image(systemName: "chevron.right")
+                    .resizable()
+                    .fontWeight(.light)
+                    .foregroundStyle(.black)
+                    .frame(width: 14, height: 20)
+                }
+                Divider()
+              }
             }
           }
         }

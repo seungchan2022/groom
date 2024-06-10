@@ -3,9 +3,9 @@ import ComposableArchitecture
 import Domain
 import Foundation
 
-// MARK: - UpdateProfileSideEffect
+// MARK: - UpdateAuthSideEffect
 
-struct UpdateProfileSideEffect {
+struct UpdateAuthSideEffect {
   let useCase: DashboardEnvironmentUsable
   let main: AnySchedulerOf<DispatchQueue>
   let navigator: RootNavigatorType
@@ -21,38 +21,38 @@ struct UpdateProfileSideEffect {
   }
 }
 
-extension UpdateProfileSideEffect {
-  var userInfo: () -> Effect<UpdateProfileReducer.Action> {
+extension UpdateAuthSideEffect {
+  var userInfo: () -> Effect<UpdateAuthReducer.Action> {
     {
       .publisher {
         useCase.authUseCase.me()
           .receive(on: main)
           .mapToResult()
-          .map(UpdateProfileReducer.Action.fetchUserInfo)
+          .map(UpdateAuthReducer.Action.fetchUserInfo)
       }
     }
   }
 
-  var updateUserName: (String) -> Effect<UpdateProfileReducer.Action> {
+  var updateUserName: (String) -> Effect<UpdateAuthReducer.Action> {
     { name in
       .publisher {
         useCase.authUseCase.updateUserName(name)
           .map { _ in true }
           .receive(on: main)
           .mapToResult()
-          .map(UpdateProfileReducer.Action.fetchUpdateUserName)
+          .map(UpdateAuthReducer.Action.fetchUpdateUserName)
       }
     }
   }
 
-  var deleteUser: () -> Effect<UpdateProfileReducer.Action> {
+  var deleteUser: () -> Effect<UpdateAuthReducer.Action> {
     {
       .publisher {
         useCase.authUseCase.delete()
           .map { _ in true }
           .receive(on: main)
           .mapToResult()
-          .map(UpdateProfileReducer.Action.fetchDeleteUser)
+          .map(UpdateAuthReducer.Action.fetchDeleteUser)
       }
     }
   }
@@ -73,11 +73,9 @@ extension UpdateProfileSideEffect {
     }
   }
 
-  var close: () -> Void {
+  var routeToBack: () -> Void {
     {
-      navigator.close(
-        isAnimated: true,
-        completeAction: { })
+      navigator.back(isAnimated: true)
     }
   }
 }

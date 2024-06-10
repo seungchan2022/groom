@@ -77,12 +77,19 @@ extension ProfileSideEffect {
     }
   }
 
-  var routeToUpdateProfile: () -> Void {
+  var routeToUpdateProfileImage: () -> Void {
     {
-      navigator.fullSheet(
-        linkItem: .init(path: Link.Dashboard.Path.updateProfile.rawValue),
-        isAnimated: true,
-        prefersLargeTitles: false)
+      navigator.next(
+        linkItem: .init(path: Link.Dashboard.Path.updateProfileImage.rawValue),
+        isAnimated: true)
+    }
+  }
+
+  var routeToUpdateAuth: () -> Void {
+    {
+      navigator.next(
+        linkItem: .init(path: Link.Dashboard.Path.updateAuth.rawValue),
+        isAnimated: true)
     }
   }
 }

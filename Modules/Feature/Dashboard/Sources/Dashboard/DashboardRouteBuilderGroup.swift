@@ -18,7 +18,8 @@ extension DashboardRouteBuilderGroup {
       SignInRouteBuilder.generate(),
       SignUpRouteBuilder.generate(),
       UpdatePasswordRouteBuilder.generate(),
-      UpdateProfileRouteBuilder.generate(),
+      UpdateAuthRouteBuilder.generate(),
+      UpdateProfileImageRouteBuilder.generate(),
     ]
   }
 }

@@ -154,34 +154,6 @@ extension HomePage: View {
       case (false, false):
         EmptyView()
       }
-
-//      if store.query.isEmpty && store.country.isEmpty {
-//        ExplorePage(store: exploreStore)
-//      } else {
-//        if store.country.isEmpty {
-//          ScrollView {
-//            LazyVStack(spacing: 48) {
-//              ForEach(store.searchCityItemList) { item in
-//                SearchCityResultComponent(
-//                  viewState: .init(item: item),
-//                  tapAction: { store.send(.routeToCityDetail($0)) })
-//              }
-//            }
-//            .padding(.horizontal, 16)
-//          }
-//        } else {
-//          ScrollView {
-//            LazyVStack(spacing: 48) {
-//              ForEach(store.searchCountryItemList) { item in
-//                SearchCountryResultComponent(
-//                  viewState: .init(item: item),
-//                  tapAction: { store.send(.routeToCountryDetail($0)) })
-//              }
-//            }
-//            .padding(.horizontal, 16)
-//          }
-//        }
-//      }
     }
     .scrollDismissesKeyboard(.immediately)
     .navigationTitle("Explore")

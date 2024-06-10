@@ -4,13 +4,13 @@ import Domain
 import Foundation
 
 @Reducer
-struct UpdateProfileReducer {
+struct UpdateAuthReducer {
 
   // MARK: Lifecycle
 
   init(
     pageID: String = UUID().uuidString,
-    sideEffect: UpdateProfileSideEffect)
+    sideEffect: UpdateAuthSideEffect)
   {
     self.pageID = pageID
     self.sideEffect = sideEffect
@@ -53,14 +53,13 @@ struct UpdateProfileReducer {
 
     case getUserInfo
 
-    case onTapClose
-
     case onTapUpdateUserName
 
     case onTapDeleteUser
 
     case routeToSignIn
     case routeToUpdatePassword
+    case routeToBack
 
     case fetchUserInfo(Result<Auth.Me.Response?, CompositeErrorRepository>)
 
@@ -87,10 +86,6 @@ struct UpdateProfileReducer {
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
-      case .onTapClose:
-        sideEffect.close()
-        return .none
-
       case .onTapUpdateUserName:
         return sideEffect
           .updateUserName(state.userName)
@@ -109,6 +104,10 @@ struct UpdateProfileReducer {
         sideEffect.routeToUpdatePassword()
         return .none
 
+      case .routeToBack:
+        sideEffect.routeToBack()
+        return .none
+
       case .fetchUserInfo(let result):
         switch result {
         case .success(let item):
@@ -123,7 +122,7 @@ struct UpdateProfileReducer {
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "이름이 변경되었습니다.")
-          sideEffect.close()
+          sideEffect.routeToBack()
           return .none
 
         case .failure(let error):
@@ -134,7 +133,7 @@ struct UpdateProfileReducer {
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "계정이 탈퇴되었습니다.")
-          sideEffect.close()
+          sideEffect.routeToBack()
           sideEffect.routeToSignIn()
           return .none
 
@@ -152,5 +151,5 @@ struct UpdateProfileReducer {
   // MARK: Private
 
   private let pageID: String
-  private let sideEffect: UpdateProfileSideEffect
+  private let sideEffect: UpdateAuthSideEffect
 }

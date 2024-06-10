@@ -71,7 +71,8 @@ struct ProfileReducer {
     case routeToSignIn
     case routeToSignUp
 
-    case routeToUpdateProfile
+    case routeToUpdateProfileImage
+    case routeToUpdateAuth
 
     case throwError(CompositeErrorRepository)
   }
@@ -147,8 +148,12 @@ struct ProfileReducer {
         sideEffect.routeToSignUp()
         return .none
 
-      case .routeToUpdateProfile:
-        sideEffect.routeToUpdateProfile()
+      case .routeToUpdateProfileImage:
+        sideEffect.routeToUpdateProfileImage()
+        return .none
+
+      case .routeToUpdateAuth:
+        sideEffect.routeToUpdateAuth()
         return .none
 
       case .throwError(let error):

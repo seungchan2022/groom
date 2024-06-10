@@ -45,7 +45,7 @@ extension URLComponents {
       .replacingOccurrences(of: ":", with: "%3A")
       .replacingOccurrences(of: "%2522", with: "%22")
       .replacingOccurrences(of: "%2520", with: "%20")
-    
+
     return new
   }
 }

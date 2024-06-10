@@ -1,25 +1,18 @@
 import ComposableArchitecture
 import SwiftUI
 
-// MARK: - UpdateProfilePage
+// MARK: - UpdateAuthPage
 
-struct UpdateProfilePage {
-  @Bindable var store: StoreOf<UpdateProfileReducer>
+struct UpdateAuthPage {
+  @Bindable var store: StoreOf<UpdateAuthReducer>
 }
 
 // MARK: View
 
-extension UpdateProfilePage: View {
+extension UpdateAuthPage: View {
   var body: some View {
     ScrollView {
       VStack(spacing: 24) {
-        Image(systemName: "person.circle")
-          .resizable()
-          .frame(width: 200, height: 200)
-
-        Divider()
-          .padding(.top, 32)
-
         HStack {
           VStack(alignment: .leading, spacing: 12) {
             Text("이메일")
@@ -67,11 +60,6 @@ extension UpdateProfilePage: View {
         .padding(.horizontal, 16)
 
         Divider()
-
-        Button(action: { store.isShowDeleteUser = true }) {
-          Text("계정 탈퇴")
-        }
-        .padding(.top, 64)
       }
     }
     .alert(
@@ -104,11 +92,20 @@ extension UpdateProfilePage: View {
           Text("계정 탈퇴")
         }
       })
+    .overlay(alignment: .bottom) {
+      Button(action: { store.isShowDeleteUser = true }) {
+        Text("계정 탈퇴")
+      }
+      .padding(.bottom, 64)
+    }
+    .padding(.top, 32)
     .navigationBarTitleDisplayMode(.inline)
+    .navigationTitle("로그인 / 보안")
+    .navigationBarBackButtonHidden()
     .toolbar {
       ToolbarItem(placement: .topBarLeading) {
-        Button(action: { store.send(.onTapClose) }) {
-          Image(systemName: "xmark")
+        Button(action: { store.send(.routeToBack) }) {
+          Image(systemName: "chevron.left")
             .imageScale(.large)
         }
       }
