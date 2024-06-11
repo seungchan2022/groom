@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 
 public protocol AuthUseCase {
   var signUp: (Auth.Email.Request) -> AnyPublisher<Void, CompositeErrorRepository> { get }
@@ -12,6 +13,10 @@ public protocol AuthUseCase {
   var updateUserName: (String) -> AnyPublisher<Void, CompositeErrorRepository> { get }
 
   var updatePassword: (String) -> AnyPublisher<Void, CompositeErrorRepository> { get }
+
+  var updateProfileImage: (Data) -> AnyPublisher<Void, CompositeErrorRepository> { get }
+
+  var deleteProfileImage: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
 
   var delete: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
 }

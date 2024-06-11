@@ -9,19 +9,19 @@ extension Auth {
 // MARK: - Auth.Email.Request
 
 extension Auth.Email {
-  public struct Request: Equatable, Sendable {
+  public struct Request: Equatable, Sendable, Codable {
     public let email: String
-    public let userName: String?
     public let password: String
+    public let userName: String?
 
     public init(
       email: String,
-      userName: String? = .none,
-      password: String)
+      password: String,
+      userName: String? = .none)
     {
       self.email = email
-      self.userName = userName
       self.password = password
+      self.userName = userName
     }
 
   }

@@ -5,6 +5,7 @@ import FirebaseAuth
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import FirebaseStorage
 import Foundation
 
 // MARK: - AuthUseCasePlatform
@@ -26,14 +27,19 @@ extension AuthUseCasePlatform: AuthUseCase {
             return promise(.failure(.userCancelled))
           }
 
+          var userData: [String: Any] = [
+            "email": req.email,
+            "createdTime": Timestamp(),
+          ]
+
+          if let userName = req.userName {
+            userData["userName"] = userName
+          }
+
           Firestore.firestore()
             .collection("users")
             .document(user.uid)
-            .setData([
-              "email": req.email,
-              "userName": req.userName ?? "",
-              "createdTime": Timestamp(),
-            ]) { error in
+            .setData(userData) { error in
               if let error = error {
                 return promise(.failure(.other(error)))
               } else {
@@ -94,10 +100,10 @@ extension AuthUseCasePlatform: AuthUseCase {
             }
 
             let response = Domain.Auth.Me.Response(
-              uid: me.uid,
+              uid: me.uid ,
               email: me.email,
               userName: data["userName"] as? String,
-              photoURL: me.photoURL?.absoluteString)
+              photoURL: data["photoURL"] as? String)
 
             return promise(.success(response))
           }
@@ -152,6 +158,89 @@ extension AuthUseCasePlatform: AuthUseCase {
 
           return promise(.failure(.other(error)))
         }
+      }
+      .eraseToAnyPublisher()
+    }
+  }
+
+  public var updateProfileImage: (Data) -> AnyPublisher<Void, CompositeErrorRepository> {
+    { imageData in
+      Future<Void, CompositeErrorRepository> { promise in
+        guard let user = Auth.auth().currentUser else {
+          return promise(.failure(.invalidTypeCasting))
+        }
+
+        // 참조 만들기 (파일 위치)
+        let storageRef = Storage.storage().reference()
+        // 기존 참조에 child 메서드를 사용하여 'images/space.jpg'와 같이 하위 위치를 가리키는 참조를 만들 수 있습니다.
+        let profileImageRef = storageRef.child("profile_images/\(user.uid).jpg")
+
+        // 참조에 맞게 이미지 업로드
+        profileImageRef.putData(imageData, metadata: .none) { _, error in
+
+          if let error = error {
+            return promise(.failure(.other(error)))
+          }
+
+          // 이미지 업로드에 해당 이미지의 url을 가져옴
+          profileImageRef.downloadURL { url, error in
+            if let error = error {
+              return promise(.failure(.other(error)))
+            }
+
+            guard let url = url else {
+              return promise(.failure(.invalidTypeCasting))
+            }
+
+            // url을 string으로 변환
+            let photoURLString = url.absoluteString
+
+            Firestore.firestore()
+              .collection("users")
+              .document(user.uid)
+              .setData(["photoURL": photoURLString], merge: true) { error in
+                if let error = error {
+                  return promise(.failure(.other(error)))
+                } else {
+                  return promise(.success(Void()))
+                }
+              }
+          }
+        }
+      }
+      .eraseToAnyPublisher()
+    }
+  }
+
+  public var deleteProfileImage: () -> AnyPublisher<Void, CompositeErrorRepository> {
+    {
+      Future<Void, CompositeErrorRepository> { promise in
+        guard let user = Auth.auth().currentUser else {
+          return promise(.failure(.invalidTypeCasting))
+        }
+
+        let storageRef = Storage.storage().reference()
+
+        let profileImageRef = storageRef.child("profile_images/\(user.uid).jpg")
+
+        profileImageRef.delete { error in
+          if let error = error {
+            promise(.failure(.other(error)))
+          } else {
+            promise(.success(Void()))
+          }
+        }
+
+        Firestore.firestore()
+          .collection("users")
+          .document(user.uid)
+          .updateData(["photoURL": ""]) { error in
+            if let error = error {
+              return promise(.failure(.other(error)))
+            } else {
+              return promise(.success(Void()))
+            }
+          }
       }
       .eraseToAnyPublisher()
     }

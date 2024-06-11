@@ -1,7 +1,9 @@
+import _PhotosUI_SwiftUI
 import Architecture
 import ComposableArchitecture
 import Domain
 import Foundation
+import SwiftUI
 
 @Reducer
 struct UpdateProfileImageReducer {
@@ -22,9 +24,14 @@ struct UpdateProfileImageReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
+    var isShowPhotoPicker = false
+    var selectedImage: PhotosPickerItem?
+
     var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
 
     var fetchUserInfo: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
+    var fetchUpdateProfileImage: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchDeleteProfileImage: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     init(id: UUID = UUID()) {
       self.id = id
@@ -34,6 +41,8 @@ struct UpdateProfileImageReducer {
   enum CancelID: Equatable, CaseIterable {
     case teardown
     case requestUserInfo
+    case requestUpdateProfileImage
+    case requestDeleteProfileImage
   }
 
   enum Action: BindableAction, Equatable {
@@ -41,8 +50,12 @@ struct UpdateProfileImageReducer {
     case teardown
 
     case getUserInfo
+    case updateProfileImage(Data)
+    case deleteProfileImage
 
     case fetchUserInfo(Result<Auth.Me.Response?, CompositeErrorRepository>)
+    case fetchUpdateProfileImage(Result<Bool, CompositeErrorRepository>)
+    case fetchDeleteProfileImage(Result<Bool, CompositeErrorRepository>)
 
     case routeToBack
 
@@ -65,10 +78,42 @@ struct UpdateProfileImageReducer {
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
+      case .updateProfileImage(let imageData):
+        return sideEffect
+          .updateProfileImage(imageData)
+          .cancellable(pageID: pageID, id: CancelID.requestUpdateProfileImage, cancelInFlight: true)
+
+      case .deleteProfileImage:
+        return sideEffect
+          .deleteProfileImage()
+          .cancellable(pageID: pageID, id: CancelID.requestDeleteProfileImage, cancelInFlight: true)
+
       case .fetchUserInfo(let result):
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchUpdateProfileImage(let result):
+        switch result {
+        case .success:
+          sideEffect.useCase.toastViewModel.send(message: "프로필 이미지가 변경되었습니다.")
+          sideEffect.routeToBack()
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchDeleteProfileImage(let result):
+        switch result {
+        case .success:
+          sideEffect.useCase.toastViewModel.send(message: "프로필 이미지가 삭제되었습니다.")
+          sideEffect.routeToBack()
           return .none
 
         case .failure(let error):

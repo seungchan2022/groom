@@ -70,7 +70,7 @@ struct SignUpReducer {
 
       case .onTapSignUp:
         return sideEffect
-          .signUp(.init(email: state.emailText, userName: state.userNameText, password: state.passwordText))
+          .signUp(.init(email: state.emailText, password: state.passwordText, userName: state.userNameText))
           .cancellable(pageID: pageID, id: CancelID.requestSignUp, cancelInFlight: true)
 
       case .fetchSignUp(let result):

@@ -1,5 +1,6 @@
 import Architecture
 import ComposableArchitecture
+import DesignSystem
 import SwiftUI
 
 // MARK: - ProfilePage
@@ -19,9 +20,14 @@ extension ProfilePage: View {
         case .isLoggedIn:
           VStack(alignment: .leading) {
             HStack(spacing: 12) {
-              Image(systemName: "person.circle")
-                .resizable()
-                .frame(width: 80, height: 80)
+              RemoteImage(url: store.item.photoURL ?? "") {
+                Image(systemName: "person.circle")
+                  .resizable()
+                  .frame(width: 80, height: 80)
+              }
+              .scaledToFill()
+              .frame(width: 100, height: 100)
+              .clipShape(Circle())
 
               VStack(alignment: .leading) {
                 Text("이메일: \(store.item.email ?? "")")

@@ -32,9 +32,34 @@ extension UpdateProfileImageSideEffect {
     }
   }
 
+  var updateProfileImage: (Data) -> Effect<UpdateProfileImageReducer.Action> {
+    { imageData in
+      .publisher {
+        useCase.authUseCase.updateProfileImage(imageData)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdateProfileImageReducer.Action.fetchUpdateProfileImage)
+      }
+    }
+  }
+
+  var deleteProfileImage: () -> Effect<UpdateProfileImageReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.deleteProfileImage()
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdateProfileImageReducer.Action.fetchDeleteProfileImage)
+      }
+    }
+  }
+
   var routeToBack: () -> Void {
     {
       navigator.back(isAnimated: true)
     }
   }
+
 }
