@@ -22,24 +22,52 @@ extension DetailPage: View {
     ScrollView {
       if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
         SearchCityResultComponent(
-          viewState: .init(item: searchCityItem),
+          viewState: .init(
+            item: searchCityItem,
+            isLike: store.state.isLike),
           backAction: { store.send(.routeToBack) },
           tapAction: { isShowMap = true },
+          likeAction: {
+            if !store.state.isLike {
+              store.send(.onTapLikeCityDetail($0))
+            } else {
+              store.send(.onTapUnLikeCityDetail($0))
+            }
+          },
           position: $position)
       } else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
         ItemComponent(
-          viewState: .init(item: item),
+          viewState: .init(
+            item: item,
+            isLike: store.state.isLike),
           backAction: { store.send(.routeToBack) },
           tapAction: { isShowMap = true },
+          likeAction: {
+            if !store.state.isLike {
+              store.send(.onTapLikeDetail($0))
+            } else {
+              store.send(.onTapUnLikeDetail($0))
+            }
+
+          },
           position: $position)
       } else if
         let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
           .first(where: { $0.id == store.searchCountryItem.id })
       {
         SearchCountryResultComponent(
-          viewState: .init(item: searchCountryItem),
+          viewState: .init(
+            item: searchCountryItem,
+            isLike: store.state.isLike),
           backAction: { store.send(.routeToBack) },
           tapAction: { isShowMap = true },
+          likeAction: {
+            if !store.state.isLike {
+              store.send(.onTapLikeCountryDetail($0))
+            } else {
+              store.send(.onTapUnLikeCountryDetail($0))
+            }
+          },
           position: $position)
       }
     }
@@ -156,6 +184,7 @@ extension DetailPage: View {
       store.send(.getItem(store.item))
       store.send(.getSearchCityItem(store.searchCityItem))
       store.send(.getSearchCountryItem(store.searchCountryItem))
+      store.send(.getIsLike)
     }
     .onDisappear {
       store.send(.teardown)

@@ -39,6 +39,8 @@ struct DetailReducer {
 
     let id: UUID
 
+    var isLike = false
+
     let item: Airbnb.Listing.Item
     let searchCityItem: Airbnb.Search.City.Item
     let searchCountryItem: Airbnb.Search.Country.Item
@@ -47,6 +49,15 @@ struct DetailReducer {
     var fetchSearchCityItem: FetchState.Data<Airbnb.SearchCityDetail.Response?> = .init(isLoading: false, value: .none)
     var fetchSearchCountryItem: FetchState.Data<Airbnb.SearchCountryDetail.Response?> = .init(isLoading: false, value: .none)
 
+    var fetchIsLike: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+
+    var fetchLikeDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchLikeCityDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchLikeCountryDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+
+    var fetchUnLikeDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchUnLikeCityDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchUnLikeCountryDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
   }
 
   enum CancelID: Equatable, CaseIterable {
@@ -54,6 +65,10 @@ struct DetailReducer {
     case requestItem
     case requestSearchCityItem
     case requestSearchCountryItem
+    case requestLikeDetail
+    case requestLikeCityDetail
+    case requestLikeCountryDetail
+    case requestIsLike
   }
 
   enum Action: BindableAction, Equatable {
@@ -65,9 +80,30 @@ struct DetailReducer {
     case getSearchCityItem(Airbnb.Search.City.Item)
     case getSearchCountryItem(Airbnb.Search.Country.Item)
 
+    case getIsLike
+
+    case onTapLikeDetail(Airbnb.Detail.Item)
+    case onTapUnLikeDetail(Airbnb.Detail.Item)
+
+    case onTapLikeCityDetail(Airbnb.SearchCityDetail.Item)
+    case onTapUnLikeCityDetail(Airbnb.SearchCityDetail.Item)
+
+    case onTapLikeCountryDetail(Airbnb.SearchCountryDetail.Item)
+    case onTapUnLikeCountryDetail(Airbnb.SearchCountryDetail.Item)
+
     case fetchItem(Result<Airbnb.Detail.Response, CompositeErrorRepository>)
     case fetchSearchCityItem(Result<Airbnb.SearchCityDetail.Response, CompositeErrorRepository>)
     case fetchSearchCountryItem(Result<Airbnb.SearchCountryDetail.Response, CompositeErrorRepository>)
+
+    case fetchIsLike(Result<Bool, CompositeErrorRepository>)
+
+    case fetchLikeDetail(Result<Bool, CompositeErrorRepository>)
+    case fetchLikeCityDetail(Result<Bool, CompositeErrorRepository>)
+    case fetchLikeCountryDetail(Result<Bool, CompositeErrorRepository>)
+
+    case fetchUnLikeDetail(Result<Bool, CompositeErrorRepository>)
+    case fetchUnLikeCityDetail(Result<Bool, CompositeErrorRepository>)
+    case fetchUnLikeCountryDetail(Result<Bool, CompositeErrorRepository>)
 
     case routeToBack
 
@@ -84,6 +120,12 @@ struct DetailReducer {
       case .teardown:
         return .concatenate(
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
+
+      case .getIsLike:
+        state.fetchIsLike.isLoading = true
+        return sideEffect
+          .getIsLike("\(state.item.id)")
+          .cancellable(pageID: pageID, id: CancelID.requestIsLike, cancelInFlight: true)
 
       case .getItem(let item):
         state.fetchItem.isLoading = true
@@ -102,6 +144,42 @@ struct DetailReducer {
         return sideEffect
           .getSearchCountryItem(item)
           .cancellable(pageID: pageID, id: CancelID.requestSearchCountryItem, cancelInFlight: true)
+
+      case .onTapLikeDetail(let item):
+        state.fetchLikeDetail.isLoading = true
+        return sideEffect
+          .likeDetail(item)
+          .cancellable(pageID: pageID, id: CancelID.requestLikeDetail, cancelInFlight: true)
+
+      case .onTapUnLikeDetail(let item):
+        state.fetchUnLikeDetail.isLoading = true
+        return sideEffect
+          .unLikeDetail(item)
+          .cancellable(pageID: pageID, id: CancelID.requestLikeDetail, cancelInFlight: true)
+
+      case .onTapLikeCityDetail(let item):
+        state.fetchLikeCityDetail.isLoading = true
+        return sideEffect
+          .likeCityDetail(item)
+          .cancellable(pageID: pageID, id: CancelID.requestLikeCityDetail, cancelInFlight: true)
+
+      case .onTapUnLikeCityDetail(let item):
+        state.fetchUnLikeCityDetail.isLoading = true
+        return sideEffect
+          .unLikeCityDetail(item)
+          .cancellable(pageID: pageID, id: CancelID.requestLikeCityDetail, cancelInFlight: true)
+
+      case .onTapLikeCountryDetail(let item):
+        state.fetchLikeCountryDetail.isLoading = true
+        return sideEffect
+          .likeCountryDetail(item)
+          .cancellable(pageID: pageID, id: CancelID.requestLikeCountryDetail, cancelInFlight: true)
+
+      case .onTapUnLikeCountryDetail(let item):
+        state.fetchUnLikeCountryDetail.isLoading = true
+        return sideEffect
+          .unLikeCountryDetail(item)
+          .cancellable(pageID: pageID, id: CancelID.requestLikeCountryDetail, cancelInFlight: true)
 
       case .fetchItem(let result):
         state.fetchItem.isLoading = false
@@ -130,6 +208,83 @@ struct DetailReducer {
         switch result {
         case .success(let item):
           state.fetchSearchCountryItem.value = item
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchIsLike(let result):
+        state.fetchIsLike.isLoading = false
+        switch result {
+        case .success(let isLike):
+          state.isLike = isLike
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchLikeDetail(let result):
+        state.fetchLikeDetail.isLoading = false
+        switch result {
+        case .success:
+          state.isLike = true
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchUnLikeDetail(let result):
+        state.fetchUnLikeDetail.isLoading = false
+        switch result {
+        case .success:
+          state.isLike = false
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchLikeCityDetail(let result):
+        state.fetchLikeCityDetail.isLoading = false
+        switch result {
+        case .success:
+          state.isLike = true
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchUnLikeCityDetail(let result):
+        state.fetchUnLikeCityDetail.isLoading = false
+        switch result {
+        case .success:
+          state.isLike = false
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchLikeCountryDetail(let result):
+        state.fetchLikeCountryDetail.isLoading = false
+        switch result {
+        case .success:
+          state.isLike = true
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchUnLikeCountryDetail(let result):
+        state.fetchUnLikeCountryDetail.isLoading = false
+        switch result {
+        case .success:
+          state.isLike = false
           return .none
 
         case .failure(let error):

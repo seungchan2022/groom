@@ -11,6 +11,7 @@ extension DetailPage {
     let viewState: ViewState
     let backAction: () -> Void
     let tapAction: () -> Void
+    let likeAction: (Airbnb.Detail.Item) -> Void
 
     @Binding var position: MapCameraPosition
   }
@@ -51,6 +52,19 @@ extension DetailPage.ItemComponent: View {
       Button(action: { backAction() }) {
         Image(systemName: "chevron.left")
           .foregroundStyle(.black)
+          .background {
+            Circle()
+              .fill(.white)
+              .frame(width: 32, height: 32)
+          }
+          .padding(.horizontal, 24)
+          .padding(.top, 64)
+      }
+    }
+    .overlay(alignment: .topTrailing) {
+      Button(action: { likeAction(viewState.item) }) {
+        Image(systemName: viewState.isLike ? "heart.fill" : "heart")
+          .foregroundStyle(viewState.isLike ? .pink : .black)
           .background {
             Circle()
               .fill(.white)
@@ -170,6 +184,7 @@ extension DetailPage.ItemComponent: View {
 extension DetailPage.ItemComponent {
   struct ViewState: Equatable {
     let item: Airbnb.Detail.Item
+    var isLike: Bool
   }
 }
 

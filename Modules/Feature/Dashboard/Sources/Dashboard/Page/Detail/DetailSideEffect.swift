@@ -55,6 +55,90 @@ extension DetailSideEffect {
     }
   }
 
+  var getIsLike: (String) -> Effect<DetailReducer.Action> {
+    { itemId in
+      .publisher {
+        useCase.likeUseCase.getIsLike(itemId)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchIsLike)
+      }
+    }
+  }
+
+  var likeDetail: (Airbnb.Detail.Item) -> Effect<DetailReducer.Action> {
+    { item in
+      .publisher {
+        useCase.likeUseCase.likeDetail(item)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchLikeDetail)
+      }
+    }
+  }
+
+  var unLikeDetail: (Airbnb.Detail.Item) -> Effect<DetailReducer.Action> {
+    { item in
+      .publisher {
+        useCase.likeUseCase.unLikeDetail(item)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchUnLikeDetail)
+      }
+    }
+  }
+
+  var likeCityDetail: (Airbnb.SearchCityDetail.Item) -> Effect<DetailReducer.Action> {
+    { item in
+      .publisher {
+        useCase.likeUseCase.likeCityDetail(item)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchLikeCityDetail)
+      }
+    }
+  }
+
+  var unLikeCityDetail: (Airbnb.SearchCityDetail.Item) -> Effect<DetailReducer.Action> {
+    { item in
+      .publisher {
+        useCase.likeUseCase.unLikeCityDetail(item)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchUnLikeCityDetail)
+      }
+    }
+  }
+
+  var likeCountryDetail: (Airbnb.SearchCountryDetail.Item) -> Effect<DetailReducer.Action> {
+    { item in
+      .publisher {
+        useCase.likeUseCase.likeCountryDetail(item)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchLikeCountryDetail)
+      }
+    }
+  }
+
+  var unLikeCountryDetail: (Airbnb.SearchCountryDetail.Item) -> Effect<DetailReducer.Action> {
+    { item in
+      .publisher {
+        useCase.likeUseCase.unLikeCountryDetail(item)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchUnLikeCountryDetail)
+      }
+    }
+  }
+
   var routeToBack: () -> Void {
     {
       navigator.back(isAnimated: true)
