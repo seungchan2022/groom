@@ -29,11 +29,11 @@ extension AuthUseCasePlatform: AuthUseCase {
 
           var userData: [String: Any] = [
             "email": req.email,
-            "createdTime": Timestamp(),
+            "created_time": Timestamp(),
           ]
 
           if let userName = req.userName {
-            userData["userName"] = userName
+            userData["user_name"] = userName
           }
 
           Firestore.firestore()
@@ -102,7 +102,7 @@ extension AuthUseCasePlatform: AuthUseCase {
             let response = Domain.Auth.Me.Response(
               uid: me.uid ,
               email: me.email,
-              userName: data["userName"] as? String,
+              userName: data["user_name"] as? String,
               photoURL: data["photoURL"] as? String)
 
             return promise(.success(response))
@@ -137,7 +137,7 @@ extension AuthUseCasePlatform: AuthUseCase {
           .collection("users")
           .document(me.uid)
           .updateData([
-            "userName": name,
+            "user_name": name,
           ]) { error in
             if let error = error {
               return promise(.failure(.other(error)))

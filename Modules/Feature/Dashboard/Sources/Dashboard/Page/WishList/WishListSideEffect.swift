@@ -46,6 +46,17 @@ extension WishListSideEffect {
     }
   }
 
+  var getWishList: () -> Effect<WishListReducer.Action> {
+    {
+      .publisher {
+        useCase.wishListUseCase.getItemList()
+          .receive(on: main)
+          .mapToResult()
+          .map(WishListReducer.Action.fetchWishList)
+      }
+    }
+  }
+
   var routeToSignIn: () -> Void {
     {
       navigator.sheet(

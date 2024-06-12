@@ -13,5 +13,6 @@ struct AppSideEffect: DependencyType, DashboardEnvironmentUsable {
   let airbnbDetailUseCase: AirbnbDetailUseCase
   let likeUseCase: LikeUseCase
   let searchUseCase: SearchUseCase
+  let wishListUseCase: WishListUseCase
   let toastViewModel: ToastViewActionType
 }

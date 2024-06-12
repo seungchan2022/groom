@@ -23,7 +23,8 @@ extension ProfilePage: View {
               RemoteImage(url: store.item.photoURL ?? "") {
                 Image(systemName: "person.circle")
                   .resizable()
-                  .frame(width: 80, height: 80)
+                  .frame(width: 100, height: 100)
+                  .fontWeight(.ultraLight)
               }
               .scaledToFill()
               .frame(width: 100, height: 100)
@@ -34,6 +35,14 @@ extension ProfilePage: View {
 
                 Text("이름: \(store.item.userName ?? "")")
               }
+              
+              Spacer()
+
+              Image(systemName: "chevron.right")
+                .resizable()
+                .foregroundStyle(.black)
+                .frame(width: 14, height: 20)
+              
             }
 
             Divider()
@@ -74,78 +83,6 @@ extension ProfilePage: View {
           .padding(.top, 32) // ~ Sign Up
         }
         VStack(spacing: 32) {
-          Button(action: { }) {
-            VStack {
-              HStack {
-                Image(systemName: "gear")
-                  .resizable()
-                  .foregroundStyle(.black)
-                  .frame(width: 20, height: 20)
-
-                Text("Settings")
-                  .font(.headline)
-                  .foregroundStyle(.black)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                  .resizable()
-                  .foregroundStyle(.black)
-                  .frame(width: 14, height: 20)
-              }
-
-              Divider()
-            }
-          }
-
-          Button(action: { }) {
-            VStack {
-              HStack {
-                Image(systemName: "gear")
-                  .resizable()
-                  .foregroundStyle(.black)
-                  .frame(width: 20, height: 20)
-
-                Text("Accessibility")
-                  .font(.headline)
-                  .foregroundStyle(.black)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                  .resizable()
-                  .foregroundStyle(.black)
-                  .frame(width: 14, height: 20)
-              }
-
-              Divider()
-            }
-          }
-
-          Button(action: { }) {
-            VStack {
-              HStack {
-                Image(systemName: "questionmark.circle")
-                  .resizable()
-                  .foregroundStyle(.black)
-                  .frame(width: 20, height: 20)
-
-                Text("Visit the Help Center")
-                  .font(.headline)
-                  .foregroundStyle(.black)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                  .resizable()
-                  .fontWeight(.light)
-                  .foregroundStyle(.black)
-                  .frame(width: 14, height: 20)
-              }
-              Divider()
-            }
-          }
-
           if store.state.status == .isLoggedIn {
             Button(action: { store.send(.routeToUpdateAuth) }) {
               VStack {

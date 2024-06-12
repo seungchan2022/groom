@@ -21,6 +21,10 @@ extension WishListPage: View {
 
           Text("User ID: \(store.item.uid)")
           Text("User Email: \(store.item.email ?? "")")
+
+          ForEach(store.wishList) { item in
+            Text(item.name)
+          }
         }
         .padding(.top, 32)
         .padding(.leading, 16)
@@ -57,10 +61,12 @@ extension WishListPage: View {
     .onReceive(routeSubscriber.isRouteEventSubject, perform: { _ in
       store.send(.getUser)
       store.send(.getUserInfo)
+      store.send(.getWishList)
     })
     .onAppear {
       store.send(.getUser)
       store.send(.getUserInfo)
+      store.send(.getWishList)
     }
     .onDisappear {
       store.send(.teardown)

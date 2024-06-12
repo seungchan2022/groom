@@ -28,34 +28,34 @@ extension LikeUseCasePlatform: LikeUseCase {
         var data: [String: Any] = [
           "id" : item.id,
           "name" : item.name,
-          "hostID" : item.hostID,
-          "roomType" : item.roomType,
-          "price" : item.price,
-          "reviewCount" : item.reviewCount,
-          "totalListingCount" : item.totalListingCount,
-          "availableDays" : item.availableDays,
-          "lastUpdateDate" : item.lastUpdateDate,
-          "country" : item.country,
+          "host_id" : item.hostID,
+          "room_type" : item.roomType,
+          "column_10" : item.price,
+          "number_of_reviews" : item.reviewCount,
+          "calculated_host_listings_count" : item.totalListingCount,
+          "availability_365" : item.availableDays,
+          "updated_date" : item.lastUpdateDate,
+          "column_19" : item.country,
           "city" : item.city,
-          "location" : item.location,
-          "coordinateList": [
-            "latitude": item.coordinateList.latitude,
-            "longitude": item.coordinateList.longitude,
+          "column_20" : item.location,
+          "coordinates": [
+            "lat": item.coordinateList.latitude,
+            "lon": item.coordinateList.longitude,
           ],
         ]
 
         if let lastReviewDate = item.lastReviewDate {
-          data["lastReviewDate"] = lastReviewDate
+          data["last_review"] = lastReviewDate
         }
 
         if let reviewPerMonth = item.reviewPerMonth {
-          data["reviewPerMonth"] = reviewPerMonth
+          data["reviews_per_month"] = reviewPerMonth
         }
 
         Firestore.firestore()
           .collection("users")
           .document(me.uid)
-          .collection("wishList")
+          .collection("wish_list")
           .document("\(item.id)")
           .setData(data) { error in
             if let error = error {
@@ -80,34 +80,34 @@ extension LikeUseCasePlatform: LikeUseCase {
         var data: [String: Any] = [
           "id" : item.id,
           "name" : item.name,
-          "hostID" : item.hostID,
-          "roomType" : item.roomType,
-          "price" : item.price,
-          "reviewCount" : item.reviewCount,
-          "totalListingCount" : item.totalListingCount,
-          "availableDays" : item.availableDays,
-          "lastUpdateDate" : item.lastUpdateDate,
-          "country" : item.country,
+          "host_id" : item.hostID,
+          "room_type" : item.roomType,
+          "column_10" : item.price,
+          "number_of_reviews" : item.reviewCount,
+          "calculated_host_listings_count" : item.totalListingCount,
+          "availability_365" : item.availableDays,
+          "updated_date" : item.lastUpdateDate,
+          "column_19" : item.country,
           "city" : item.city,
-          "location" : item.location,
-          "coordinateList": [
-            "latitude": item.coordinateList.latitude,
-            "longitude": item.coordinateList.longitude,
+          "column_20" : item.location,
+          "coordinates": [
+            "lat": item.coordinateList.latitude,
+            "lon": item.coordinateList.longitude,
           ],
         ]
 
         if let lastReviewDate = item.lastReviewDate {
-          data["lastReviewDate"] = lastReviewDate
+          data["last_review"] = lastReviewDate
         }
 
         if let reviewPerMonth = item.reviewPerMonth {
-          data["reviewPerMonth"] = reviewPerMonth
+          data["reviews_per_month"] = reviewPerMonth
         }
 
         Firestore.firestore()
           .collection("users")
           .document(me.uid)
-          .collection("wishList")
+          .collection("wish_list")
           .document("\(item.id)")
           .setData(data) { error in
             if let error = error {
@@ -132,34 +132,34 @@ extension LikeUseCasePlatform: LikeUseCase {
         var data: [String: Any] = [
           "id" : item.id,
           "name" : item.name,
-          "hostID" : item.hostID,
-          "roomType" : item.roomType,
-          "price" : item.price,
-          "reviewCount" : item.reviewCount,
-          "totalListingCount" : item.totalListingCount,
-          "availableDays" : item.availableDays,
-          "lastUpdateDate" : item.lastUpdateDate,
-          "country" : item.country,
+          "host_id" : item.hostID,
+          "room_type" : item.roomType,
+          "column_10" : item.price,
+          "number_of_reviews" : item.reviewCount,
+          "calculated_host_listings_count" : item.totalListingCount,
+          "availability_365" : item.availableDays,
+          "updated_date" : item.lastUpdateDate,
+          "column_19" : item.country,
           "city" : item.city,
-          "location" : item.location,
-          "coordinateList": [
-            "latitude": item.coordinateList.latitude,
-            "longitude": item.coordinateList.longitude,
+          "column_20" : item.location,
+          "coordinates": [
+            "lat": item.coordinateList.latitude,
+            "lon": item.coordinateList.longitude,
           ],
         ]
 
         if let lastReviewDate = item.lastReviewDate {
-          data["lastReviewDate"] = lastReviewDate
+          data["last_review"] = lastReviewDate
         }
 
         if let reviewPerMonth = item.reviewPerMonth {
-          data["reviewPerMonth"] = reviewPerMonth
+          data["reviews_per_month"] = reviewPerMonth
         }
 
         Firestore.firestore()
           .collection("users")
           .document(me.uid)
-          .collection("wishList")
+          .collection("wish_list")
           .document("\(item.id)")
           .setData(data) { error in
             if let error = error {
@@ -183,7 +183,7 @@ extension LikeUseCasePlatform: LikeUseCase {
         Firestore.firestore()
           .collection("users")
           .document(me.uid)
-          .collection("wishList")
+          .collection("wish_list")
           .document("\(item.id)")
           .delete { error in
             if let error = error {
@@ -207,7 +207,7 @@ extension LikeUseCasePlatform: LikeUseCase {
         Firestore.firestore()
           .collection("users")
           .document(me.uid)
-          .collection("wishList")
+          .collection("wish_list")
           .document("\(item.id)")
           .delete { error in
             if let error = error {
@@ -231,7 +231,7 @@ extension LikeUseCasePlatform: LikeUseCase {
         Firestore.firestore()
           .collection("users")
           .document(me.uid)
-          .collection("wishList")
+          .collection("wish_list")
           .document("\(item.id)")
           .delete { error in
             if let error = error {
@@ -255,7 +255,7 @@ extension LikeUseCasePlatform: LikeUseCase {
         Firestore.firestore()
           .collection("users")
           .document(me.uid)
-          .collection("wishList")
+          .collection("wish_list")
           .document(itemID)
           .getDocument { document, error in
             if let error = error {

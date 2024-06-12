@@ -7,5 +7,6 @@ public protocol DashboardEnvironmentUsable {
   var airbnbDetailUseCase: AirbnbDetailUseCase { get }
   var likeUseCase: LikeUseCase { get }
   var searchUseCase: SearchUseCase { get }
+  var wishListUseCase: WishListUseCase { get }
   var toastViewModel: ToastViewActionType { get }
 }

@@ -25,6 +25,8 @@ extension UpdateProfileImagePage: View {
                 Image(systemName: "person.circle")
                   .resizable()
                   .frame(width: 200, height: 200)
+                  .fontWeight(.ultraLight)
+                  .foregroundStyle(.black)
               })
               .scaledToFill()
               .frame(width: 200, height: 200)

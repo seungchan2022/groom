@@ -26,8 +26,12 @@ struct WishListReducer {
 
     var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
 
+    var wishList: [Airbnb.WishList.Item] = []
+
     var fetchUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
     var fetchUserInfo: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
+
+    var fetchWishList: FetchState.Data<[Airbnb.WishList.Item]?> = .init(isLoading: false, value: .none)
 
     init(id: UUID = UUID()) {
       self.id = id
@@ -38,6 +42,7 @@ struct WishListReducer {
     case teardown
     case requestUser
     case requestUserInfo
+    case requestWishList
 
   }
 
@@ -48,8 +53,11 @@ struct WishListReducer {
     case getUser
     case getUserInfo
 
+    case getWishList
+
     case fetchUser(Result<Bool, CompositeErrorRepository>)
     case fetchUserInfo(Result<Auth.Me.Response?, CompositeErrorRepository>)
+    case fetchWishList(Result<[Airbnb.WishList.Item], CompositeErrorRepository>)
 
     case routeToSignIn
 
@@ -77,6 +85,12 @@ struct WishListReducer {
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
+      case .getWishList:
+        state.fetchWishList.isLoading = true
+        return sideEffect
+          .getWishList()
+          .cancellable(pageID: pageID, id: CancelID.requestWishList, cancelInFlight: true)
+
       case .fetchUser(let result):
         switch result {
         case .success(let isLoggedIn):
@@ -95,6 +109,17 @@ struct WishListReducer {
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .fetchWishList(let result):
+        state.fetchWishList.isLoading = false
+        switch result {
+        case .success(let itemList):
+          state.wishList = itemList
           return .none
 
         case .failure(let error):
