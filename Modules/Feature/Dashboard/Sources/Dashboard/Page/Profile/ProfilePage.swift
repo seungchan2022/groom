@@ -35,14 +35,13 @@ extension ProfilePage: View {
 
                 Text("이름: \(store.item.userName ?? "")")
               }
-              
+
               Spacer()
 
               Image(systemName: "chevron.right")
                 .resizable()
                 .foregroundStyle(.black)
                 .frame(width: 14, height: 20)
-              
             }
 
             Divider()

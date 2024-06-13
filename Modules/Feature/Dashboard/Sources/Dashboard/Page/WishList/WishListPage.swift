@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import DesignSystem
 import SwiftUI
 
 // MARK: - WishListPage
@@ -6,6 +7,14 @@ import SwiftUI
 struct WishListPage {
   @Bindable var store: StoreOf<WishListReducer>
   var routeSubscriber: WishListRouteSubscriber
+}
+
+extension WishListPage {
+  private var gridColumnList: [GridItem] {
+    Array(
+      repeating: .init(.flexible()),
+      count: UIDevice.current.userInterfaceIdiom == .pad ? 6 : 2)
+  }
 }
 
 // MARK: View
@@ -16,18 +25,20 @@ extension WishListPage: View {
       switch store.state.status {
       case .isLoggedIn:
         VStack(alignment: .leading) {
-          Text("로그인 성공")
-            .font(.largeTitle)
+          if store.wishList.isEmpty {
+            Text("위시리스트가 없습니다. \n원하시는 숙소의 하트 버튼을 눌러 위시리스트를 추가해주세요.")
+          }
 
-          Text("User ID: \(store.item.uid)")
-          Text("User Email: \(store.item.email ?? "")")
-
-          ForEach(store.wishList) { item in
-            Text(item.name)
+          LazyVGrid(columns: gridColumnList) {
+            ForEach(store.wishList) { item in
+              ItemComponent(
+                viewState: .init(item: item),
+                tapAction: { store.send(.routeToDetail($0)) })
+            }
           }
         }
         .padding(.top, 32)
-        .padding(.leading, 16)
+        .padding(.horizontal, 16)
 
       case .isLoggedOut:
         VStack {
@@ -58,6 +69,7 @@ extension WishListPage: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .navigationTitle("WishList")
+    .navigationBarTitleDisplayMode(.large)
     .onReceive(routeSubscriber.isRouteEventSubject, perform: { _ in
       store.send(.getUser)
       store.send(.getUserInfo)

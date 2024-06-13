@@ -64,4 +64,14 @@ extension WishListSideEffect {
         isAnimated: true)
     }
   }
+
+  var routeToDetail: (Airbnb.WishList.Item) -> Void {
+    { item in
+      navigator.next(
+        linkItem: .init(
+          path: Link.Dashboard.Path.detail.rawValue,
+          items: item),
+        isAnimated: true)
+    }
+  }
 }
