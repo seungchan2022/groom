@@ -22,7 +22,7 @@ extension LikeUseCasePlatform: LikeUseCase {
       Future<Void, CompositeErrorRepository> { promise in
 
         guard let me = Auth.auth().currentUser else {
-          return promise(.failure(.invalidTypeCasting))
+          return promise(.failure(.userCancelled))
         }
 
         var data: [String: Any] = [
@@ -42,6 +42,7 @@ extension LikeUseCasePlatform: LikeUseCase {
             "lat": item.coordinateList.latitude,
             "lon": item.coordinateList.longitude,
           ],
+          "created_time": Timestamp(),
         ]
 
         if let lastReviewDate = item.lastReviewDate {
@@ -74,7 +75,7 @@ extension LikeUseCasePlatform: LikeUseCase {
       Future<Void, CompositeErrorRepository> { promise in
 
         guard let me = Auth.auth().currentUser else {
-          return promise(.failure(.invalidTypeCasting))
+          return promise(.failure(.userCancelled))
         }
 
         var data: [String: Any] = [
@@ -94,6 +95,7 @@ extension LikeUseCasePlatform: LikeUseCase {
             "lat": item.coordinateList.latitude,
             "lon": item.coordinateList.longitude,
           ],
+          "created_time": Timestamp(),
         ]
 
         if let lastReviewDate = item.lastReviewDate {
@@ -126,7 +128,7 @@ extension LikeUseCasePlatform: LikeUseCase {
       Future<Void, CompositeErrorRepository> { promise in
 
         guard let me = Auth.auth().currentUser else {
-          return promise(.failure(.invalidTypeCasting))
+          return promise(.failure(.userCancelled))
         }
 
         var data: [String: Any] = [
@@ -146,6 +148,7 @@ extension LikeUseCasePlatform: LikeUseCase {
             "lat": item.coordinateList.latitude,
             "lon": item.coordinateList.longitude,
           ],
+          "created_time": Timestamp(),
         ]
 
         if let lastReviewDate = item.lastReviewDate {
@@ -249,7 +252,7 @@ extension LikeUseCasePlatform: LikeUseCase {
     { itemID in
       Future<Void, CompositeErrorRepository> { promise in
         guard let me = Auth.auth().currentUser else {
-          return promise(.failure(.invalidTypeCasting))
+          return 
         }
 
         Firestore.firestore()

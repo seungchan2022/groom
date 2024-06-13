@@ -13,7 +13,7 @@ extension Airbnb.WishList {
 
     public let id: Int
     public let name: String
-    public let hostID: Int?
+    public let hostID: Int
     public let roomType: String
     public let price: Int
     public let reviewCount: Int
@@ -26,6 +26,7 @@ extension Airbnb.WishList {
     public let city: String
     public let location: String
     public let coordinateList: Coordinate
+    public let createdTime: Date
 
     // MARK: Private
 
@@ -45,6 +46,7 @@ extension Airbnb.WishList {
       case city
       case location = "column_20"
       case coordinateList = "coordinates"
+      case createdTime = "created_time"
     }
   }
 

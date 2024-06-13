@@ -30,7 +30,7 @@ extension WishListPage: View {
           }
 
           LazyVGrid(columns: gridColumnList) {
-            ForEach(store.wishList) { item in
+            ForEach(store.wishList.sorted(by: { $0.createdTime > $1.createdTime})) { item in
               ItemComponent(
                 viewState: .init(item: item),
                 tapAction: { store.send(.routeToDetail($0)) })
