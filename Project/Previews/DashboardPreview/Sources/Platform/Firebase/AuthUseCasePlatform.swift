@@ -7,6 +7,7 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import FirebaseStorage
 import Foundation
+import GoogleSignIn
 
 // MARK: - AuthUseCasePlatform
 
@@ -257,5 +258,77 @@ extension AuthUseCasePlatform: AuthUseCase {
       }
       .eraseToAnyPublisher()
     }
+  }
+
+  public var googleSignIn: () -> AnyPublisher<Void, CompositeErrorRepository> {
+    {
+      Future<Void, CompositeErrorRepository> { promise in
+
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        //        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+        //        guard let rootViewController = windowScene.windows.first?.rootViewController else { return }
+
+        guard let rootViewController = UIApplication.shared.firstKeyWindow?.rootViewController else { return }
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+          if let error = error {
+            return
+          }
+
+          guard
+            let user = result?.user,
+            let idToken = user.idToken?.tokenString
+          else { return }
+
+          let credential = GoogleAuthProvider.credential(
+            withIDToken: idToken,
+            accessToken: user.accessToken.tokenString)
+
+          Auth.auth().signIn(with: credential) { _, error in
+            if let error = error {
+              promise(.failure(.other(error)))
+              return
+            }
+
+            guard let me = Auth.auth().currentUser else { return }
+
+            var userData: [String: Any] = [
+              "uid": me.uid,
+              "created_time": Timestamp(),
+            ]
+
+            if let email = me.email {
+              userData["email"] = email
+            }
+
+            Firestore.firestore()
+              .collection("users")
+              .document(me.uid)
+              .setData(userData) { error in
+                if let error = error {
+                  promise(.failure(.other(error)))
+                } else {
+                  promise(.success(Void()))
+                }
+              }
+          }
+        }
+      }
+      .eraseToAnyPublisher()
+    }
+  }
+}
+
+extension UIApplication {
+  fileprivate var firstKeyWindow: UIWindow? {
+    UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .filter { $0.activationState == .foregroundActive }
+      .first?.windows
+      .first(where: \.isKeyWindow)
   }
 }

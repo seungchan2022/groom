@@ -47,13 +47,14 @@ struct SignInReducer {
 
     var fetchResetPassword: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
+    var fetchGoogleSignIn: FetchState.Data<Bool> = .init(isLoading: false, value: false)
   }
 
   enum CancelID: Equatable, CaseIterable {
     case teardown
     case requestSignIn
     case requestResetPassword
-
+    case requestGoogleSignIn
   }
 
   enum Action: BindableAction, Equatable {
@@ -62,9 +63,11 @@ struct SignInReducer {
 
     case onTapSignIn
     case onTapResetPassword
+    case onTapGoogleSignIn
 
     case fetchSignIn(Result<Bool, CompositeErrorRepository>)
     case fetchResetPassword(Result<Bool, CompositeErrorRepository>)
+    case fetchGoogleSignIn(Result<Bool, CompositeErrorRepository>)
 
     case routeToClose
     case routeToSignUp
@@ -93,6 +96,11 @@ struct SignInReducer {
           .resetPassword(state.checkToEmail)
           .cancellable(pageID: pageID, id: CancelID.requestResetPassword, cancelInFlight: true)
 
+      case .onTapGoogleSignIn:
+        return sideEffect
+          .googleSignIn()
+          .cancellable(pageID: pageID, id: CancelID.requestGoogleSignIn, cancelInFlight: true)
+
       case .fetchSignIn(let result):
         switch result {
         case .success:
@@ -113,6 +121,18 @@ struct SignInReducer {
         case .failure:
           sideEffect.useCase.toastViewModel.send(message: "요청하신 계정은 존재하지 않습니다. 다시 한번 확인해주세요.")
           return .none
+        }
+
+      case .fetchGoogleSignIn(let result):
+        switch result {
+        case .success:
+          sideEffect.useCase.toastViewModel.send(message: "구글 로그인 성공")
+          sideEffect.routeToClose(true)
+          return .none
+
+        case .failure(let error):
+          sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)
+          return .run { await $0(.throwError(error)) }
         }
 
       case .routeToClose:

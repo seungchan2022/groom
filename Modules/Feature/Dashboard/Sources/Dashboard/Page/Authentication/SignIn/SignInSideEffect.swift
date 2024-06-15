@@ -47,6 +47,18 @@ extension SignInSideEffect {
     }
   }
 
+  var googleSignIn: () -> Effect<SignInReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.googleSignIn()
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(SignInReducer.Action.fetchGoogleSignIn)
+      }
+    }
+  }
+
   var routeToClose: (Bool?) -> Void {
     { isLogIn in
       navigator.close(

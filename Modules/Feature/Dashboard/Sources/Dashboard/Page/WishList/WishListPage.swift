@@ -30,7 +30,7 @@ extension WishListPage: View {
           }
 
           LazyVGrid(columns: gridColumnList) {
-            ForEach(store.wishList.sorted(by: { $0.createdTime > $1.createdTime})) { item in
+            ForEach(store.wishList.sorted(by: { $0.createdTime > $1.createdTime })) { item in
               ItemComponent(
                 store: store,
                 viewState: .init(item: item),
@@ -72,7 +72,7 @@ extension WishListPage: View {
     .navigationTitle("WishList")
     .navigationBarTitleDisplayMode(.large)
     .toolbar {
-      if !store.wishList.isEmpty {
+      if store.state.status == .isLoggedIn && !store.wishList.isEmpty {
         ToolbarItem(placement: .topBarTrailing) {
           Button(action: {
             withAnimation(.smooth) {

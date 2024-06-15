@@ -252,7 +252,7 @@ extension LikeUseCasePlatform: LikeUseCase {
     { itemID in
       Future<Void, CompositeErrorRepository> { promise in
         guard let me = Auth.auth().currentUser else {
-          return 
+          return
         }
 
         Firestore.firestore()
