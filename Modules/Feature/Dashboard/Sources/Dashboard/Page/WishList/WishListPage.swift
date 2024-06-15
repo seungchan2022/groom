@@ -13,7 +13,7 @@ extension WishListPage {
   private var gridColumnList: [GridItem] {
     Array(
       repeating: .init(.flexible()),
-      count: UIDevice.current.userInterfaceIdiom == .pad ? 6 : 2)
+      count: store.isGridLayout ? 1 : 2)
   }
 }
 
@@ -32,6 +32,7 @@ extension WishListPage: View {
           LazyVGrid(columns: gridColumnList) {
             ForEach(store.wishList.sorted(by: { $0.createdTime > $1.createdTime})) { item in
               ItemComponent(
+                store: store,
                 viewState: .init(item: item),
                 tapAction: { store.send(.routeToDetail($0)) })
             }
@@ -70,6 +71,20 @@ extension WishListPage: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .navigationTitle("WishList")
     .navigationBarTitleDisplayMode(.large)
+    .toolbar {
+      if !store.wishList.isEmpty {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button(action: {
+            withAnimation(.smooth) {
+              store.isGridLayout.toggle()
+            }
+          }) {
+            Image(systemName: store.isGridLayout ? "rectangle.split.1x2.fill" : "rectangle.split.2x2.fill")
+              .imageScale(.large)
+          }
+        }
+      }
+    }
     .onReceive(routeSubscriber.isRouteEventSubject, perform: { _ in
       store.send(.getUser)
       store.send(.getUserInfo)

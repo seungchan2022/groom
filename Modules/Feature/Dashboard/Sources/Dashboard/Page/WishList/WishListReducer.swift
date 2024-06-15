@@ -22,6 +22,8 @@ struct WishListReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
+    var isGridLayout = false
+    
     var status: LoginStatus = .isLoggedOut
 
     var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
