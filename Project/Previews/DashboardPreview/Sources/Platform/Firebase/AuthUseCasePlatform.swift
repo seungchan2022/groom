@@ -247,7 +247,7 @@ extension AuthUseCasePlatform: AuthUseCase {
     }
   }
 
-  public var delete: () -> AnyPublisher<Void, CompositeErrorRepository> {
+  public var deleteUser: () -> AnyPublisher<Void, CompositeErrorRepository> {
     {
       Future<Void, CompositeErrorRepository> { promise in
         Auth.auth().currentUser?.delete { error in
@@ -255,6 +255,71 @@ extension AuthUseCasePlatform: AuthUseCase {
 
           return promise(.failure(.other(error)))
         }
+      }
+      .eraseToAnyPublisher()
+    }
+  }
+
+  public var deleteUserInfo: () -> AnyPublisher<Void, CompositeErrorRepository> {
+    {
+      Future<Void, CompositeErrorRepository> { promise in
+        guard let me = Auth.auth().currentUser else {
+          return promise(.failure(.userCancelled))
+        }
+
+        let db = Firestore.firestore()
+        let userDocRef = db.collection("users").document(me.uid)
+        let wishListRef = userDocRef.collection("wish_list")
+        let batch = db.batch()
+
+        wishListRef
+          // wish_list 컬렉션의 모든 문서를 가져옴
+          .getDocuments { snapshot, error in
+            if let error = error {
+              return promise(.failure(.other(error)))
+            }
+
+            // 해당 문서가 존재하는지 확인
+            // documents => wish_list 컬렉션의 문서들
+            guard let documents = snapshot?.documents else {
+              userDocRef
+                .delete { error in
+                  if let error = error {
+                    return promise(.failure(.other(error)))
+                  }
+                  return promise(.success(Void()))
+                }
+              return
+            }
+
+            // batch를 사용하여 Wish_list 하위 컬렉션의 모든 문서를 삭제합니다.
+            // 서브 컬렉션(wish_list) 먼저 삭제후,
+            for document in documents {
+//              // Firestore 배치 작업 생성. 배치 작업은 여러 작업을 하나로 묶어 처리할 수 있게 해줌
+              batch
+                // 각 문서에 대해 삭제 작업 추가
+                .deleteDocument(document.reference)
+            }
+
+            batch
+              // 배치 작업을 Firestore에 커밋하여, 추가된 모든 삭제 작업 실행
+              .commit { error in
+                if let error = error {
+                  return promise(.failure(.other(error)))
+                }
+
+                // 유저에 대한 데이터 삭제
+                // 배치 작업이 성공적으로 완료된 후, 사용자 문서 삭제
+                userDocRef
+                  .delete { error in
+                    if let error = error {
+                      return promise(.failure(.other(error)))
+                    }
+
+                    return promise(.success(Void()))
+                  }
+              }
+          }
       }
       .eraseToAnyPublisher()
     }
@@ -276,7 +341,7 @@ extension AuthUseCasePlatform: AuthUseCase {
 
         GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
           if let error = error {
-            return
+            return promise(.failure(.other(error)))
           }
 
           guard
@@ -321,6 +386,7 @@ extension AuthUseCasePlatform: AuthUseCase {
       .eraseToAnyPublisher()
     }
   }
+
 }
 
 extension UIApplication {

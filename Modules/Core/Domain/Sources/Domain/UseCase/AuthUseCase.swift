@@ -18,7 +18,9 @@ public protocol AuthUseCase {
 
   var deleteProfileImage: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
 
-  var delete: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
+  var deleteUser: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
+
+  var deleteUserInfo: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
 
   var googleSignIn: () -> AnyPublisher<Void, CompositeErrorRepository> { get }
 

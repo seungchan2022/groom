@@ -88,7 +88,11 @@ extension UpdateAuthPage: View {
           Text("취소")
         }
 
-        Button(action: { store.send(.onTapDeleteUser) }) {
+        Button(action: {
+          store.send(.onTapDeleteUser)
+          store.send(.onTapDeleteUserInfo)
+          store.send(.deleteProfileImage)
+        }) {
           Text("계정 탈퇴")
         }
       })

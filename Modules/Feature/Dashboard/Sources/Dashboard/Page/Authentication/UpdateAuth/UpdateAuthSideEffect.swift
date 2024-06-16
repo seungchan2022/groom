@@ -48,11 +48,35 @@ extension UpdateAuthSideEffect {
   var deleteUser: () -> Effect<UpdateAuthReducer.Action> {
     {
       .publisher {
-        useCase.authUseCase.delete()
+        useCase.authUseCase.deleteUser()
           .map { _ in true }
           .receive(on: main)
           .mapToResult()
           .map(UpdateAuthReducer.Action.fetchDeleteUser)
+      }
+    }
+  }
+
+  var deleteUserInfo: () -> Effect<UpdateAuthReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.deleteUserInfo()
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdateAuthReducer.Action.fetchDeleteUserInfo)
+      }
+    }
+  }
+
+  var deleteProfileImage: () -> Effect<UpdateAuthReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.deleteProfileImage()
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdateAuthReducer.Action.fetchDeleteProfileImage)
       }
     }
   }
