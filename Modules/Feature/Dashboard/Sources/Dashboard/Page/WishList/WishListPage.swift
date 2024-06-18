@@ -15,6 +15,12 @@ extension WishListPage {
       repeating: .init(.flexible()),
       count: store.isGridLayout ? 1 : 2)
   }
+
+  private var isLoading: Bool {
+    store.fetchUser.isLoading
+      || store.fetchUserInfo.isLoading
+      || store.fetchWishList.isLoading
+  }
 }
 
 // MARK: View
@@ -90,6 +96,7 @@ extension WishListPage: View {
       store.send(.getUserInfo)
       store.send(.getWishList)
     })
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       store.send(.getUser)
       store.send(.getUserInfo)

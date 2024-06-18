@@ -67,6 +67,7 @@ struct UpdatePasswordReducer {
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
       case .onTapUpdatePassword:
+        state.fetchUpdatePassword.isLoading = true
         return sideEffect
           .updatePassword(state.passwordText)
           .cancellable(pageID: pageID, id: CancelID.requestUpdatePassword, cancelInFlight: true)
@@ -76,6 +77,7 @@ struct UpdatePasswordReducer {
         return .none
 
       case .fetchUpdatePassword(let result):
+        state.fetchUpdatePassword.isLoading = false
         switch result {
         case .success:
           sideEffect.routeToBack()

@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import DesignSystem
 import SwiftUI
 
 // MARK: - Focus
@@ -20,6 +21,10 @@ extension SignUpPage {
   private var isActiveSignUp: Bool {
     Validator.validateEmail(email: store.emailText) && Validator
       .validatePassword(password: store.passwordText) && isValidConfirm(text: store.confirmPasswordText)
+  }
+
+  private var isLoading: Bool {
+    store.fetchSignUp.isLoading
   }
 
   private func isValidConfirm(text: String) -> Bool {
@@ -192,6 +197,7 @@ extension SignUpPage: View {
     .padding(.horizontal, 16)
     .padding(.top, 72)
     .toolbar(.hidden, for: .navigationBar)
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       isFocus = .email
     }

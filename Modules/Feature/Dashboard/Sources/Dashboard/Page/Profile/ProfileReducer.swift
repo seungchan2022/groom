@@ -89,16 +89,19 @@ struct ProfileReducer {
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
       case .getUser:
+        state.fetchUser.isLoading = true
         return sideEffect
           .user()
           .cancellable(pageID: pageID, id: CancelID.requestUser, cancelInFlight: true)
 
       case .getUserInfo:
+        state.fetchUserInfo.isLoading = true
         return sideEffect
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
       case .onTapSignOut:
+        state.fetchSignOut.isLoading = true
         state.item = .init(uid: "", email: "", userName: "", photoURL: "")
         state.status = .isLoggedOut
         return sideEffect
@@ -106,6 +109,7 @@ struct ProfileReducer {
           .cancellable(pageID: pageID, id: CancelID.requestSignOut, cancelInFlight: true)
 
       case .fetchSignOut(let result):
+        state.fetchSignOut.isLoading = false
         switch result {
         case .success:
           state.item = .init(uid: "", email: "", userName: "", photoURL: "")
@@ -118,6 +122,7 @@ struct ProfileReducer {
         }
 
       case .fetchUser(let result):
+        state.fetchUser.isLoading = false
         switch result {
         case .success(let isLoggedIn):
           switch isLoggedIn {
@@ -131,6 +136,7 @@ struct ProfileReducer {
         }
 
       case .fetchUserInfo(let result):
+        state.fetchUserInfo.isLoading = false
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")

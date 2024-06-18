@@ -10,6 +10,13 @@ struct ProfilePage {
   var routeSubscriber: ProfileRouteSubscriber
 }
 
+extension ProfilePage {
+  private var isLoading: Bool {
+    store.fetchUser.isLoading
+      || store.fetchUserInfo.isLoading
+  }
+}
+
 // MARK: View
 
 extension ProfilePage: View {
@@ -140,6 +147,7 @@ extension ProfilePage: View {
       store.send(.getUser)
       store.send(.getUserInfo)
     })
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       store.send(.getUser)
       store.send(.getUserInfo)

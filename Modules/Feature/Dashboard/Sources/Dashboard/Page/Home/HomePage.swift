@@ -73,6 +73,11 @@ extension HomePage {
         store.send(.searchCountry(new))
       })
   }
+
+  private var isLoading: Bool {
+    store.fetchSearchCityItem.isLoading
+      || store.fetchSearchCountryItem.isLoading
+  }
 }
 
 // MARK: View
@@ -159,6 +164,7 @@ extension HomePage: View {
     .navigationTitle("Explore")
     .navigationBarTitleDisplayMode(.large)
     .toolbar(.visible, for: .navigationBar)
+    .setRequestFlightView(isLoading: isLoading)
     .onChange(of: store.query) { _, new in
       guard !new.isEmpty else { return }
       store.send(.set(\.country, ""))

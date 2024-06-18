@@ -69,11 +69,13 @@ struct SignUpReducer {
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
       case .onTapSignUp:
+        state.fetchSignUp.isLoading = true
         return sideEffect
           .signUp(.init(email: state.emailText, password: state.passwordText, userName: state.userNameText))
           .cancellable(pageID: pageID, id: CancelID.requestSignUp, cancelInFlight: true)
 
       case .fetchSignUp(let result):
+        state.fetchSignUp.isLoading = false
         switch result {
         case .success:
           sideEffect.routeToSignIn()

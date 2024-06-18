@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import DesignSystem
 import SwiftUI
 
 // MARK: - Focus
@@ -20,6 +21,10 @@ extension UpdatePasswordPage {
   private var isActive: Bool {
     Validator
       .validatePassword(password: store.passwordText) && isValidConfirm(text: store.confirmPasswordText)
+  }
+
+  private var isLoading: Bool {
+    store.fetchUpdatePassword.isLoading
   }
 
   private func isValidConfirm(text: String) -> Bool {
@@ -144,6 +149,7 @@ extension UpdatePasswordPage: View {
     }
     .navigationBarTitleDisplayMode(.inline)
     .navigationTitle("비밀번호 변경")
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       isFocus = .password
     }

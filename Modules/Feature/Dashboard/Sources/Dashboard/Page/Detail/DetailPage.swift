@@ -13,7 +13,21 @@ struct DetailPage {
 
 }
 
-extension DetailPage { }
+extension DetailPage {
+  private var isLoading: Bool {
+    store.fetchItem.isLoading
+      || store.fetchSearchCityItem.isLoading
+      || store.fetchSearchCountryItem.isLoading
+      || store.fetchIsLike.isLoading
+      || store.fetchLikeDetail.isLoading
+      || store.fetchLikeCityDetail.isLoading
+      || store.fetchLikeCountryDetail.isLoading
+      || store.fetchUnLikeDetail.isLoading
+      || store.fetchUnLikeCityDetail.isLoading
+      || store.fetchUnLikeCountryDetail.isLoading
+  }
+
+}
 
 // MARK: View
 
@@ -81,29 +95,25 @@ extension DetailPage: View {
               longitude: searchCityItem.coordinateList.longitude))
         }
         .mapStyle(.standard)
-        .mapControls {
-          MapCompass()
-          MapUserLocationButton()
-          MapPitchToggle()
-        }
-        .overlay(alignment: .bottomTrailing) {
-          Button(action: { position = .automatic }) {
-            Image(systemName: "dot.scope")
-              .foregroundStyle(.black)
-              .background {
-                RoundedRectangle(cornerRadius: 5)
-                  .fill(.white)
-                  .frame(width: 40, height: 40)
-              }
-          }
-          .padding([.bottom, .trailing], 16)
-        }
         .overlay(alignment: .topLeading) {
           Button(action: { isShowMap = false }) {
             Image(systemName: "xmark")
               .imageScale(.large)
           }
           .padding(.leading, 16)
+        }
+        .overlay(alignment: .topTrailing) {
+          Button(action: { position = .automatic }) {
+            Image(systemName: "dot.scope")
+              .imageScale(.large)
+              .foregroundStyle(.black)
+              .background {
+                RoundedRectangle(cornerRadius: 5)
+                  .fill(.white)
+                  .frame(width: 45, height: 45)
+              }
+          }
+          .padding([.bottom, .trailing], 16)
         }
       }
 
@@ -116,11 +126,6 @@ extension DetailPage: View {
               longitude: item.coordinateList.longitude))
         }
         .mapStyle(.standard)
-        .mapControls {
-          MapCompass()
-          MapUserLocationButton()
-          MapPitchToggle()
-        }
         .overlay(alignment: .bottomTrailing) {
           Button(action: { position = .automatic }) {
             Image(systemName: "dot.scope")
@@ -152,11 +157,6 @@ extension DetailPage: View {
               longitude: searchCountryItem.coordinateList.longitude))
         }
         .mapStyle(.standard)
-        .mapControls {
-          MapCompass()
-          MapUserLocationButton()
-          MapPitchToggle()
-        }
         .overlay(alignment: .bottomTrailing) {
           Button(action: { position = .automatic }) {
             Image(systemName: "dot.scope")
@@ -180,6 +180,7 @@ extension DetailPage: View {
     }
     .ignoresSafeArea()
     .toolbar(.hidden, for: .navigationBar)
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       store.send(.getItem(store.item))
       store.send(.getSearchCityItem(store.searchCityItem))

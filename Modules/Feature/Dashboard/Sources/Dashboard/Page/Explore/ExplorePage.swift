@@ -8,6 +8,12 @@ struct ExplorePage {
   @Bindable var store: StoreOf<ExploreReducer>
 }
 
+extension ExplorePage {
+  private var isLoading: Bool {
+    store.fetchItem.isLoading
+  }
+}
+
 // MARK: View
 
 extension ExplorePage: View {
@@ -24,6 +30,7 @@ extension ExplorePage: View {
         .padding(.horizontal, 16)
       }
     }
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       store.send(.getItem)
     }

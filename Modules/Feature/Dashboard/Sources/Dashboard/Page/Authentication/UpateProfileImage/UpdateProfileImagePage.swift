@@ -9,6 +9,14 @@ struct UpdateProfileImagePage {
   @Bindable var store: StoreOf<UpdateProfileImageReducer>
 }
 
+extension UpdateProfileImagePage {
+  private var isLoading: Bool {
+    store.fetchUserInfo.isLoading
+      || store.fetchUpdateProfileImage.isLoading
+      || store.fetchDeleteProfileImage.isLoading
+  }
+}
+
 // MARK: View
 
 extension UpdateProfileImagePage: View {
@@ -73,6 +81,7 @@ extension UpdateProfileImagePage: View {
         store.send(.updateProfileImage(data))
       }
     }
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       store.send(.getUserInfo)
     }

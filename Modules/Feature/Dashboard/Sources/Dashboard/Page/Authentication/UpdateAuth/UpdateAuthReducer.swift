@@ -95,26 +95,31 @@ struct UpdateAuthReducer {
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
       case .getUserInfo:
+        state.fetchUserInfo.isLoading = true
         return sideEffect
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
       case .onTapUpdateUserName:
+        state.fetchUpdateUserName.isLoading = true
         return sideEffect
           .updateUserName(state.userName)
           .cancellable(pageID: pageID, id: CancelID.requestUpdateUserName, cancelInFlight: true)
 
       case .onTapDeleteUser:
+        state.fetchDeleteUser.isLoading = true
         return sideEffect
           .deleteUser()
           .cancellable(pageID: pageID, id: CancelID.requestDeleteUser, cancelInFlight: true)
 
       case .onTapDeleteUserInfo:
+        state.fetchDeleteUserInfo.isLoading = true
         return sideEffect
           .deleteUserInfo()
           .cancellable(pageID: pageID, id: CancelID.requestDeleteUserInfo, cancelInFlight: true)
 
       case .deleteProfileImage:
+        state.fetchDeleteProfileImage.isLoading = true
         return sideEffect
           .deleteProfileImage()
           .cancellable(pageID: pageID, id: CancelID.requestDelteProfileImage, cancelInFlight: true)
@@ -132,6 +137,7 @@ struct UpdateAuthReducer {
         return .none
 
       case .fetchUserInfo(let result):
+        state.fetchUserInfo.isLoading = false
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")
@@ -142,6 +148,7 @@ struct UpdateAuthReducer {
         }
 
       case .fetchUpdateUserName(let result):
+        state.fetchUpdateUserName.isLoading = false
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "이름이 변경되었습니다.")
@@ -153,6 +160,7 @@ struct UpdateAuthReducer {
         }
 
       case .fetchDeleteUser(let result):
+        state.fetchDeleteUser.isLoading = false
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "계정이 탈퇴되었습니다.")
@@ -165,6 +173,7 @@ struct UpdateAuthReducer {
         }
 
       case .fetchDeleteUserInfo(let result):
+        state.fetchDeleteUserInfo.isLoading = false
         switch result {
         case .success:
           return .none
@@ -174,6 +183,7 @@ struct UpdateAuthReducer {
         }
 
       case .fetchDeleteProfileImage(let result):
+        state.fetchDeleteProfileImage.isLoading = false
         switch result {
         case .success:
           return .none

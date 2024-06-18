@@ -1,3 +1,4 @@
+import AuthenticationServices
 import ComposableArchitecture
 import GoogleSignIn
 import GoogleSignInSwift
@@ -16,11 +17,18 @@ struct SignInPage {
   @Bindable var store: StoreOf<SignInReducer>
 
   @FocusState private var isFocus: Focus?
+  @Environment(\.colorScheme) private var colorScheme
 }
 
 extension SignInPage {
   private var isActiveSignIn: Bool {
     !store.emailText.isEmpty && !store.emailText.isEmpty
+  }
+
+  private var isLoading: Bool {
+    store.fetchSignIn.isLoading
+      || store.fetchResetPassword.isLoading
+      || store.fetchGoogleSignIn.isLoading
   }
 }
 
@@ -125,6 +133,14 @@ extension SignInPage: View {
         {
           store.send(.onTapGoogleSignIn)
         }
+
+        Button(action: { }) {
+          SignWithAppleButtonViewRepresentable(
+            buttonType: .default,
+            buttonStyle: .black)
+            .allowsHitTesting(false)
+            .frame(height: 45)
+        }
       }
     }
     .alert(
@@ -147,8 +163,22 @@ extension SignInPage: View {
       })
     .padding(.horizontal, 16)
     .toolbar(.visible, for: .navigationBar)
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       isFocus = .email
     }
   }
+}
+
+// MARK: - SignWithAppleButtonViewRepresentable
+
+struct SignWithAppleButtonViewRepresentable: UIViewRepresentable {
+  let buttonType: ASAuthorizationAppleIDButton.ButtonType
+  let buttonStyle: ASAuthorizationAppleIDButton.Style
+
+  func makeUIView(context _: Context) -> some UIView {
+    ASAuthorizationAppleIDButton(authorizationButtonType: buttonType, authorizationButtonStyle: buttonStyle)
+  }
+
+  func updateUIView(_: UIViewType, context _: Context) { }
 }

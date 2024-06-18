@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import DesignSystem
 import SwiftUI
 
 // MARK: - UpdateAuthPage
@@ -11,6 +12,14 @@ extension UpdateAuthPage {
   private var isGoogleUser: Bool {
     store.item.email?.hasSuffix("@gmail.com") ?? false
   }
+
+  private var isLoading: Bool {
+    store.fetchUserInfo.isLoading
+      || store.fetchUpdateUserName.isLoading
+      || store.fetchDeleteUser.isLoading
+      || store.fetchDeleteUserInfo.isLoading
+      || store.fetchDeleteProfileImage.isLoading
+  }
 }
 
 // MARK: View
@@ -22,24 +31,24 @@ extension UpdateAuthPage: View {
         HStack {
           VStack(alignment: .leading, spacing: 12) {
             Text("이메일")
-            
+
             Text(store.item.email ?? "")
           }
-          
+
           Spacer()
         }
         .padding(.horizontal, 16)
-        
+
         Divider()
-        
+
         HStack {
           VStack(alignment: .leading, spacing: 12) {
             Text("이름")
             Text(store.item.userName ?? "")
           }
-          
+
           Spacer()
-          
+
           Button(action: {
             store.userName = ""
             store.isShowUpdateUser = true
@@ -48,24 +57,24 @@ extension UpdateAuthPage: View {
           }
         }
         .padding(.horizontal, 16)
-        
+
         Divider()
-        
+
         if !isGoogleUser {
           HStack {
             VStack(alignment: .leading, spacing: 12) {
               Text("비밀번호")
               Text("************")
             }
-            
+
             Spacer()
-            
+
             Button(action: { store.send(.routeToUpdatePassword) }) {
               Text("변경")
             }
           }
           .padding(.horizontal, 16)
-          
+
           Divider()
         }
       }
@@ -122,6 +131,7 @@ extension UpdateAuthPage: View {
         }
       }
     }
+    .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       store.send(.getUserInfo)
     }

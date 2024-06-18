@@ -74,21 +74,25 @@ struct UpdateProfileImageReducer {
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
       case .getUserInfo:
+        state.fetchUserInfo.isLoading = true
         return sideEffect
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
 
       case .updateProfileImage(let imageData):
+        state.fetchUpdateProfileImage.isLoading = true
         return sideEffect
           .updateProfileImage(imageData)
           .cancellable(pageID: pageID, id: CancelID.requestUpdateProfileImage, cancelInFlight: true)
 
       case .deleteProfileImage:
+        state.fetchDeleteProfileImage.isLoading = true
         return sideEffect
           .deleteProfileImage()
           .cancellable(pageID: pageID, id: CancelID.requestDeleteProfileImage, cancelInFlight: true)
 
       case .fetchUserInfo(let result):
+        state.fetchUserInfo.isLoading = false
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")
@@ -99,6 +103,7 @@ struct UpdateProfileImageReducer {
         }
 
       case .fetchUpdateProfileImage(let result):
+        state.fetchUpdateProfileImage.isLoading = false
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "프로필 이미지가 변경되었습니다.")
@@ -110,6 +115,7 @@ struct UpdateProfileImageReducer {
         }
 
       case .fetchDeleteProfileImage(let result):
+        state.fetchDeleteProfileImage.isLoading = false
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "프로필 이미지가 삭제되었습니다.")

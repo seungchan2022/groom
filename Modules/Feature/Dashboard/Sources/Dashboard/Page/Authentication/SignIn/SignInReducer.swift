@@ -48,6 +48,7 @@ struct SignInReducer {
     var fetchResetPassword: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     var fetchGoogleSignIn: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+
   }
 
   enum CancelID: Equatable, CaseIterable {
@@ -87,21 +88,25 @@ struct SignInReducer {
           CancelID.allCases.map { .cancel(pageID: pageID, id: $0) })
 
       case .onTapSignIn:
+        state.fetchSignIn.isLoading = true
         return sideEffect
           .signIn(.init(email: state.emailText, password: state.passwordText))
           .cancellable(pageID: pageID, id: CancelID.requestSignIn, cancelInFlight: true)
 
       case .onTapResetPassword:
+        state.fetchResetPassword.isLoading = true
         return sideEffect
           .resetPassword(state.checkToEmail)
           .cancellable(pageID: pageID, id: CancelID.requestResetPassword, cancelInFlight: true)
 
       case .onTapGoogleSignIn:
+        state.fetchGoogleSignIn.isLoading = true
         return sideEffect
           .googleSignIn()
           .cancellable(pageID: pageID, id: CancelID.requestGoogleSignIn, cancelInFlight: true)
 
       case .fetchSignIn(let result):
+        state.fetchSignIn.isLoading = false
         switch result {
         case .success:
           sideEffect.routeToClose(true)
@@ -113,6 +118,7 @@ struct SignInReducer {
         }
 
       case .fetchResetPassword(let result):
+        state.fetchResetPassword.isLoading = false
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "비밀번호 재설정 링크가 입력하신 이메일로 전송되었습니다.")
@@ -124,6 +130,7 @@ struct SignInReducer {
         }
 
       case .fetchGoogleSignIn(let result):
+        state.fetchGoogleSignIn.isLoading = false
         switch result {
         case .success:
           sideEffect.useCase.toastViewModel.send(message: "구글 로그인 성공")
