@@ -29,6 +29,15 @@ extension InfoPlist {
   public static var extraInfoPlist: [String: Plist.Value] {
     [
       "UILaunchScreen": .dictionary([:]),
+      "CFBundleURLTypes": .array([
+        .dictionary([
+          "CFBundleTypeRole": .string("Editor"),
+          "CFBundleURLSchemes": .array([
+            .string("com.googleusercontent.apps.858295803699-1ausmbvgmo62k9h8s4bkuaalv9nrv759")
+          ])
+        ])
+        
+      ])
     ]
   }
 }
