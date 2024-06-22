@@ -1,4 +1,5 @@
 import Foundation
+import LinkNavigator
 import URLEncodedForm
 
 extension Endpoint {
@@ -69,7 +70,7 @@ extension URLRequest {
 
     case .bodyURLEncoded(let item):
       return {
-        guard let data = item.encodeString().data(using: .utf8) else { return self }
+        guard let data = item.encoded().data(using: .utf8) else { return self }
         var new = self
         new.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         new.httpBody = data

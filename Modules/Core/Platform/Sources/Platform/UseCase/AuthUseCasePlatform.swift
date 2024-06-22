@@ -11,7 +11,10 @@ import GoogleSignIn
 
 // MARK: - AuthUseCasePlatform
 
-public struct AuthUseCasePlatform { }
+public struct AuthUseCasePlatform {
+
+  public init() { }
+}
 
 // MARK: AuthUseCase
 

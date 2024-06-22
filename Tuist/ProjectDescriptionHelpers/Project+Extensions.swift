@@ -33,11 +33,11 @@ extension InfoPlist {
         .dictionary([
           "CFBundleTypeRole": .string("Editor"),
           "CFBundleURLSchemes": .array([
-            .string("com.googleusercontent.apps.858295803699-1ausmbvgmo62k9h8s4bkuaalv9nrv759")
-          ])
-        ])
-        
-      ])
+            .string("com.googleusercontent.apps.858295803699-sl54vsnd22dd7njta74ie60179beg3u9"),
+          ]),
+        ]),
+
+      ]),
     ]
   }
 }

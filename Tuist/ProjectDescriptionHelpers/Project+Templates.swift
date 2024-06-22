@@ -44,7 +44,7 @@ extension Target {
       productName: "\(projectName)PreviewTests",
       bundleId: "io.seungchan.groom.\(projectName.lowercased()).preview.tests",
       deploymentTargets: .default,
-      infoPlist: .default,
+      infoPlist: .defaultInfoPlist,
       sources: ["Tests/**"],
       resources: .none,
       copyFiles: .none,

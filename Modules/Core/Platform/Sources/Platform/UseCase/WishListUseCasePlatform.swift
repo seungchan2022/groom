@@ -1,4 +1,3 @@
-import Architecture
 import Combine
 import Domain
 import Firebase
@@ -11,7 +10,9 @@ import Foundation
 
 // MARK: - WishListUseCasePlatform
 
-public struct WishListUseCasePlatform { }
+public struct WishListUseCasePlatform {
+  public init() { }
+}
 
 // MARK: WishListUseCase
 

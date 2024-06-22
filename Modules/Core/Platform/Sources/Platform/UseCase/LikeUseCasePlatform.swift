@@ -1,4 +1,3 @@
-import Architecture
 import Combine
 import Domain
 import Firebase
@@ -11,7 +10,9 @@ import Foundation
 
 // MARK: - LikeUseCasePlatform
 
-public struct LikeUseCasePlatform { }
+public struct LikeUseCasePlatform {
+  public init() { }
+}
 
 // MARK: LikeUseCase
 
