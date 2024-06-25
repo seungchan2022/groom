@@ -6,13 +6,9 @@ import LinkNavigator
 @Observable
 final class AppViewModel {
 
-  // MARK: Lifecycle
-
-  init(linkNavigator: TabLinkNavigator) {
+  let linkNavigator: SingleLinkNavigator
+  
+  init(linkNavigator: SingleLinkNavigator) {
     self.linkNavigator = linkNavigator
   }
-
-  // MARK: Internal
-
-  let linkNavigator: TabLinkNavigator
 }

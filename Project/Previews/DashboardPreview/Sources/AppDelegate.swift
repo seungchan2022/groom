@@ -9,7 +9,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
   let thirdPartyContainer: ThirdPartyContainer = .init()
 
   var dependency: AppSideEffect { container.dependency }
-  var navigator: TabLinkNavigator { container.navigator }
+  var navigator: SingleLinkNavigator { container.navigator }
 
   func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
     thirdPartyContainer.connect()
