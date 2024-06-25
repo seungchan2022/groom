@@ -21,7 +21,7 @@ extension WishListUseCasePlatform: WishListUseCase {
     {
       Future<[Domain.Airbnb.WishList.Item], CompositeErrorRepository> { promise in
         guard let me = Auth.auth().currentUser else {
-          return
+          return promise(.success([]))
         }
 
         /// Firestore 경로 설정

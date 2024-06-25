@@ -249,11 +249,11 @@ extension LikeUseCasePlatform: LikeUseCase {
     }
   }
 
-  public var getIsLike: (String) -> AnyPublisher<Void, CompositeErrorRepository> {
+  public var getIsLike: (String) -> AnyPublisher<Bool, CompositeErrorRepository> {
     { itemID in
-      Future<Void, CompositeErrorRepository> { promise in
+      Future<Bool, CompositeErrorRepository> { promise in
         guard let me = Auth.auth().currentUser else {
-          return
+          return promise(.success(false))
         }
 
         Firestore.firestore()
@@ -265,7 +265,9 @@ extension LikeUseCasePlatform: LikeUseCase {
             if let error = error {
               return promise(.failure(.other(error)))
             } else if document?.exists == true {
-              return promise(.success(Void()))
+              return promise(.success(true))
+            } else {
+              return promise(.success(false))
             }
           }
       }

@@ -19,12 +19,6 @@ extension DetailPage {
       || store.fetchSearchCityItem.isLoading
       || store.fetchSearchCountryItem.isLoading
       || store.fetchIsLike.isLoading
-      || store.fetchLikeDetail.isLoading
-      || store.fetchLikeCityDetail.isLoading
-      || store.fetchLikeCountryDetail.isLoading
-      || store.fetchUnLikeDetail.isLoading
-      || store.fetchUnLikeCityDetail.isLoading
-      || store.fetchUnLikeCountryDetail.isLoading
   }
 
 }

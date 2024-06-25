@@ -9,5 +9,5 @@ public protocol LikeUseCase {
   var unLikeCityDetail: (Airbnb.SearchCityDetail.Item) -> AnyPublisher<Void, CompositeErrorRepository> { get }
   var unLikeCountryDetail: (Airbnb.SearchCountryDetail.Item) -> AnyPublisher<Void, CompositeErrorRepository> { get }
 
-  var getIsLike: (String) -> AnyPublisher<Void, CompositeErrorRepository> { get }
+  var getIsLike: (String) -> AnyPublisher<Bool, CompositeErrorRepository> { get }
 }

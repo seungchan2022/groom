@@ -106,6 +106,7 @@ struct DetailReducer {
     case fetchUnLikeCountryDetail(Result<Bool, CompositeErrorRepository>)
 
     case routeToBack
+    case routeToSignIn
 
     case throwError(CompositeErrorRepository)
   }
@@ -233,6 +234,7 @@ struct DetailReducer {
           return .none
 
         case .failure(let error):
+          sideEffect.routeToSignIn()
           return .run { await $0(.throwError(error)) }
         }
 
@@ -255,6 +257,7 @@ struct DetailReducer {
           return .none
 
         case .failure(let error):
+          sideEffect.routeToSignIn()
           return .run { await $0(.throwError(error)) }
         }
 
@@ -277,6 +280,7 @@ struct DetailReducer {
           return .none
 
         case .failure(let error):
+          sideEffect.routeToSignIn()
           return .run { await $0(.throwError(error)) }
         }
 
@@ -293,6 +297,10 @@ struct DetailReducer {
 
       case .routeToBack:
         sideEffect.routeToBack()
+        return .none
+
+      case .routeToSignIn:
+        sideEffect.routeToSignIn()
         return .none
 
       case .throwError(let error):

@@ -59,7 +59,6 @@ extension DetailSideEffect {
     { itemId in
       .publisher {
         useCase.likeUseCase.getIsLike(itemId)
-          .map { _ in true }
           .receive(on: main)
           .mapToResult()
           .map(DetailReducer.Action.fetchIsLike)
@@ -142,6 +141,14 @@ extension DetailSideEffect {
   var routeToBack: () -> Void {
     {
       navigator.back(isAnimated: true)
+    }
+  }
+
+  var routeToSignIn: () -> Void {
+    {
+      navigator.sheet(
+        linkItem: .init(path: Link.Dashboard.Path.signIn.rawValue),
+        isAnimated: true)
     }
   }
 }
