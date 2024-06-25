@@ -7,20 +7,20 @@ import SwiftUI
 
 struct DetailPage {
   @Bindable var store: StoreOf<DetailReducer>
-
+  
   @State private var position: MapCameraPosition = .automatic
   @State private var isShowMap = false
-
+  
 }
 
 extension DetailPage {
   private var isLoading: Bool {
     store.fetchItem.isLoading
-      || store.fetchSearchCityItem.isLoading
-      || store.fetchSearchCountryItem.isLoading
-      || store.fetchIsLike.isLoading
+    || store.fetchSearchCityItem.isLoading
+    || store.fetchSearchCountryItem.isLoading
+    || store.fetchIsLike.isLoading
   }
-
+  
 }
 
 // MARK: View
@@ -29,59 +29,91 @@ extension DetailPage: View {
   var body: some View {
     VStack {
       DesignSystemNavigation(title: "") {
-          if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
-            SearchCityResultComponent(
-              viewState: .init(
-                item: searchCityItem,
-                isLike: store.state.isLike),
-              backAction: { store.send(.routeToBack) },
-              tapAction: { isShowMap = true },
-              likeAction: {
-                if !store.state.isLike {
-                  store.send(.onTapLikeCityDetail($0))
-                } else {
-                  store.send(.onTapUnLikeCityDetail($0))
-                }
-              },
-              position: $position)
-          } else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
-            ItemComponent(
-              viewState: .init(
-                item: item,
-                isLike: store.state.isLike),
-              backAction: { store.send(.routeToBack) },
-              tapAction: { isShowMap = true },
-              likeAction: {
-                if !store.state.isLike {
-                  store.send(.onTapLikeDetail($0))
-                } else {
-                  store.send(.onTapUnLikeDetail($0))
-                }
-
-              },
-              position: $position)
-          } else if
-            let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
-              .first(where: { $0.id == store.searchCountryItem.id })
-          {
-            SearchCountryResultComponent(
-              viewState: .init(
-                item: searchCountryItem,
-                isLike: store.state.isLike),
-              backAction: { store.send(.routeToBack) },
-              tapAction: { isShowMap = true },
-              likeAction: {
-                if !store.state.isLike {
-                  store.send(.onTapLikeCountryDetail($0))
-                } else {
-                  store.send(.onTapUnLikeCountryDetail($0))
-                }
-              },
-              position: $position)
-          }
-        
+        if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
+          SearchCityResultComponent(
+            viewState: .init(
+              item: searchCityItem,
+              isLike: store.state.isLike),
+            backAction: { store.send(.routeToBack) },
+            tapAction: { isShowMap = true },
+            likeAction: {
+              if !store.state.isLike {
+                store.send(.onTapLikeCityDetail($0))
+              } else {
+                store.send(.onTapUnLikeCityDetail($0))
+              }
+            },
+            position: $position)
+        } else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
+          ItemComponent(
+            viewState: .init(
+              item: item,
+              isLike: store.state.isLike),
+            backAction: { store.send(.routeToBack) },
+            tapAction: { isShowMap = true },
+            likeAction: {
+              if !store.state.isLike {
+                store.send(.onTapLikeDetail($0))
+              } else {
+                store.send(.onTapUnLikeDetail($0))
+              }
+              
+            },
+            position: $position)
+        } else if
+          let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
+            .first(where: { $0.id == store.searchCountryItem.id })
+        {
+          SearchCountryResultComponent(
+            viewState: .init(
+              item: searchCountryItem,
+              isLike: store.state.isLike),
+            backAction: { store.send(.routeToBack) },
+            tapAction: { isShowMap = true },
+            likeAction: {
+              if !store.state.isLike {
+                store.send(.onTapLikeCountryDetail($0))
+              } else {
+                store.send(.onTapUnLikeCountryDetail($0))
+              }
+            },
+            position: $position)
+        }
       }
+      VStack(spacing: .zero) {
+
+        Divider()
+        
+        HStack {
+          VStack(alignment: .leading) {
+            Text("$")
+              .fontWeight(.semibold)
+          }
+          
+          Spacer()
+          
+          Button(action: { }) {
+            Text("예약하기")
+              .foregroundStyle(.white)
+              .font(.subheadline)
+              .fontWeight(.semibold)
+              .frame(width: 140, height: 40)
+              .background(.pink)
+              .clipShape(RoundedRectangle(cornerRadius: 8))
+          }
+        }
+        .padding(.horizontal, 32)
+        .padding(.vertical, 16) // 추가 패딩으로 버튼 크기 조정
+        .padding(.bottom, WindowAppearance.safeArea.bottom)
+        .background {
+          Rectangle()
+            .fill(DesignSystemColor.label(.default).color)
+            .fill(.white)
+        }
+      }
+      
     }
+    .ignoresSafeArea(.all, edges: .bottom)
     .ignoresSafeArea(.all, edges: .top)
     .toolbar(.hidden, for: .navigationBar)
     .setRequestFlightView(isLoading: isLoading)
