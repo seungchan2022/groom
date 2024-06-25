@@ -1,8 +1,10 @@
+import Architecture
 import AuthenticationServices
 import ComposableArchitecture
 import GoogleSignIn
 import GoogleSignInSwift
 import SwiftUI
+import DesignSystem
 
 // MARK: - Focus
 
@@ -36,110 +38,112 @@ extension SignInPage {
 
 extension SignInPage: View {
   var body: some View {
-    ScrollView {
-      VStack(spacing: 24) {
-        Image(systemName: "paperplane")
-          .resizable()
-          .frame(width: 150, height: 150)
-          .fontWeight(.light)
-          .foregroundStyle(.pink)
+    VStack {
+      DesignSystemNavigation(title: "") {
+        VStack(spacing: 24) {
+          Image(systemName: "paperplane")
+            .resizable()
+            .frame(width: 150, height: 150)
+            .fontWeight(.light)
+            .foregroundStyle(.pink)
 
-        TextField(
-          "",
-          text: $store.emailText,
-          prompt: Text("Email"))
+          TextField(
+            "",
+            text: $store.emailText,
+            prompt: Text("Email"))
+            .autocorrectionDisabled(true)
+            .focused($isFocus, equals: .email)
+            .textInputAutocapitalization(.never)
+            .padding()
+            .background(.thinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay {
+              RoundedRectangle(cornerRadius: 10)
+                .stroke(isFocus == .email ? .blue : .clear, lineWidth: 1)
+            }
+
+          HStack {
+            if store.isShowPassword {
+              TextField(
+                "",
+                text: $store.passwordText,
+                prompt: Text("Password"))
+            } else {
+              SecureField(
+                "",
+                text: $store.passwordText,
+                prompt: Text("Password"))
+            }
+          }
           .autocorrectionDisabled(true)
-          .focused($isFocus, equals: .email)
+          .focused($isFocus, equals: .password)
           .textInputAutocapitalization(.never)
           .padding()
           .background(.thinMaterial)
           .clipShape(RoundedRectangle(cornerRadius: 10))
           .overlay {
             RoundedRectangle(cornerRadius: 10)
-              .stroke(isFocus == .email ? .blue : .clear, lineWidth: 1)
+              .stroke(isFocus == .password ? .blue : .clear, lineWidth: 1)
           }
 
-        HStack {
-          if store.isShowPassword {
-            TextField(
-              "",
-              text: $store.passwordText,
-              prompt: Text("Password"))
-          } else {
-            SecureField(
-              "",
-              text: $store.passwordText,
-              prompt: Text("Password"))
+          .overlay(alignment: .trailing) {
+            Button(action: { store.isShowPassword.toggle() }) {
+              Image(systemName: store.isShowPassword ? "eye" : "eye.slash")
+                .foregroundStyle(.black)
+                .padding(.trailing, 12)
+            }
           }
-        }
-        .autocorrectionDisabled(true)
-        .focused($isFocus, equals: .password)
-        .textInputAutocapitalization(.never)
-        .padding()
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay {
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(isFocus == .password ? .blue : .clear, lineWidth: 1)
-        }
 
-        .overlay(alignment: .trailing) {
-          Button(action: { store.isShowPassword.toggle() }) {
-            Image(systemName: store.isShowPassword ? "eye" : "eye.slash")
-              .foregroundStyle(.black)
-              .padding(.trailing, 12)
-          }
-        }
-
-        HStack {
-          Spacer()
-
-          Button(action: {
-            store.state.checkToEmail = ""
-            store.isShowReset = true
-          }) {
-            Text("Forgot Password?")
-              .font(.callout)
-              .fontWeight(.bold)
-          }
-        }
-
-        Button(action: { store.send(.onTapSignIn) }) {
-          Text("Log In")
-            .foregroundStyle(.white)
-            .frame(height: 50)
-            .frame(maxWidth: .infinity)
-            .background(.pink)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .opacity(isActiveSignIn ? 1.0 : 0.3)
-        }
-        .disabled(!isActiveSignIn)
-
-        Button(action: { store.send(.routeToSignUp) }) {
           HStack {
-            Text("Don't have an account?")
+            Spacer()
 
-            Text("Sign Up here")
-              .fontWeight(.bold)
+            Button(action: {
+              store.state.checkToEmail = ""
+              store.isShowReset = true
+            }) {
+              Text("Forgot Password?")
+                .font(.callout)
+                .fontWeight(.bold)
+            }
           }
-          .font(.callout)
-        }
 
-        GoogleSignInButton(
-          viewModel: GoogleSignInButtonViewModel(
-            scheme: .dark,
-            style: .wide,
-            state: .normal))
-        {
-          store.send(.onTapGoogleSignIn)
-        }
+          Button(action: { store.send(.onTapSignIn) }) {
+            Text("Log In")
+              .foregroundStyle(.white)
+              .frame(height: 50)
+              .frame(maxWidth: .infinity)
+              .background(.pink)
+              .clipShape(RoundedRectangle(cornerRadius: 8))
+              .opacity(isActiveSignIn ? 1.0 : 0.3)
+          }
+          .disabled(!isActiveSignIn)
 
-        Button(action: { }) {
-          SignWithAppleButtonViewRepresentable(
-            buttonType: .default,
-            buttonStyle: .black)
-            .allowsHitTesting(false)
-            .frame(height: 45)
+          Button(action: { store.send(.routeToSignUp) }) {
+            HStack {
+              Text("Don't have an account?")
+
+              Text("Sign Up here")
+                .fontWeight(.bold)
+            }
+            .font(.callout)
+          }
+
+          GoogleSignInButton(
+            viewModel: GoogleSignInButtonViewModel(
+              scheme: .dark,
+              style: .wide,
+              state: .normal))
+          {
+            store.send(.onTapGoogleSignIn)
+          }
+
+          Button(action: { }) {
+            SignWithAppleButtonViewRepresentable(
+              buttonType: .default,
+              buttonStyle: .black)
+              .allowsHitTesting(false)
+              .frame(height: 45)
+          }
         }
       }
     }
@@ -162,7 +166,7 @@ extension SignInPage: View {
         Text("계정과 연결된 이메일 주소를 입력하면, 비밀번호 재설정 링크가 이메일로 전송됩니다.")
       })
     .padding(.horizontal, 16)
-    .toolbar(.visible, for: .navigationBar)
+    .toolbar(.hidden, for: .navigationBar)
     .setRequestFlightView(isLoading: isLoading)
     .onAppear {
       isFocus = .email

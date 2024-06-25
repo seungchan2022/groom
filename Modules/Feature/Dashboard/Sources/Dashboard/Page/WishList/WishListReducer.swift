@@ -64,6 +64,8 @@ struct WishListReducer {
     case routeToSignIn
 
     case routeToDetail(Airbnb.WishList.Item)
+    
+    case routeToTabBarItem(String)
 
     case throwError(CompositeErrorRepository)
   }
@@ -140,6 +142,10 @@ struct WishListReducer {
 
       case .routeToDetail(let item):
         sideEffect.routeToDetail(item)
+        return .none
+        
+      case .routeToTabBarItem(let matchPath):
+        sideEffect.routeToTabBarItem(matchPath)
         return .none
 
       case .throwError(let error):

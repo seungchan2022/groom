@@ -58,7 +58,7 @@ extension DetailPage.ItemComponent: View {
               .frame(width: 32, height: 32)
           }
           .padding(.horizontal, 24)
-          .padding(.top, 64)
+          .padding(.top, 24)
       }
     }
     .overlay(alignment: .topTrailing) {
@@ -71,7 +71,7 @@ extension DetailPage.ItemComponent: View {
               .frame(width: 32, height: 32)
           }
           .padding(.horizontal, 24)
-          .padding(.top, 64)
+          .padding(.top, 24)
       }
     }
 

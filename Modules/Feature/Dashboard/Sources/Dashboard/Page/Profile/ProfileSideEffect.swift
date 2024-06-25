@@ -45,17 +45,7 @@ extension ProfileSideEffect {
     }
   }
 
-  var signOut: () -> Effect<ProfileReducer.Action> {
-    {
-      .publisher {
-        useCase.authUseCase.signOut()
-          .map { _ in true }
-          .receive(on: main)
-          .mapToResult()
-          .map(ProfileReducer.Action.fetchSignOut)
-      }
-    }
-  }
+
 
   var routeToSignIn: () -> Void {
     {
@@ -90,6 +80,14 @@ extension ProfileSideEffect {
       navigator.next(
         linkItem: .init(path: Link.Dashboard.Path.updateAuth.rawValue),
         isAnimated: true)
+    }
+  }
+  
+  
+  var routeToTabBarItem: (String) -> Void {
+    { path in
+      guard path != Link.Dashboard.Path.profile.rawValue else { return }
+      navigator.replace(linkItem: .init(path: path), isAnimated: false)
     }
   }
 }

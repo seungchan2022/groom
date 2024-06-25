@@ -55,6 +55,9 @@ struct HomeReducer {
     case routeToCityDetail(Airbnb.Search.City.Item)
     case routeToCountryDetail(Airbnb.Search.Country.Item)
 
+    case routeToTabBarItem(String)
+
+    
     case throwError(CompositeErrorRepository)
   }
 
@@ -130,6 +133,10 @@ struct HomeReducer {
 
       case .routeToCountryDetail(let item):
         sideEffect.routeToCountryDetail(item)
+        return .none
+        
+      case .routeToTabBarItem(let matchPath):
+        sideEffect.routeToTabBarItem(matchPath)
         return .none
 
       case .throwError(let error):

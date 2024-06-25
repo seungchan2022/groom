@@ -12,8 +12,8 @@ struct UpdateProfileImagePage {
 extension UpdateProfileImagePage {
   private var isLoading: Bool {
     store.fetchUserInfo.isLoading
-      || store.fetchUpdateProfileImage.isLoading
-      || store.fetchDeleteProfileImage.isLoading
+    || store.fetchUpdateProfileImage.isLoading
+    || store.fetchDeleteProfileImage.isLoading
   }
 }
 
@@ -21,72 +21,65 @@ extension UpdateProfileImagePage {
 
 extension UpdateProfileImagePage: View {
   var body: some View {
-    ScrollView {
-      VStack {
-        Button(action: {
-          store.isShowPhotoPicker = true
-        }) {
+    VStack {
+      DesignSystemNavigation(
+        barItem: .init(
+          backAction: { store.send(.routeToBack) },
+          moreActionList: [
+            .init(
+              title: "프로필 이미지 삭제",
+              action: { store.send(.deleteProfileImage)  })
+          ]),
+        title: "") {
           VStack {
-            RemoteImage(
-              url: store.item.photoURL ?? "",
-              placeholder: {
-                Image(systemName: "person.circle")
-                  .resizable()
-                  .frame(width: 200, height: 200)
-                  .fontWeight(.ultraLight)
-                  .foregroundStyle(.black)
-              })
-              .scaledToFill()
-              .frame(width: 200, height: 200)
-              .clipShape(Circle())
+            Button(action: {
+              store.isShowPhotoPicker = true
+            }) {
+              VStack {
+                RemoteImage(
+                  url: store.item.photoURL ?? "",
+                  placeholder: {
+                    Image(systemName: "person.circle")
+                      .resizable()
+                      .frame(width: 200, height: 200)
+                      .fontWeight(.ultraLight)
+                      .foregroundStyle(.black)
+                  })
+                .scaledToFill()
+                .frame(width: 200, height: 200)
+                .clipShape(Circle())
+              }
+            }
+            VStack {
+              Text("이메일: \(store.item.email ?? "")")
+              
+              Text("이름: \(store.item.userName ?? "")")
+            }
+            .padding(.top, 32)
           }
+          
+          Divider()
+            .padding(.top, 32)
         }
-        VStack {
-          Text("이메일: \(store.item.email ?? "")")
-
-          Text("이름: \(store.item.userName ?? "")")
-        }
-        .padding(.top, 32)
-      }
-
-      Divider()
-        .padding(.top, 32)
     }
-    .navigationTitle("")
-    .navigationBarTitleDisplayMode(.inline)
-    .navigationBarBackButtonHidden()
-    .toolbar {
-      ToolbarItem(placement: .topBarLeading) {
-        Button(action: { store.send(.routeToBack) }) {
-          Image(systemName: "chevron.left")
-            .imageScale(.large)
+        .toolbar(.hidden, for: .navigationBar)
+      .photosPicker(
+        isPresented: $store.isShowPhotoPicker,
+        selection: $store.selectedImage)
+      .onChange(of: store.selectedImage) { _, new in
+        Task {
+          guard let item = new else { return }
+          guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+          
+          store.send(.updateProfileImage(data))
         }
       }
-
-      ToolbarItem(placement: .topBarTrailing) {
-        Button(action: { store.send(.deleteProfileImage) }) {
-          Text("프로필 이미지 삭제")
-            .font(.callout)
-        }
+      .setRequestFlightView(isLoading: isLoading)
+      .onAppear {
+        store.send(.getUserInfo)
       }
-    }
-    .photosPicker(
-      isPresented: $store.isShowPhotoPicker,
-      selection: $store.selectedImage)
-    .onChange(of: store.selectedImage) { _, new in
-      Task {
-        guard let item = new else { return }
-        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-
-        store.send(.updateProfileImage(data))
+      .onDisappear {
+        store.send(.teardown)
       }
-    }
-    .setRequestFlightView(isLoading: isLoading)
-    .onAppear {
-      store.send(.getUserInfo)
-    }
-    .onDisappear {
-      store.send(.teardown)
-    }
   }
 }

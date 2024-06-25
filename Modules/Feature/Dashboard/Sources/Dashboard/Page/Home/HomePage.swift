@@ -50,6 +50,10 @@ extension HomePage {
 // MARK: View
 
 extension HomePage {
+  private var tabNavigationComponentViewState: TabNavigationComponent.ViewState {
+    .init(activeMatchPath: Link.Dashboard.Path.home.rawValue)
+  }
+  
   private var queryBinder: Binding<String> {
     .init(
       get: { store.query },
@@ -85,85 +89,93 @@ extension HomePage {
 extension HomePage: View {
   var body: some View {
     VStack {
-      VStack {
-        HStack {
-          Text("City")
-          Spacer()
+      DesignSystemNavigation(title: "Home") {
+        VStack {
+          VStack {
+            HStack {
+              Text("City")
+              Spacer()
 
-          Picker("", selection: queryBinder) {
-            Text("Select a city")
-              .tag("")
-            ForEach(cityItemList, id: \.self) { item in
-              Text(item)
-                .tag(item)
+              Picker("", selection: queryBinder) {
+                Text("Select a city")
+                  .tag("")
+                ForEach(cityItemList, id: \.self) { item in
+                  Text(item)
+                    .tag(item)
+                }
+              }
+              .pickerStyle(.menu)
+              .tint(.gray)
             }
-          }
-          .pickerStyle(.menu)
-          .tint(.gray)
-        }
-        .padding(.leading, 16)
+            .padding(.leading, 16)
 
-        Divider()
+            Divider()
 
-        HStack {
-          Text("Country")
-          Spacer()
+            HStack {
+              Text("Country")
+              Spacer()
 
-          Picker("", selection: countryBinder) {
-            Text("Select a country")
-              .tag("")
-            ForEach(countryItemList, id: \.self) { item in
-              Text(item)
-                .tag(item)
+              Picker("", selection: countryBinder) {
+                Text("Select a country")
+                  .tag("")
+                ForEach(countryItemList, id: \.self) { item in
+                  Text(item)
+                    .tag(item)
+                }
+              }
+              .pickerStyle(.menu)
+              .tint(.gray)
             }
+            .padding(.leading, 16)
           }
-          .pickerStyle(.menu)
-          .tint(.gray)
+          .background {
+            RoundedRectangle(cornerRadius: 5)
+              .stroke(.black, lineWidth: 1)
+          }
+          .padding(.horizontal, 12)
+
+          switch (store.query.isEmpty, store.country.isEmpty) {
+          case (true, true):
+            ExplorePage(store: exploreStore)
+
+          case (false, true):
+            ScrollView {
+              LazyVStack(spacing: 48) {
+                ForEach(store.searchCityItemList) { item in
+                  SearchCityResultComponent(
+                    viewState: .init(item: item),
+                    tapAction: { store.send(.routeToCityDetail($0)) })
+                }
+              }
+              .padding(.horizontal, 16)
+            }
+
+          case (true, false):
+            ScrollView {
+              LazyVStack(spacing: 48) {
+                ForEach(store.searchCountryItemList) { item in
+                  SearchCountryResultComponent(
+                    viewState: .init(item: item),
+                    tapAction: { store.send(.routeToCountryDetail($0)) })
+                }
+              }
+              .padding(.horizontal, 16)
+            }
+
+          case (false, false):
+            EmptyView()
+          }
         }
-        .padding(.leading, 16)
       }
-      .background {
-        RoundedRectangle(cornerRadius: 5)
-          .stroke(.black, lineWidth: 1)
-      }
-      .padding(.horizontal, 12)
-
-      switch (store.query.isEmpty, store.country.isEmpty) {
-      case (true, true):
-        ExplorePage(store: exploreStore)
-
-      case (false, true):
-        ScrollView {
-          LazyVStack(spacing: 48) {
-            ForEach(store.searchCityItemList) { item in
-              SearchCityResultComponent(
-                viewState: .init(item: item),
-                tapAction: { store.send(.routeToCityDetail($0)) })
-            }
-          }
-          .padding(.horizontal, 16)
-        }
-
-      case (true, false):
-        ScrollView {
-          LazyVStack(spacing: 48) {
-            ForEach(store.searchCountryItemList) { item in
-              SearchCountryResultComponent(
-                viewState: .init(item: item),
-                tapAction: { store.send(.routeToCountryDetail($0)) })
-            }
-          }
-          .padding(.horizontal, 16)
-        }
-
-      case (false, false):
-        EmptyView()
-      }
+      
+      
+      TabNavigationComponent(
+        viewState: tabNavigationComponentViewState,
+        tapAction: { store.send(.routeToTabBarItem($0)) })
     }
     .scrollDismissesKeyboard(.immediately)
-    .navigationTitle("Explore")
-    .navigationBarTitleDisplayMode(.large)
-    .toolbar(.visible, for: .navigationBar)
+    .toolbar(.hidden, for: .navigationBar)
+    .ignoresSafeArea(.all, edges: .bottom)
     .setRequestFlightView(isLoading: isLoading)
     .onChange(of: store.query) { _, new in
       guard !new.isEmpty else { return }

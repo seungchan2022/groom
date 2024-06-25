@@ -32,6 +32,18 @@ extension UpdateAuthSideEffect {
       }
     }
   }
+  
+  var signOut: () -> Effect<UpdateAuthReducer.Action> {
+    {
+      .publisher {
+        useCase.authUseCase.signOut()
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(UpdateAuthReducer.Action.fetchSignOut)
+      }
+    }
+  }
 
   var updateUserName: (String) -> Effect<UpdateAuthReducer.Action> {
     { name in

@@ -36,166 +36,169 @@ extension SignUpPage {
 
 extension SignUpPage: View {
   var body: some View {
-    VStack(spacing: 24) {
-      Text("Create Account")
-        .font(.largeTitle)
-        .foregroundStyle(.pink)
-        .padding(.bottom, 36)
+    VStack {
+      DesignSystemNavigation(title: "") {
+        VStack(spacing: 24) {
+          Text("Create Account")
+            .font(.largeTitle)
+            .foregroundStyle(.pink)
+            .padding(.bottom, 36)
 
-      TextField(
-        "",
-        text: $store.emailText,
-        prompt: Text("Email"))
-        .autocorrectionDisabled(true)
-        .focused($isFocus, equals: .email)
-        .textInputAutocapitalization(.never)
-        .padding()
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay {
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(!store.isValidEmail ? .red : isFocus == .email ? .blue : .clear, lineWidth: 1)
-        }
-        .onChange(of: store.emailText) { _, new in
-          store.isValidEmail = Validator.validateEmail(email: new)
-        }
-
-      if !store.isValidEmail {
-        HStack {
-          Text("유효한 이메일 주소가 아닙니다.")
-            .font(.footnote)
-            .foregroundStyle(.red)
-            .padding(.top, -12)
-
-          Spacer()
-        }
-      }
-
-      TextField(
-        "",
-        text: $store.userNameText,
-        prompt: Text("userName"))
-        .autocorrectionDisabled(true)
-        .textInputAutocapitalization(.never)
-        .padding()
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-
-      HStack {
-        if store.isShowPassword {
           TextField(
             "",
-            text: $store.passwordText,
-            prompt: Text("Password"))
-        } else {
-          SecureField(
-            "",
-            text: $store.passwordText,
-            prompt: Text("Password"))
-        }
-      }
-      .autocorrectionDisabled(true)
-      .focused($isFocus, equals: .password)
-      .textInputAutocapitalization(.never)
-      .padding()
-      .background(.thinMaterial)
-      .clipShape(RoundedRectangle(cornerRadius: 10))
-      .overlay {
-        RoundedRectangle(cornerRadius: 10)
-          .stroke(!store.isValidPassword ? .red : isFocus == .password ? .blue : .clear, lineWidth: 1)
-      }
-      .overlay(alignment: .trailing) {
-        Button(action: { store.isShowPassword.toggle() }) {
-          Image(systemName: store.isShowPassword ? "eye" : "eye.slash")
-            .foregroundStyle(.black)
-            .padding(.trailing, 12)
-        }
-      }
-      .onChange(of: store.passwordText) { _, new in
-        store.isValidPassword = Validator.validatePassword(password: new)
-      }
-      if !store.isValidPassword {
-        HStack {
-          Text("영어대문자, 숫자, 특수문자를 모두 사용하여 8 ~ 20자리로 설정해주세요.")
-            .font(.footnote)
-            .foregroundStyle(.red)
-            .padding(.top, -12)
+            text: $store.emailText,
+            prompt: Text("Email"))
+            .autocorrectionDisabled(true)
+            .focused($isFocus, equals: .email)
+            .textInputAutocapitalization(.never)
+            .padding()
+            .background(.thinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay {
+              RoundedRectangle(cornerRadius: 10)
+                .stroke(!store.isValidEmail ? .red : isFocus == .email ? .blue : .clear, lineWidth: 1)
+            }
+            .onChange(of: store.emailText) { _, new in
+              store.isValidEmail = Validator.validateEmail(email: new)
+            }
 
-          Spacer()
-        }
-      }
+          if !store.isValidEmail {
+            HStack {
+              Text("유효한 이메일 주소가 아닙니다.")
+                .font(.footnote)
+                .foregroundStyle(.red)
+                .padding(.top, -12)
 
-      HStack {
-        if store.isShowConfirmPassword {
+              Spacer()
+            }
+          }
+
           TextField(
             "",
-            text: $store.confirmPasswordText,
-            prompt: Text("Confirm Password"))
-        } else {
-          SecureField(
-            "",
-            text: $store.confirmPasswordText,
-            prompt: Text("Confirm Password"))
-        }
-      }
-      .autocorrectionDisabled(true)
-      .focused($isFocus, equals: .confirmPassword)
-      .textInputAutocapitalization(.never)
-      .padding()
-      .background(.thinMaterial)
-      .clipShape(RoundedRectangle(cornerRadius: 10))
-      .overlay {
-        RoundedRectangle(cornerRadius: 10)
-          .stroke(!store.isValidConfirmPassword ? .red : isFocus == .confirmPassword ? .blue : .clear, lineWidth: 1)
-      }
-      .overlay(alignment: .trailing) {
-        Button(action: { store.isShowConfirmPassword.toggle() }) {
-          Image(systemName: store.isShowConfirmPassword ? "eye" : "eye.slash")
-            .foregroundStyle(.black)
-            .padding(.trailing, 12)
-        }
-      }
-      .onChange(of: store.confirmPasswordText) { _, new in
-        store.isValidConfirmPassword = isValidConfirm(text: new)
-      }
-      if !store.isValidConfirmPassword {
-        HStack {
-          Text("비밀번호가 일치하지 않습니다.")
-            .font(.footnote)
-            .foregroundStyle(.red)
-            .padding(.top, -12)
+            text: $store.userNameText,
+            prompt: Text("userName"))
+            .autocorrectionDisabled(true)
+            .textInputAutocapitalization(.never)
+            .padding()
+            .background(.thinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+
+          HStack {
+            if store.isShowPassword {
+              TextField(
+                "",
+                text: $store.passwordText,
+                prompt: Text("Password"))
+            } else {
+              SecureField(
+                "",
+                text: $store.passwordText,
+                prompt: Text("Password"))
+            }
+          }
+          .autocorrectionDisabled(true)
+          .focused($isFocus, equals: .password)
+          .textInputAutocapitalization(.never)
+          .padding()
+          .background(.thinMaterial)
+          .clipShape(RoundedRectangle(cornerRadius: 10))
+          .overlay {
+            RoundedRectangle(cornerRadius: 10)
+              .stroke(!store.isValidPassword ? .red : isFocus == .password ? .blue : .clear, lineWidth: 1)
+          }
+          .overlay(alignment: .trailing) {
+            Button(action: { store.isShowPassword.toggle() }) {
+              Image(systemName: store.isShowPassword ? "eye" : "eye.slash")
+                .foregroundStyle(.black)
+                .padding(.trailing, 12)
+            }
+          }
+          .onChange(of: store.passwordText) { _, new in
+            store.isValidPassword = Validator.validatePassword(password: new)
+          }
+          if !store.isValidPassword {
+            HStack {
+              Text("영어대문자, 숫자, 특수문자를 모두 사용하여 8 ~ 20자리로 설정해주세요.")
+                .font(.footnote)
+                .foregroundStyle(.red)
+                .padding(.top, -12)
+
+              Spacer()
+            }
+          }
+
+          HStack {
+            if store.isShowConfirmPassword {
+              TextField(
+                "",
+                text: $store.confirmPasswordText,
+                prompt: Text("Confirm Password"))
+            } else {
+              SecureField(
+                "",
+                text: $store.confirmPasswordText,
+                prompt: Text("Confirm Password"))
+            }
+          }
+          .autocorrectionDisabled(true)
+          .focused($isFocus, equals: .confirmPassword)
+          .textInputAutocapitalization(.never)
+          .padding()
+          .background(.thinMaterial)
+          .clipShape(RoundedRectangle(cornerRadius: 10))
+          .overlay {
+            RoundedRectangle(cornerRadius: 10)
+              .stroke(!store.isValidConfirmPassword ? .red : isFocus == .confirmPassword ? .blue : .clear, lineWidth: 1)
+          }
+          .overlay(alignment: .trailing) {
+            Button(action: { store.isShowConfirmPassword.toggle() }) {
+              Image(systemName: store.isShowConfirmPassword ? "eye" : "eye.slash")
+                .foregroundStyle(.black)
+                .padding(.trailing, 12)
+            }
+          }
+          .onChange(of: store.confirmPasswordText) { _, new in
+            store.isValidConfirmPassword = isValidConfirm(text: new)
+          }
+          if !store.isValidConfirmPassword {
+            HStack {
+              Text("비밀번호가 일치하지 않습니다.")
+                .font(.footnote)
+                .foregroundStyle(.red)
+                .padding(.top, -12)
+
+              Spacer()
+            }
+          }
+
+          Button(action: {
+            store.send(.onTapSignUp)
+          }) {
+            Text("Sign Up")
+              .foregroundStyle(.white)
+              .frame(height: 50)
+              .frame(maxWidth: .infinity)
+              .background(.pink)
+              .clipShape(RoundedRectangle(cornerRadius: 8))
+              .opacity(isActiveSignUp ? 1.0 : 0.3)
+          }
+          .disabled(!isActiveSignUp)
+
+          Button(action: { store.send(.routeToSignIn) }) {
+            HStack {
+              Text("Already have an account?")
+
+              Text("Log In here")
+                .fontWeight(.bold)
+            }
+            .font(.callout)
+          }
 
           Spacer()
         }
       }
-
-      Button(action: {
-        store.send(.onTapSignUp)
-      }) {
-        Text("Sign Up")
-          .foregroundStyle(.white)
-          .frame(height: 50)
-          .frame(maxWidth: .infinity)
-          .background(.pink)
-          .clipShape(RoundedRectangle(cornerRadius: 8))
-          .opacity(isActiveSignUp ? 1.0 : 0.3)
-      }
-      .disabled(!isActiveSignUp)
-
-      Button(action: { store.send(.routeToSignIn) }) {
-        HStack {
-          Text("Already have an account?")
-
-          Text("Log In here")
-            .fontWeight(.bold)
-        }
-        .font(.callout)
-      }
-
-      Spacer()
     }
     .padding(.horizontal, 16)
-    .padding(.top, 72)
     .toolbar(.hidden, for: .navigationBar)
     .setRequestFlightView(isLoading: isLoading)
     .onAppear {

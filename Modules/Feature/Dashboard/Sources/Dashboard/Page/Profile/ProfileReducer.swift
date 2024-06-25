@@ -31,13 +31,9 @@ struct ProfileReducer {
   struct State: Equatable, Identifiable {
     let id: UUID
 
-    var isShowResetPassword = false
-
     var status: LoginStatus = .isLoggedOut
 
     var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
-
-    var fetchSignOut: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     var fetchUser: FetchState.Data<Bool> = .init(isLoading: false, value: false)
     var fetchUserInfo: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
@@ -49,7 +45,6 @@ struct ProfileReducer {
 
   enum CancelID: Equatable, CaseIterable {
     case teardown
-    case requestSignOut
     case requestUser
     case requestUserInfo
   }
@@ -61,10 +56,6 @@ struct ProfileReducer {
     case getUser
     case getUserInfo
 
-    case onTapSignOut
-
-    case fetchSignOut(Result<Bool, CompositeErrorRepository>)
-
     case fetchUser(Result<Bool, CompositeErrorRepository>)
     case fetchUserInfo(Result<Auth.Me.Response?, CompositeErrorRepository>)
 
@@ -73,6 +64,9 @@ struct ProfileReducer {
 
     case routeToUpdateProfileImage
     case routeToUpdateAuth
+    
+    case routeToTabBarItem(String)
+
 
     case throwError(CompositeErrorRepository)
   }
@@ -99,27 +93,6 @@ struct ProfileReducer {
         return sideEffect
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
-
-      case .onTapSignOut:
-        state.fetchSignOut.isLoading = true
-        state.item = .init(uid: "", email: "", userName: "", photoURL: "")
-        state.status = .isLoggedOut
-        return sideEffect
-          .signOut()
-          .cancellable(pageID: pageID, id: CancelID.requestSignOut, cancelInFlight: true)
-
-      case .fetchSignOut(let result):
-        state.fetchSignOut.isLoading = false
-        switch result {
-        case .success:
-          state.item = .init(uid: "", email: "", userName: "", photoURL: "")
-          state.status = .isLoggedOut
-          sideEffect.routeToSignIn()
-          return .none
-
-        case .failure(let error):
-          return .run { await $0(.throwError(error)) }
-        }
 
       case .fetchUser(let result):
         state.fetchUser.isLoading = false
@@ -161,6 +134,11 @@ struct ProfileReducer {
       case .routeToUpdateAuth:
         sideEffect.routeToUpdateAuth()
         return .none
+        
+      case .routeToTabBarItem(let matchPath):
+        sideEffect.routeToTabBarItem(matchPath)
+        return .none
+
 
       case .throwError(let error):
         sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)

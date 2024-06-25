@@ -31,14 +31,18 @@ struct UpdateAuthReducer {
 
     let id: UUID
 
+    var isShowSignOut = false
     var isShowDeleteUser = false
     var isShowUpdateUser = false
+    
+    var status: LoginStatus = .isLoggedOut
 
     var userName = ""
 
     var item: Auth.Me.Response = .init(uid: "", email: "", userName: "", photoURL: "")
 
     var fetchUserInfo: FetchState.Data<Auth.Me.Response?> = .init(isLoading: false, value: .none)
+    var fetchSignOut: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
     var fetchUpdateUserName: FetchState.Data<Bool> = .init(isLoading: false, value: false)
 
@@ -50,6 +54,7 @@ struct UpdateAuthReducer {
   enum CancelID: String, CaseIterable {
     case teardown
     case requestUserInfo
+    case requestSignOut
     case requestUpdateUserName
     case requestDeleteUser
     case requestDeleteUserInfo
@@ -62,6 +67,8 @@ struct UpdateAuthReducer {
 
     case getUserInfo
 
+    case onTapSignOut
+    
     case onTapUpdateUserName
 
     case onTapDeleteUser
@@ -73,6 +80,7 @@ struct UpdateAuthReducer {
     case routeToBack
 
     case fetchUserInfo(Result<Auth.Me.Response?, CompositeErrorRepository>)
+    case fetchSignOut(Result<Bool, CompositeErrorRepository>)
 
     case fetchUpdateUserName(Result<Bool, CompositeErrorRepository>)
 
@@ -99,6 +107,15 @@ struct UpdateAuthReducer {
         return sideEffect
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
+        
+      case .onTapSignOut:
+        state.fetchSignOut.isLoading = true
+        state.item = .init(uid: "", email: "", userName: "", photoURL: "")
+        state.status = .isLoggedOut
+        return sideEffect
+          .signOut()
+          .cancellable(pageID: pageID, id: CancelID.requestSignOut, cancelInFlight: true)
+
 
       case .onTapUpdateUserName:
         state.fetchUpdateUserName.isLoading = true
@@ -141,6 +158,21 @@ struct UpdateAuthReducer {
         switch result {
         case .success(let item):
           state.item = item ?? .init(uid: "", email: "", userName: "", photoURL: "")
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+        
+        
+      case .fetchSignOut(let result):
+        state.fetchSignOut.isLoading = false
+        switch result {
+        case .success:
+          state.item = .init(uid: "", email: "", userName: "", photoURL: "")
+          state.status = .isLoggedOut
+          sideEffect.routeToBack()
+          sideEffect.routeToSignIn()
           return .none
 
         case .failure(let error):

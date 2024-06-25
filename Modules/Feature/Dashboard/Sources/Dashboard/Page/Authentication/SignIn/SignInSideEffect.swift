@@ -66,13 +66,13 @@ extension SignInSideEffect {
         completeAction: {
           guard let isLogIn else { return }
 
-          navigator.currentTabSend(
-            linkItem: .init(
+          navigator.send(
+            item: .init(
               path: Link.Dashboard.Path.wishList.rawValue,
               items: WishListRouteItem(isLogIn: isLogIn)))
-
-          navigator.currentTabSend(
-            linkItem: .init(
+          
+          navigator.send(
+            item: .init(
               path: Link.Dashboard.Path.profile.rawValue,
               items: ProfileRouteItem(isLogIn: isLogIn)))
         })
