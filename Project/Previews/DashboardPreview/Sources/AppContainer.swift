@@ -9,7 +9,6 @@ final class AppContainer {
 
   // MARK: Lifecycle
 
-  
   private init(dependency: AppSideEffect, navigator: SingleLinkNavigator) {
     self.dependency = dependency
     self.navigator = navigator

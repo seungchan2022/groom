@@ -1,10 +1,10 @@
 import Architecture
 import AuthenticationServices
 import ComposableArchitecture
+import DesignSystem
 import GoogleSignIn
 import GoogleSignInSwift
 import SwiftUI
-import DesignSystem
 
 // MARK: - Focus
 
@@ -39,7 +39,7 @@ extension SignInPage {
 extension SignInPage: View {
   var body: some View {
     VStack {
-      DesignSystemNavigation(title: "") {
+      DesignSystemNavigation {
         VStack(spacing: 24) {
           Image(systemName: "paperplane")
             .resizable()

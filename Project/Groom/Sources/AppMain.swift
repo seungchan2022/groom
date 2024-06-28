@@ -17,6 +17,5 @@ extension AppMain: View {
       linkNavigator: viewModel.linkNavigator,
       item: .init(path: Link.Dashboard.Path.home.rawValue))
       .ignoresSafeArea()
-
   }
 }

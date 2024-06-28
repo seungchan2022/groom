@@ -53,7 +53,7 @@ extension HomePage {
   private var tabNavigationComponentViewState: TabNavigationComponent.ViewState {
     .init(activeMatchPath: Link.Dashboard.Path.home.rawValue)
   }
-  
+
   private var queryBinder: Binding<String> {
     .init(
       get: { store.query },
@@ -88,8 +88,11 @@ extension HomePage {
 
 extension HomePage: View {
   var body: some View {
-    VStack {
-      DesignSystemNavigation(title: "Home") {
+    VStack(spacing: .zero) {
+      DesignSystemNavigation(
+        barItem: .init(title: ""),
+        largeTitle: "Home")
+      {
         VStack {
           VStack {
             HStack {
@@ -167,8 +170,7 @@ extension HomePage: View {
           }
         }
       }
-      
-      
+
       TabNavigationComponent(
         viewState: tabNavigationComponentViewState,
         tapAction: { store.send(.routeToTabBarItem($0)) })

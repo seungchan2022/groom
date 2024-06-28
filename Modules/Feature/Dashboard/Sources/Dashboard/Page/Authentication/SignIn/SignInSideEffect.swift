@@ -70,7 +70,7 @@ extension SignInSideEffect {
             item: .init(
               path: Link.Dashboard.Path.wishList.rawValue,
               items: WishListRouteItem(isLogIn: isLogIn)))
-          
+
           navigator.send(
             item: .init(
               path: Link.Dashboard.Path.profile.rawValue,

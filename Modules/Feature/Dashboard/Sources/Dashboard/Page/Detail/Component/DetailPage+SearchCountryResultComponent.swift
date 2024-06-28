@@ -58,7 +58,7 @@ extension DetailPage.SearchCountryResultComponent: View {
               .frame(width: 32, height: 32)
           }
           .padding(.horizontal, 24)
-          .padding(.top, 24)
+          .padding(.top, 60)
       }
     }
     .overlay(alignment: .topTrailing) {
@@ -71,7 +71,7 @@ extension DetailPage.SearchCountryResultComponent: View {
               .frame(width: 32, height: 32)
           }
           .padding(.horizontal, 24)
-          .padding(.top, 24)
+          .padding(.top, 60)
       }
     }
 
@@ -174,7 +174,7 @@ extension DetailPage.SearchCountryResultComponent: View {
       .padding(.horizontal, 16)
     }
     .padding(.top, 20)
-    .padding(.bottom, 140)
+    .padding(.bottom, 24)
   }
 
 }

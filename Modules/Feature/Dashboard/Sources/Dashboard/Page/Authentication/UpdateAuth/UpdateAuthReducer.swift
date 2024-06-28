@@ -34,7 +34,7 @@ struct UpdateAuthReducer {
     var isShowSignOut = false
     var isShowDeleteUser = false
     var isShowUpdateUser = false
-    
+
     var status: LoginStatus = .isLoggedOut
 
     var userName = ""
@@ -68,7 +68,7 @@ struct UpdateAuthReducer {
     case getUserInfo
 
     case onTapSignOut
-    
+
     case onTapUpdateUserName
 
     case onTapDeleteUser
@@ -107,7 +107,7 @@ struct UpdateAuthReducer {
         return sideEffect
           .userInfo()
           .cancellable(pageID: pageID, id: CancelID.requestUserInfo, cancelInFlight: true)
-        
+
       case .onTapSignOut:
         state.fetchSignOut.isLoading = true
         state.item = .init(uid: "", email: "", userName: "", photoURL: "")
@@ -115,7 +115,6 @@ struct UpdateAuthReducer {
         return sideEffect
           .signOut()
           .cancellable(pageID: pageID, id: CancelID.requestSignOut, cancelInFlight: true)
-
 
       case .onTapUpdateUserName:
         state.fetchUpdateUserName.isLoading = true
@@ -163,8 +162,7 @@ struct UpdateAuthReducer {
         case .failure(let error):
           return .run { await $0(.throwError(error)) }
         }
-        
-        
+
       case .fetchSignOut(let result):
         state.fetchSignOut.isLoading = false
         switch result {

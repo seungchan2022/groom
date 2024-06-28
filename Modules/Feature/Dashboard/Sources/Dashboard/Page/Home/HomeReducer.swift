@@ -57,7 +57,6 @@ struct HomeReducer {
 
     case routeToTabBarItem(String)
 
-    
     case throwError(CompositeErrorRepository)
   }
 
@@ -134,7 +133,7 @@ struct HomeReducer {
       case .routeToCountryDetail(let item):
         sideEffect.routeToCountryDetail(item)
         return .none
-        
+
       case .routeToTabBarItem(let matchPath):
         sideEffect.routeToTabBarItem(matchPath)
         return .none

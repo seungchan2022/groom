@@ -32,7 +32,7 @@ extension UpdateAuthSideEffect {
       }
     }
   }
-  
+
   var signOut: () -> Effect<UpdateAuthReducer.Action> {
     {
       .publisher {

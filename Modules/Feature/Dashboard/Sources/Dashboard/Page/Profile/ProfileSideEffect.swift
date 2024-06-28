@@ -45,8 +45,6 @@ extension ProfileSideEffect {
     }
   }
 
-
-
   var routeToSignIn: () -> Void {
     {
       navigator.sheet(
@@ -82,8 +80,7 @@ extension ProfileSideEffect {
         isAnimated: true)
     }
   }
-  
-  
+
   var routeToTabBarItem: (String) -> Void {
     { path in
       guard path != Link.Dashboard.Path.profile.rawValue else { return }

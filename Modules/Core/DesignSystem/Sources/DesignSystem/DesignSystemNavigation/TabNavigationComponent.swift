@@ -5,7 +5,7 @@ import SwiftUI
 public struct TabNavigationComponent {
   let viewState: ViewState
   let tapAction: (String) -> Void
-  
+
   public init(viewState: ViewState, tapAction: @escaping (String) -> Void) {
     self.viewState = viewState
     self.tapAction = tapAction
@@ -16,7 +16,7 @@ public struct TabNavigationComponent {
 
 extension TabNavigationComponent: View {
   public var body: some View {
-    HStack() {
+    HStack {
       ForEach(viewState.itemList) { item in
         Button(action: { tapAction(item.matchPath) }) {
           VStack {
@@ -24,8 +24,9 @@ extension TabNavigationComponent: View {
               .resizable()
               .frame(width: 32, height: 32)
               .foregroundStyle(Color.defaultButtonColor(item.isActive))
-            
+
             Text(item.matchPath)
+              .font(.footnote)
               .foregroundStyle(Color.defaultButtonColor(item.isActive))
           }
         }
@@ -39,8 +40,10 @@ extension TabNavigationComponent: View {
     .padding(.bottom, WindowAppearance.safeArea.bottom)
     .background {
       Rectangle()
-        .fill(DesignSystemColor.label(.default).color)
         .fill(.white)
+    }
+    .overlay(alignment: .top) {
+      Divider()
     }
   }
 }
@@ -49,9 +52,9 @@ extension TabNavigationComponent: View {
 
 extension TabNavigationComponent {
   public struct ViewState: Equatable {
-    
+
     // MARK: Lifecycle
-    
+
     public init(activeMatchPath: String) {
       self.activeMatchPath = activeMatchPath
       itemList = [
@@ -69,13 +72,13 @@ extension TabNavigationComponent {
           icon: Image(systemName: "person.circle.fill")),
       ]
     }
-    
+
     // MARK: Internal
-    
+
     let activeMatchPath: String
-    
+
     // MARK: Fileprivate
-    
+
     fileprivate let itemList: [ItemComponent]
   }
 }
@@ -86,11 +89,11 @@ private struct ItemComponent: Equatable, Identifiable {
   let matchPath: String // 각 tab의 matchPath
   let activeMatchPath: String // 그 tab이 활성화된 탭을 식별 하기 위해
   let icon: Image
-  
+
   var isActive: Bool {
     matchPath == activeMatchPath
   }
-  
+
   var id: String { matchPath }
 }
 
@@ -99,8 +102,8 @@ extension Color {
     { isActive in
       var color: Color {
         isActive == true
-        ? DesignSystemColor.tint(.red).color
-        : DesignSystemColor.palette(.gray(.lv200)).color
+          ? DesignSystemColor.tint(.red).color
+          : DesignSystemColor.palette(.gray(.lv200)).color
       }
       return color
     }

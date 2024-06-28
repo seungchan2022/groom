@@ -74,7 +74,7 @@ extension WishListSideEffect {
         isAnimated: true)
     }
   }
-  
+
   var routeToTabBarItem: (String) -> Void {
     { path in
       guard path != Link.Dashboard.Path.wishList.rawValue else { return }

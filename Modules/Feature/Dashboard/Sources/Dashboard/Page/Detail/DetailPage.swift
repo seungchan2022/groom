@@ -7,20 +7,20 @@ import SwiftUI
 
 struct DetailPage {
   @Bindable var store: StoreOf<DetailReducer>
-  
+
   @State private var position: MapCameraPosition = .automatic
   @State private var isShowMap = false
-  
+
 }
 
 extension DetailPage {
   private var isLoading: Bool {
     store.fetchItem.isLoading
-    || store.fetchSearchCityItem.isLoading
-    || store.fetchSearchCountryItem.isLoading
-    || store.fetchIsLike.isLoading
+      || store.fetchSearchCityItem.isLoading
+      || store.fetchSearchCountryItem.isLoading
+      || store.fetchIsLike.isLoading
   }
-  
+
 }
 
 // MARK: View
@@ -28,7 +28,7 @@ extension DetailPage {
 extension DetailPage: View {
   var body: some View {
     VStack {
-      DesignSystemNavigation(title: "") {
+      ScrollView {
         if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
           SearchCityResultComponent(
             viewState: .init(
@@ -57,7 +57,7 @@ extension DetailPage: View {
               } else {
                 store.send(.onTapUnLikeDetail($0))
               }
-              
+
             },
             position: $position)
         } else if
@@ -80,18 +80,111 @@ extension DetailPage: View {
             position: $position)
         }
       }
-      VStack(spacing: .zero) {
+      .fullScreenCover(isPresented: $isShowMap) {
+        if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
+          Map(position: $position) {
+            Marker(
+              "Destination",
+              coordinate: CLLocationCoordinate2D(
+                latitude: searchCityItem.coordinateList.latitude,
+                longitude: searchCityItem.coordinateList.longitude))
+          }
+          .mapStyle(.standard)
+          .overlay(alignment: .topLeading) {
+            Button(action: { isShowMap = false }) {
+              Image(systemName: "xmark")
+                .imageScale(.large)
+            }
+            .padding(.leading, 16)
+          }
+          .overlay(alignment: .topTrailing) {
+            Button(action: { position = .automatic }) {
+              Image(systemName: "dot.scope")
+                .imageScale(.large)
+                .foregroundStyle(.black)
+                .background {
+                  RoundedRectangle(cornerRadius: 5)
+                    .fill(.white)
+                    .frame(width: 45, height: 45)
+                }
+            }
+            .padding([.bottom, .trailing], 16)
+          }
+        }
 
+        else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
+          Map(position: $position) {
+            Marker(
+              "Destination",
+              coordinate: CLLocationCoordinate2D(
+                latitude: item.coordinateList.latitude,
+                longitude: item.coordinateList.longitude))
+          }
+          .mapStyle(.standard)
+          .overlay(alignment: .bottomTrailing) {
+            Button(action: { position = .automatic }) {
+              Image(systemName: "dot.scope")
+                .foregroundStyle(.black)
+                .background {
+                  RoundedRectangle(cornerRadius: 5)
+                    .fill(.white)
+                    .frame(width: 40, height: 40)
+                }
+            }
+            .padding([.bottom, .trailing], 16)
+          }
+          .overlay(alignment: .topLeading) {
+            Button(action: { isShowMap = false }) {
+              Image(systemName: "xmark")
+                .imageScale(.large)
+            }
+            .padding(.leading, 16)
+          }
+        } else if
+          let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
+            .first(where: { $0.id == store.searchCountryItem.id })
+        {
+          Map(position: $position) {
+            Marker(
+              "Destination",
+              coordinate: CLLocationCoordinate2D(
+                latitude: searchCountryItem.coordinateList.latitude,
+                longitude: searchCountryItem.coordinateList.longitude))
+          }
+          .mapStyle(.standard)
+          .overlay(alignment: .bottomTrailing) {
+            Button(action: { position = .automatic }) {
+              Image(systemName: "dot.scope")
+                .foregroundStyle(.black)
+                .background {
+                  RoundedRectangle(cornerRadius: 5)
+                    .fill(.white)
+                    .frame(width: 40, height: 40)
+                }
+            }
+            .padding([.bottom, .trailing], 16)
+          }
+          .overlay(alignment: .topLeading) {
+            Button(action: { isShowMap = false }) {
+              Image(systemName: "xmark")
+                .imageScale(.large)
+            }
+            .padding(.leading, 16)
+          }
+        }
+      }
+
+      VStack(spacing: .zero) {
         Divider()
-        
+
         HStack {
           VStack(alignment: .leading) {
             Text("$")
               .fontWeight(.semibold)
           }
-          
+
           Spacer()
-          
+
           Button(action: { }) {
             Text("예약하기")
               .foregroundStyle(.white)
@@ -111,7 +204,6 @@ extension DetailPage: View {
             .fill(.white)
         }
       }
-      
     }
     .ignoresSafeArea(.all, edges: .bottom)
     .ignoresSafeArea(.all, edges: .top)
@@ -128,98 +220,3 @@ extension DetailPage: View {
     }
   }
 }
-
-
-//  .fullScreenCover(isPresented: $isShowMap) {
-//    if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
-//      Map(position: $position) {
-//        Marker(
-//          "Destination",
-//          coordinate: CLLocationCoordinate2D(
-//            latitude: searchCityItem.coordinateList.latitude,
-//            longitude: searchCityItem.coordinateList.longitude))
-//      }
-//      .mapStyle(.standard)
-//      .overlay(alignment: .topLeading) {
-//        Button(action: { isShowMap = false }) {
-//          Image(systemName: "xmark")
-//            .imageScale(.large)
-//        }
-//        .padding(.leading, 16)
-//      }
-//      .overlay(alignment: .topTrailing) {
-//        Button(action: { position = .automatic }) {
-//          Image(systemName: "dot.scope")
-//            .imageScale(.large)
-//            .foregroundStyle(.black)
-//            .background {
-//              RoundedRectangle(cornerRadius: 5)
-//                .fill(.white)
-//                .frame(width: 45, height: 45)
-//            }
-//        }
-//        .padding([.bottom, .trailing], 16)
-//      }
-//    }
-//
-//    else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
-//      Map(position: $position) {
-//        Marker(
-//          "Destination",
-//          coordinate: CLLocationCoordinate2D(
-//            latitude: item.coordinateList.latitude,
-//            longitude: item.coordinateList.longitude))
-//      }
-//      .mapStyle(.standard)
-//      .overlay(alignment: .bottomTrailing) {
-//        Button(action: { position = .automatic }) {
-//          Image(systemName: "dot.scope")
-//            .foregroundStyle(.black)
-//            .background {
-//              RoundedRectangle(cornerRadius: 5)
-//                .fill(.white)
-//                .frame(width: 40, height: 40)
-//            }
-//        }
-//        .padding([.bottom, .trailing], 16)
-//      }
-//      .overlay(alignment: .topLeading) {
-//        Button(action: { isShowMap = false }) {
-//          Image(systemName: "xmark")
-//            .imageScale(.large)
-//        }
-//        .padding(.leading, 16)
-//      }
-//    } else if
-//      let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
-//        .first(where: { $0.id == store.searchCountryItem.id })
-//    {
-//      Map(position: $position) {
-//        Marker(
-//          "Destination",
-//          coordinate: CLLocationCoordinate2D(
-//            latitude: searchCountryItem.coordinateList.latitude,
-//            longitude: searchCountryItem.coordinateList.longitude))
-//      }
-//      .mapStyle(.standard)
-//      .overlay(alignment: .bottomTrailing) {
-//        Button(action: { position = .automatic }) {
-//          Image(systemName: "dot.scope")
-//            .foregroundStyle(.black)
-//            .background {
-//              RoundedRectangle(cornerRadius: 5)
-//                .fill(.white)
-//                .frame(width: 40, height: 40)
-//            }
-//        }
-//        .padding([.bottom, .trailing], 16)
-//      }
-//      .overlay(alignment: .topLeading) {
-//        Button(action: { isShowMap = false }) {
-//          Image(systemName: "xmark")
-//            .imageScale(.large)
-//        }
-//        .padding(.leading, 16)
-//      }
-//    }
-//  }

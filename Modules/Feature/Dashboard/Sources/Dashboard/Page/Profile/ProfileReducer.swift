@@ -64,9 +64,8 @@ struct ProfileReducer {
 
     case routeToUpdateProfileImage
     case routeToUpdateAuth
-    
-    case routeToTabBarItem(String)
 
+    case routeToTabBarItem(String)
 
     case throwError(CompositeErrorRepository)
   }
@@ -134,11 +133,10 @@ struct ProfileReducer {
       case .routeToUpdateAuth:
         sideEffect.routeToUpdateAuth()
         return .none
-        
+
       case .routeToTabBarItem(let matchPath):
         sideEffect.routeToTabBarItem(matchPath)
         return .none
-
 
       case .throwError(let error):
         sideEffect.useCase.toastViewModel.send(errorMessage: error.displayMessage)

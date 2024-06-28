@@ -37,7 +37,7 @@ extension SignUpPage {
 extension SignUpPage: View {
   var body: some View {
     VStack {
-      DesignSystemNavigation(title: "") {
+      DesignSystemNavigation {
         VStack(spacing: 24) {
           Text("Create Account")
             .font(.largeTitle)

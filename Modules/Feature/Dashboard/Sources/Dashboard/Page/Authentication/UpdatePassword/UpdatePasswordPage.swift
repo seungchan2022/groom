@@ -39,7 +39,12 @@ extension UpdatePasswordPage: View {
   var body: some View {
     VStack {
       DesignSystemNavigation(
-        barItem: .init(backAction: { store.send(.routeToBack)}), title: "")
+        barItem: .init(
+          backAction: .init(
+            image: Image(systemName: "chevron.left"),
+            action: { store.send(.routeToBack) }),
+          title: "비밀번호 변경"),
+        isShowDivider: true)
       {
         VStack(spacing: 24) {
           Image(systemName: "paperplane")

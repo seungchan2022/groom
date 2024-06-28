@@ -74,7 +74,7 @@ extension HomeSideEffect {
         isAnimated: true)
     }
   }
-  
+
   var routeToTabBarItem: (String) -> Void {
     { path in
       guard path != Link.Dashboard.Path.home.rawValue else { return }
