@@ -64,6 +64,7 @@ struct ProfileReducer {
 
     case routeToUpdateProfileImage
     case routeToUpdateAuth
+    case routeToReservation
 
     case routeToTabBarItem(String)
 
@@ -132,6 +133,10 @@ struct ProfileReducer {
 
       case .routeToUpdateAuth:
         sideEffect.routeToUpdateAuth()
+        return .none
+
+      case .routeToReservation:
+        sideEffect.routeToReservation()
         return .none
 
       case .routeToTabBarItem(let matchPath):

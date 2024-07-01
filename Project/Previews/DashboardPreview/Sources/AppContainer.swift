@@ -29,6 +29,7 @@ extension AppContainer {
       likeUseCase: LikeUseCasePlatform(),
       searchUseCase: SearchUseCasePlatform(),
       wishListUseCase: WishListUseCasePlatform(),
+      reservationUseCase: ReservationUseCasePlatform(),
       toastViewModel: ToastViewModel())
 
     return .init(

@@ -20,6 +20,7 @@ extension DashboardRouteBuilderGroup {
       UpdatePasswordRouteBuilder.generate(),
       UpdateAuthRouteBuilder.generate(),
       UpdateProfileImageRouteBuilder.generate(),
+      ReservationRouteBuilder.generate(),
     ]
   }
 }

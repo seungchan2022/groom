@@ -33,37 +33,90 @@ extension ProfilePage: View {
         VStack(alignment: .leading) {
           switch store.state.status {
           case .isLoggedIn:
-            VStack(alignment: .leading) {
-              HStack(spacing: 12) {
-                RemoteImage(url: store.item.photoURL ?? "") {
-                  Image(systemName: "person.circle")
+            VStack {
+              VStack(alignment: .leading) {
+                HStack(spacing: 12) {
+                  RemoteImage(url: store.item.photoURL ?? "") {
+                    Image(systemName: "person.circle")
+                      .resizable()
+                      .frame(width: 100, height: 100)
+                      .fontWeight(.ultraLight)
+                  }
+                  .scaledToFill()
+                  .frame(width: 100, height: 100)
+                  .clipShape(Circle())
+
+                  VStack(alignment: .leading) {
+                    Text("이메일: \(store.item.email ?? "")")
+
+                    Text("이름: \(store.item.userName ?? "")")
+                  }
+
+                  Spacer()
+
+                  Image(systemName: "chevron.right")
                     .resizable()
-                    .frame(width: 100, height: 100)
-                    .fontWeight(.ultraLight)
-                }
-                .scaledToFill()
-                .frame(width: 100, height: 100)
-                .clipShape(Circle())
-
-                VStack(alignment: .leading) {
-                  Text("이메일: \(store.item.email ?? "")")
-
-                  Text("이름: \(store.item.userName ?? "")")
+                    .foregroundStyle(.black)
+                    .frame(width: 14, height: 20)
                 }
 
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                  .resizable()
-                  .foregroundStyle(.black)
-                  .frame(width: 14, height: 20)
+                Divider()
+              }
+              .frame(maxWidth: .infinity, alignment: .leading)
+              .onTapGesture {
+                store.send(.routeToUpdateProfileImage)
               }
 
-              Divider()
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .onTapGesture {
-              store.send(.routeToUpdateProfileImage)
+              VStack(spacing: 32) {
+                Button(action: { store.send(.routeToUpdateAuth) }) {
+                  VStack {
+                    HStack {
+                      Image(systemName: "lock.square")
+                        .resizable()
+                        .foregroundStyle(.black)
+                        .frame(width: 20, height: 20)
+
+                      Text("로그인 / 보안")
+                        .font(.headline)
+                        .foregroundStyle(.black)
+
+                      Spacer()
+
+                      Image(systemName: "chevron.right")
+                        .resizable()
+                        .fontWeight(.light)
+                        .foregroundStyle(.black)
+                        .frame(width: 14, height: 20)
+                    }
+                    Divider()
+                  }
+                }
+
+                Button(action: { store.send(.routeToReservation) }) {
+                  VStack {
+                    HStack {
+                      Image(systemName: "bookmark")
+//                        .resizable()
+                        .foregroundStyle(.black)
+                        .frame(width: 20, height: 20)
+
+                      Text("예약 현황")
+                        .font(.headline)
+                        .foregroundStyle(.black)
+
+                      Spacer()
+
+                      Image(systemName: "chevron.right")
+                        .resizable()
+                        .fontWeight(.light)
+                        .foregroundStyle(.black)
+                        .frame(width: 14, height: 20)
+                    }
+                    Divider()
+                  }
+                }
+              }
+              .padding(.top, 32)
             }
 
           case .isLoggedOut:
@@ -97,34 +150,6 @@ extension ProfilePage: View {
             }
             .padding(.top, 32) // ~ Sign Up
           }
-          VStack(spacing: 32) {
-            if store.state.status == .isLoggedIn {
-              Button(action: { store.send(.routeToUpdateAuth) }) {
-                VStack {
-                  HStack {
-                    Image(systemName: "lock.square")
-                      .resizable()
-                      .foregroundStyle(.black)
-                      .frame(width: 20, height: 20)
-
-                    Text("로그인 / 보안")
-                      .font(.headline)
-                      .foregroundStyle(.black)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                      .resizable()
-                      .fontWeight(.light)
-                      .foregroundStyle(.black)
-                      .frame(width: 14, height: 20)
-                  }
-                  Divider()
-                }
-              }
-            }
-          }
-          .padding(.top, 32)
         }
         .padding(.horizontal, 16)
       }

@@ -138,6 +138,42 @@ extension DetailSideEffect {
     }
   }
 
+  var reservationDetail: (Airbnb.Detail.Item, [Date]) -> Effect<DetailReducer.Action> {
+    { item, dateList in
+      .publisher {
+        useCase.reservationUseCase.reservationDetail(item, dateList)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchReservationDetail)
+      }
+    }
+  }
+
+  var reservationCityDetail: (Airbnb.SearchCityDetail.Item, [Date]) -> Effect<DetailReducer.Action> {
+    { item, dateList in
+      .publisher {
+        useCase.reservationUseCase.reservationCityDetail(item, dateList)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchReservationCityDetail)
+      }
+    }
+  }
+
+  var reservationCountryDetail: (Airbnb.SearchCountryDetail.Item, [Date]) -> Effect<DetailReducer.Action> {
+    { item, dateList in
+      .publisher {
+        useCase.reservationUseCase.reservationCountryDetail(item, dateList)
+          .map { _ in true }
+          .receive(on: main)
+          .mapToResult()
+          .map(DetailReducer.Action.fetchReservationCountryDetail)
+      }
+    }
+  }
+
   var routeToBack: () -> Void {
     {
       navigator.back(isAnimated: true)

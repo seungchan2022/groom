@@ -8,5 +8,6 @@ public protocol DashboardEnvironmentUsable {
   var likeUseCase: LikeUseCase { get }
   var searchUseCase: SearchUseCase { get }
   var wishListUseCase: WishListUseCase { get }
+  var reservationUseCase: ReservationUseCase { get }
   var toastViewModel: ToastViewActionType { get }
 }

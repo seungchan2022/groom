@@ -81,6 +81,14 @@ extension ProfileSideEffect {
     }
   }
 
+  var routeToReservation: () -> Void {
+    {
+      navigator.next(
+        linkItem: .init(path: Link.Dashboard.Path.reservation.rawValue),
+        isAnimated: true)
+    }
+  }
+
   var routeToTabBarItem: (String) -> Void {
     { path in
       guard path != Link.Dashboard.Path.profile.rawValue else { return }

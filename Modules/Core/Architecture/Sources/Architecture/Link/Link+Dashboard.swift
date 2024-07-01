@@ -20,5 +20,6 @@ extension Link.Dashboard {
     case updatePassword
     case updateAuth
     case updateProfileImage
+    case reservation
   }
 }

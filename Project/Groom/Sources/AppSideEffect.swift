@@ -14,5 +14,6 @@ struct AppSideEffect: DependencyType, DashboardEnvironmentUsable {
   let likeUseCase: LikeUseCase
   let searchUseCase: SearchUseCase
   let wishListUseCase: WishListUseCase
+  let reservationUseCase: ReservationUseCase
   let toastViewModel: ToastViewActionType
 }

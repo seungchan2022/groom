@@ -41,6 +41,12 @@ struct DetailReducer {
 
     var isLike = false
 
+    var selectedDateList: Set<DateComponents> = []
+
+    var isShowCalendar = false
+
+    var selectedDate = "날짜를 선택해주세요"
+
     let item: Airbnb.Listing.Item
     let searchCityItem: Airbnb.Search.City.Item
     let searchCountryItem: Airbnb.Search.Country.Item
@@ -58,6 +64,10 @@ struct DetailReducer {
     var fetchUnLikeDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
     var fetchUnLikeCityDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
     var fetchUnLikeCountryDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+
+    var fetchReservationDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchReservationCityDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
+    var fetchReservationCountryDetail: FetchState.Data<Bool> = .init(isLoading: false, value: false)
   }
 
   enum CancelID: Equatable, CaseIterable {
@@ -69,6 +79,9 @@ struct DetailReducer {
     case requestLikeCityDetail
     case requestLikeCountryDetail
     case requestIsLike
+    case requestReservationDetail
+    case requestReservationCityDetail
+    case requestReservationCountryDetail
   }
 
   enum Action: BindableAction, Equatable {
@@ -104,6 +117,15 @@ struct DetailReducer {
     case fetchUnLikeDetail(Result<Bool, CompositeErrorRepository>)
     case fetchUnLikeCityDetail(Result<Bool, CompositeErrorRepository>)
     case fetchUnLikeCountryDetail(Result<Bool, CompositeErrorRepository>)
+
+    case onTapReservationDetail(Airbnb.Detail.Item, [Date])
+    case fetchReservationDetail(Result<Bool, CompositeErrorRepository>)
+
+    case onTapReservationCityDetail(Airbnb.SearchCityDetail.Item, [Date])
+    case fetchReservationCityDetail(Result<Bool, CompositeErrorRepository>)
+
+    case onTapReservationCountryDetail(Airbnb.SearchCountryDetail.Item, [Date])
+    case fetchReservationCountryDetail(Result<Bool, CompositeErrorRepository>)
 
     case routeToBack
     case routeToSignIn
@@ -181,6 +203,60 @@ struct DetailReducer {
         return sideEffect
           .unLikeCountryDetail(item)
           .cancellable(pageID: pageID, id: CancelID.requestLikeCountryDetail, cancelInFlight: true)
+
+      case .onTapReservationDetail(let item, let dateList):
+        state.fetchReservationDetail.isLoading = true
+        return sideEffect
+          .reservationDetail(item, dateList)
+          .cancellable(pageID: pageID, id: CancelID.requestReservationDetail, cancelInFlight: true)
+
+      case .fetchReservationDetail(let result):
+        state.fetchReservationDetail.isLoading = false
+        switch result {
+        case .success(let item):
+          state.fetchReservationDetail.value = item
+          sideEffect.routeToBack()
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .onTapReservationCityDetail(let item, let dateList):
+        state.fetchReservationCityDetail.isLoading = true
+        return sideEffect
+          .reservationCityDetail(item, dateList)
+          .cancellable(pageID: pageID, id: CancelID.requestReservationCityDetail, cancelInFlight: true)
+
+      case .fetchReservationCityDetail(let result):
+        state.fetchReservationCityDetail.isLoading = false
+        switch result {
+        case .success(let item):
+          state.fetchReservationCityDetail.value = item
+          sideEffect.routeToBack()
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
+
+      case .onTapReservationCountryDetail(let item, let dateList):
+        state.fetchReservationCountryDetail.isLoading = true
+        return sideEffect
+          .reservationCountryDetail(item, dateList)
+          .cancellable(pageID: pageID, id: CancelID.requestReservationCountryDetail, cancelInFlight: true)
+
+      case .fetchReservationCountryDetail(let result):
+        state.fetchReservationCountryDetail.isLoading = false
+        switch result {
+        case .success(let item):
+          state.fetchReservationCountryDetail.value = item
+          sideEffect.routeToBack()
+          return .none
+
+        case .failure(let error):
+          return .run { await $0(.throwError(error)) }
+        }
 
       case .fetchItem(let result):
         state.fetchItem.isLoading = false

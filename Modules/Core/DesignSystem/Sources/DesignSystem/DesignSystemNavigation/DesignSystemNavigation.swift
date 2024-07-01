@@ -7,9 +7,9 @@ public struct DesignSystemNavigation<Content: View> {
   let largeTitle: String?
   let isShowDivider: Bool?
   let content: Content
-  
+
   @State private var showInlineTitle = false
-  
+
   public init(
     barItem: DesignSystemNavigationBar? = .none,
     largeTitle: String? = .none,
@@ -53,7 +53,7 @@ extension DesignSystemNavigation: View {
             }
           }
       }
-      
+
       ScrollView {
         GeometryReader { geometry in
           Color.clear
@@ -65,12 +65,12 @@ extension DesignSystemNavigation: View {
             }
         }
         .frame(height: 0)
-        
+
         if let largeTitle {
           Text(largeTitle)
             .font(.system(size: 30, weight: .bold, design: .default))
             .multilineTextAlignment(.leading)
-            .padding(.horizontal, 32)
+            .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, titleTopMargin)
         }

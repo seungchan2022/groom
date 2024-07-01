@@ -21,6 +21,45 @@ extension DetailPage {
       || store.fetchIsLike.isLoading
   }
 
+  /// Set<DateComponents>를 정렬된 Array로 변환
+  private var sortedDateList: [Date] {
+    Array(store.selectedDateList).compactMap {
+      Calendar.current.date(from: $0)
+    }.sorted()
+  }
+
+  /// 언제 ~ 언제까지를 나타낼 String
+  private var dateIntervalString: String {
+    let datesArr = sortedDateList // 정렬된 Array를 가지고 사용
+
+    if datesArr.count >= 2 {
+      return "\(datesArr.first?.formatted(date: .abbreviated, time: .omitted) ?? "") ~ \(datesArr.last?.formatted(date: .abbreviated, time: .omitted) ?? "")"
+    }
+
+    return "날짜를 선택해주세요"
+  }
+
+  private var filledDateListInterval: Set<DateComponents> {
+    let sortedDates = sortedDateList // 정렬된 Array를 가지고 사용
+
+    // 시작 날짜와 마지막 날짜 가져오기
+    guard let startDate = sortedDates.first, let endDate = sortedDates.last else {
+      return store.selectedDateList
+    }
+
+    var allDates: Set<DateComponents> = [] // 두 날짜 사이를 포함할 집합
+    var currentDate = startDate
+
+    //    while 루프를 사용하여 currentDate가 endDate보다 작거나 같을 때까지 반복합니다. 각 반복에서 currentDate를 DateComponents로 변환하고 이를 allDates 집합에 추가합니다. 그런 다음 currentDate에 하루를 더합니다. 이 과정을 통해 startDate와 endDate 사이의 모든 날짜를 allDates에 추가합니다.
+    while currentDate <= endDate {
+      let components = Calendar.current.dateComponents([.year, .month, .day], from: currentDate)
+      allDates.insert(components)
+      currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
+    }
+
+    return allDates
+  }
+
 }
 
 // MARK: View
@@ -80,129 +119,97 @@ extension DetailPage: View {
             position: $position)
         }
       }
-      .fullScreenCover(isPresented: $isShowMap) {
-        if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.searchCityItem.id }) {
-          Map(position: $position) {
-            Marker(
-              "Destination",
-              coordinate: CLLocationCoordinate2D(
-                latitude: searchCityItem.coordinateList.latitude,
-                longitude: searchCityItem.coordinateList.longitude))
-          }
-          .mapStyle(.standard)
-          .overlay(alignment: .topLeading) {
-            Button(action: { isShowMap = false }) {
-              Image(systemName: "xmark")
-                .imageScale(.large)
-            }
-            .padding(.leading, 16)
-          }
-          .overlay(alignment: .topTrailing) {
-            Button(action: { position = .automatic }) {
-              Image(systemName: "dot.scope")
-                .imageScale(.large)
-                .foregroundStyle(.black)
-                .background {
-                  RoundedRectangle(cornerRadius: 5)
-                    .fill(.white)
-                    .frame(width: 45, height: 45)
-                }
-            }
-            .padding([.bottom, .trailing], 16)
-          }
-        }
+      // 하단 커스텀 예약 바
 
-        else if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
-          Map(position: $position) {
-            Marker(
-              "Destination",
-              coordinate: CLLocationCoordinate2D(
-                latitude: item.coordinateList.latitude,
-                longitude: item.coordinateList.longitude))
-          }
-          .mapStyle(.standard)
-          .overlay(alignment: .bottomTrailing) {
-            Button(action: { position = .automatic }) {
-              Image(systemName: "dot.scope")
-                .foregroundStyle(.black)
-                .background {
-                  RoundedRectangle(cornerRadius: 5)
-                    .fill(.white)
-                    .frame(width: 40, height: 40)
-                }
+      if let item = store.fetchItem.value?.itemList.first(where: { $0.id == store.item.id }) {
+        ReservationItemComponent(
+          viewState: .init(item: item),
+          tapAction: { store.send(.onTapReservationDetail(item, sortedDateList)) },
+          store: store)
+          .sheet(isPresented: $store.isShowCalendar) {
+            VStack {
+              Button(action: {
+                store.selectedDateList = []
+                store.selectedDate = "날짜를 선택해주세요"
+
+              }) {
+                Text("날짜 지우기")
+              }
+
+              MultiDatePicker("Dates", selection: $store.selectedDateList, in: Date()...)
             }
-            .padding([.bottom, .trailing], 16)
           }
-          .overlay(alignment: .topLeading) {
-            Button(action: { isShowMap = false }) {
-              Image(systemName: "xmark")
-                .imageScale(.large)
+
+          .onChange(of: store.selectedDateList) { _, new in
+            if new.count == 2 {
+              store.selectedDateList = filledDateListInterval
+              store.selectedDate = dateIntervalString
+              if filledDateListInterval.count == store.selectedDateList.count {
+                store.isShowCalendar = false
+              }
             }
-            .padding(.leading, 16)
           }
-        } else if
-          let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
-            .first(where: { $0.id == store.searchCountryItem.id })
-        {
-          Map(position: $position) {
-            Marker(
-              "Destination",
-              coordinate: CLLocationCoordinate2D(
-                latitude: searchCountryItem.coordinateList.latitude,
-                longitude: searchCountryItem.coordinateList.longitude))
-          }
-          .mapStyle(.standard)
-          .overlay(alignment: .bottomTrailing) {
-            Button(action: { position = .automatic }) {
-              Image(systemName: "dot.scope")
-                .foregroundStyle(.black)
-                .background {
-                  RoundedRectangle(cornerRadius: 5)
-                    .fill(.white)
-                    .frame(width: 40, height: 40)
-                }
-            }
-            .padding([.bottom, .trailing], 16)
-          }
-          .overlay(alignment: .topLeading) {
-            Button(action: { isShowMap = false }) {
-              Image(systemName: "xmark")
-                .imageScale(.large)
-            }
-            .padding(.leading, 16)
-          }
-        }
       }
 
-      VStack(spacing: .zero) {
-        Divider()
+      else if let searchCityItem = store.fetchSearchCityItem.value?.itemList.first(where: { $0.id == store.item.id }) {
+        ReservationCityItemComponent(
+          viewState: .init(item: searchCityItem),
+          tapAction: { store.send(.onTapReservationCityDetail(searchCityItem, sortedDateList)) },
+          store: store)
+          .sheet(isPresented: $store.isShowCalendar) {
+            VStack {
+              Button(action: {
+                store.selectedDateList = []
+                store.selectedDate = "날짜를 선택해주세요"
 
-        HStack {
-          VStack(alignment: .leading) {
-            Text("$")
-              .fontWeight(.semibold)
+              }) {
+                Text("날짜 지우기")
+              }
+
+              MultiDatePicker("Dates", selection: $store.selectedDateList, in: Date()...)
+            }
           }
 
-          Spacer()
-
-          Button(action: { }) {
-            Text("예약하기")
-              .foregroundStyle(.white)
-              .font(.subheadline)
-              .fontWeight(.semibold)
-              .frame(width: 140, height: 40)
-              .background(.pink)
-              .clipShape(RoundedRectangle(cornerRadius: 8))
+          .onChange(of: store.selectedDateList) { _, new in
+            if new.count == 2 {
+              store.selectedDateList = filledDateListInterval
+              store.selectedDate = dateIntervalString
+              if filledDateListInterval.count == store.selectedDateList.count {
+                store.isShowCalendar = false
+              }
+            }
           }
-        }
-        .padding(.horizontal, 32)
-        .padding(.vertical, 16) // 추가 패딩으로 버튼 크기 조정
-        .padding(.bottom, WindowAppearance.safeArea.bottom)
-        .background {
-          Rectangle()
-            .fill(DesignSystemColor.label(.default).color)
-            .fill(.white)
-        }
+      } else if
+        let searchCountryItem = store.fetchSearchCountryItem.value?.itemList
+          .first(where: { $0.id == store.searchCountryItem.id })
+      {
+        ReservationCountryItemComponent(
+          viewState: .init(item: searchCountryItem),
+          tapAction: { store.send(.onTapReservationCountryDetail(searchCountryItem, sortedDateList)) },
+          store: store)
+          .sheet(isPresented: $store.isShowCalendar) {
+            VStack {
+              Button(action: {
+                store.selectedDateList = []
+                store.selectedDate = "날짜를 선택해주세요"
+
+              }) {
+                Text("날짜 지우기")
+              }
+
+              MultiDatePicker("Dates", selection: $store.selectedDateList, in: Date()...)
+            }
+          }
+
+          .onChange(of: store.selectedDateList) { _, new in
+            if new.count == 2 {
+              store.selectedDateList = filledDateListInterval
+              store.selectedDate = dateIntervalString
+              if filledDateListInterval.count == store.selectedDateList.count {
+                store.isShowCalendar = false
+              }
+            }
+          }
       }
     }
     .ignoresSafeArea(.all, edges: .bottom)
