@@ -23,14 +23,22 @@ extension ReservationPage: View {
           title: ""),
         largeTitle: "예약 현황")
       {
-        VStack {
-          Text("예약 페이지")
-          Text("\(store.reservationItemList.count)")
+        VStack(alignment: .leading) {
 
-          ForEach(store.reservationItemList, id: \.id) { item in
-            Text(item.name)
+          if store.reservationItemList.isEmpty {
+            Text("예약된 상품이 없습니다.")
+          }
+          
+          LazyVStack(alignment: .leading, spacing: 48) {
+            ForEach(store.reservationItemList, id: \.id) { item in
+              ItemComponent(
+                store: store,
+                viewState: .init(item: item),
+                tapAction: { _ in })
+            }
           }
         }
+        .padding(.horizontal, 16)
       }
     }
     .onAppear {
